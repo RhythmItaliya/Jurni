@@ -1,0 +1,91 @@
+{
+  "validUser": {
+    "uuid": "user-12345-67890",
+    "username": "testuser123",
+    "email": "testuser123@example.com",
+    "password": "password123",
+    "isActive": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  "validUser2": {
+    "uuid": "user-23456-78901",
+    "username": "testuser456",
+    "email": "testuser456@example.com",
+    "password": "password456",
+    "isActive": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  "invalidUsers": {
+    "shortUsername": {
+      "username": "ab",
+      "email": "short@example.com",
+      "password": "password123"
+    },
+    "shortPassword": {
+      "username": "testuser",
+      "email": "shortpass@example.com",
+      "password": "123"
+    },
+    "invalidEmail": {
+      "username": "testuser",
+      "email": "not-an-email",
+      "password": "password123"
+    },
+    "emptyUsername": {
+      "username": "",
+      "email": "emptyuser@example.com",
+      "password": "password123"
+    },
+    "emptyEmail": {
+      "username": "testuser",
+      "email": "",
+      "password": "password123"
+    },
+    "emptyPassword": {
+      "username": "testuser",
+      "email": "emptypass@example.com",
+      "password": ""
+    }
+  },
+  "loginCredentials": {
+    "valid": {
+      "email": "testuser123@example.com",
+      "password": "password123"
+    },
+    "invalidEmail": {
+      "email": "wrong@example.com",
+      "password": "password123"
+    },
+    "invalidPassword": {
+      "email": "testuser123@example.com",
+      "password": "wrongpassword"
+    }
+  },
+  "mockUsers": {
+    "user1": {
+      "uuid": "mock-user-1",
+      "username": "mockuser1",
+      "email": "mockuser1@example.com",
+      "password": "mockpassword1",
+      "isActive": true
+    },
+    "user2": {
+      "uuid": "mock-user-2",
+      "username": "mockuser2",
+      "email": "mockuser2@example.com",
+      "password": "mockpassword2",
+      "isActive": true
+    }
+  },
+  "testUuids": {
+    "valid": "valid-uuid-12345",
+    "invalid": "invalid-uuid-67890"
+  },
+  "testData": {
+    "updateUsername": "updatedusername123456789",
+    "testMessage": "Test message for users",
+    "testResponse": "Test response for users"
+  }
+}
