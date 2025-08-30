@@ -5,7 +5,7 @@
 
 export const CLIENT_ENV = {
   // API Configuration
-  API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081',
+  API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
   API_TIMEOUT: parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT || '10000', 10),
   
   // Authentication

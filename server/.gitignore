@@ -81,10 +81,6 @@ temp/
 test-results/
 coverage/
 
-# NestJS specific
-.nest-cli.json
-nest-cli.json
-
 # TypeScript
 *.tsbuildinfo
 

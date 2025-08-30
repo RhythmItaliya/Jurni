@@ -6,7 +6,7 @@
 export const ENV_VARS = {
   // Application
   NODE_ENV: process.env.NODE_ENV || 'development',
-  PORT: process.env.PORT || 8081,
+  PORT: process.env.PORT || 8080,
   
   // Database
   MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/jurni',
