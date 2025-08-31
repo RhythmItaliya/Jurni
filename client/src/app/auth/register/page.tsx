@@ -3,61 +3,67 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import {
+  handleRegister,
+  validateRegisterForm,
+  formatRegisterError,
+  RegistrationResponse,
+} from './register';
 
-export default function Register() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+interface FormData {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export default function RegisterPage() {
   const router = useRouter();
+  const [formData, setFormData] = useState<FormData>({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
+    setIsLoading(true);
 
-    // Basic validation
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    // Validate form
+    const validation = validateRegisterForm(formData);
+    if (!validation.isValid) {
+      setError(validation.errors[0]);
       setIsLoading(false);
       return;
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
-      setIsLoading(false);
-      return;
-    }
+    // Handle registration
+    const result = await handleRegister(formData);
 
-    try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-        }),
-      });
-
-      if (response.ok) {
-        // Registration successful, redirect to login
-        router.push('/auth/login?message=Registration successful! Please sign in.');
-      } else {
-        const data = await response.json();
-        setError(data.message || 'Registration failed');
-      }
-    } catch (error) {
-      setError('An error occurred during registration');
-    } finally {
+    if (result.success && result.data) {
+      // Registration successful, redirect directly to OTP verification
+      router.push(
+        `/auth/verify-otp?email=${encodeURIComponent(result.data.user.email)}&username=${encodeURIComponent(result.data.user.username)}`
+      );
+    } else {
+      setError(formatRegisterError(result.error || 'Registration failed'));
       setIsLoading(false);
     }
   };
 
+  // Remove the success screen logic - go directly to OTP verification
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -76,8 +82,8 @@ export default function Register() {
                 required
                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={formData.username}
+                onChange={handleInputChange}
               />
             </div>
             <div>
@@ -88,8 +94,8 @@ export default function Register() {
                 required
                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={handleInputChange}
               />
             </div>
             <div>
@@ -100,8 +106,8 @@ export default function Register() {
                 required
                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleInputChange}
               />
             </div>
             <div>
@@ -112,8 +118,8 @@ export default function Register() {
                 required
                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
               />
             </div>
           </div>
@@ -133,7 +139,10 @@ export default function Register() {
           </div>
 
           <div className="text-center">
-            <Link href="/auth/login" className="text-indigo-600 hover:text-indigo-500">
+            <Link
+              href="/auth/login"
+              className="text-indigo-600 hover:text-indigo-500"
+            >
               Already have an account? Sign in
             </Link>
           </div>

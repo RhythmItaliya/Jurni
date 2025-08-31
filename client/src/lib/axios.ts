@@ -11,39 +11,32 @@ const api = axios.create({
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
-  (config) => {
-    // Get token from session storage (NextAuth handles this)
+  config => {
     if (typeof window !== 'undefined') {
-      // Try to get token from various sources
-      const token = localStorage.getItem('next-auth.session-token') || 
-                   localStorage.getItem('__Secure-next-auth.session-token') ||
-                   sessionStorage.getItem('next-auth.session-token');
-      
+      const token =
+        localStorage.getItem('next-auth.session-token') ||
+        localStorage.getItem('__Secure-next-auth.session-token') ||
+        sessionStorage.getItem('next-auth.session-token');
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  error => Promise.reject(error)
 );
 
 // Response interceptor to handle auth errors
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  response => response,
+  error => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
       if (typeof window !== 'undefined') {
-        // Clear all auth tokens
         localStorage.removeItem('next-auth.session-token');
         localStorage.removeItem('__Secure-next-auth.session-token');
         sessionStorage.removeItem('next-auth.session-token');
-        
-        // Redirect to signin page
-        window.location.href = '/auth/signin';
+        window.location.href = '/auth/login';
       }
     }
     return Promise.reject(error);
@@ -51,3 +44,14 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+// Helper function to create axios instance with custom base URL
+export const createApiInstance = (customBaseURL?: string) => {
+  return axios.create({
+    baseURL: customBaseURL || CLIENT_ENV.API_URL,
+    timeout: CLIENT_ENV.API_TIMEOUT,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};

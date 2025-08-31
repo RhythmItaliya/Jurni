@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { handleLogin, validateLoginForm, formatLoginError } from './login';
+import { LoginCredentials } from '@/types/user';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState<LoginCredentials>({
+    usernameOrEmail: '',
+    password: '',
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -21,28 +24,37 @@ export default function Login() {
     }
   }, [searchParams]);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
-    try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError('Invalid credentials');
-      } else {
-        router.push('/');
-      }
-    } catch (error) {
-      setError('An error occurred during sign in');
-    } finally {
+    // Validate form
+    const validation = validateLoginForm(formData);
+    if (!validation.isValid) {
+      setError(validation.errors[0]);
       setIsLoading(false);
+      return;
     }
+
+    // Handle login
+    const result = await handleLogin(formData);
+
+    if (result.success) {
+      router.push('/');
+    } else {
+      setError(formatLoginError(result.error || 'Login failed'));
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -53,25 +65,25 @@ export default function Login() {
             Sign in to your account
           </h2>
         </div>
-        
+
         {message && (
           <div className="text-green-600 text-sm text-center bg-green-50 p-3 rounded">
             {message}
           </div>
         )}
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="usernameOrEmail"
+                name="usernameOrEmail"
+                type="text"
                 required
                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Username or Email address"
+                value={formData.usernameOrEmail}
+                onChange={handleInputChange}
               />
             </div>
             <div>
@@ -82,8 +94,8 @@ export default function Login() {
                 required
                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleInputChange}
               />
             </div>
           </div>
@@ -103,7 +115,10 @@ export default function Login() {
           </div>
 
           <div className="text-center">
-            <Link href="/auth/register" className="text-indigo-600 hover:text-indigo-500">
+            <Link
+              href="/auth/register"
+              className="text-indigo-600 hover:text-indigo-500"
+            >
               Don't have an account? Register
             </Link>
           </div>

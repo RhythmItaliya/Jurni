@@ -20,14 +20,16 @@ export class TestUtils {
     }).compile();
 
     const app = moduleFixture.createNestApplication();
-    
+
     // Enable global validation pipe for consistent testing
-    app.useGlobalPipes(new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }));
-    
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
+
     await app.init();
     return app;
   }
@@ -62,7 +64,7 @@ export class TestUtils {
     return {
       username: `testuser${timestamp}`,
       email: `test${timestamp}@example.com`,
-      password: TEST_CONFIG.TEST_USERS.DEFAULT_PASSWORD
+      password: TEST_CONFIG.TEST_USERS.DEFAULT_PASSWORD,
     };
   }
 
@@ -89,7 +91,9 @@ export class TestUtils {
    * @param credentialType - Key of loginCredentials object in test data
    * @returns object - Login credentials object
    */
-  static getLoginCredentials(credentialType: keyof typeof usersData.loginCredentials) {
+  static getLoginCredentials(
+    credentialType: keyof typeof usersData.loginCredentials,
+  ) {
     return usersData.loginCredentials[credentialType];
   }
 

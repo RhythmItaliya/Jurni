@@ -1,7 +1,8 @@
 'use client';
 
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { logoutToHome } from '@/app/auth/logout';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -26,7 +27,7 @@ export default function Home() {
               A modern platform built with Next.js and NestJS
             </p>
           </div>
-          
+
           <div className="space-y-4">
             <Link
               href="/auth/login"
@@ -34,7 +35,7 @@ export default function Home() {
             >
               Sign In
             </Link>
-            
+
             <Link
               href="/auth/register"
               className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -59,25 +60,57 @@ export default function Home() {
               Welcome, {userSession?.user?.name || 'User'}!
             </h1>
             <button
-              onClick={() => signOut()}
+              onClick={logoutToHome}
               className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Sign Out
             </button>
           </div>
-          
+
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-2">Your Account Info</h2>
+            <h2 className="text-lg font-medium text-gray-900 mb-2">
+              Your Account Info
+            </h2>
             <div className="space-y-2 text-sm text-gray-600">
-              <p><strong>Username:</strong> {userSession?.user?.name}</p>
-              <p><strong>Email:</strong> {userSession?.user?.email}</p>
-              <p><strong>User ID:</strong> {userSession?.user?.id || userSession?.user?.uuid || 'N/A'}</p>
+              <p>
+                <strong>Username:</strong> {userSession?.user?.name}
+              </p>
+              <p>
+                <strong>Email:</strong> {userSession?.user?.email}
+              </p>
+              <p>
+                <strong>User ID:</strong>{' '}
+                {userSession?.user?.id || userSession?.user?.uuid || 'N/A'}
+              </p>
+              <p>
+                <strong>Status:</strong>{' '}
+                <span
+                  className={`font-medium ${userSession?.user?.isActive ? 'text-green-600' : 'text-red-600'}`}
+                >
+                  {userSession?.user?.isActive ? 'Active' : 'Inactive'}
+                </span>
+              </p>
+              <p>
+                <strong>Created:</strong>{' '}
+                {userSession?.user?.createdAt
+                  ? new Date(userSession?.user?.createdAt).toLocaleDateString()
+                  : 'N/A'}
+              </p>
+              <p>
+                <strong>Last Updated:</strong>{' '}
+                {userSession?.user?.updatedAt
+                  ? new Date(userSession?.user?.updatedAt).toLocaleDateString()
+                  : 'N/A'}
+              </p>
             </div>
           </div>
-          
+
           <div className="text-center text-gray-500">
             <p>You are successfully authenticated!</p>
-            <p className="mt-2">This is a simple authentication system with UUID-based user management.</p>
+            <p className="mt-2">
+              This is a simple authentication system with UUID-based user
+              management.
+            </p>
           </div>
         </div>
       </div>

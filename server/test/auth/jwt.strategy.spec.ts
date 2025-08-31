@@ -130,7 +130,9 @@ describe('JwtStrategy', () => {
       jest.spyOn(userService, 'findByUuid').mockResolvedValue(null as any);
 
       // Verify that the strategy throws the correct exception
-      await expect(strategy.validate(mockPayload)).rejects.toThrow(UnauthorizedException);
+      await expect(strategy.validate(mockPayload)).rejects.toThrow(
+        UnauthorizedException,
+      );
       expect(userService.findByUuid).toHaveBeenCalledWith(mockPayload.sub);
     });
 
@@ -175,7 +177,9 @@ describe('JwtStrategy', () => {
       jest.spyOn(userService, 'findByUuid').mockResolvedValue(null as any);
 
       // The strategy should handle missing 'sub' field gracefully
-      await expect(strategy.validate(mockPayload as any)).rejects.toThrow(UnauthorizedException);
+      await expect(strategy.validate(mockPayload as any)).rejects.toThrow(
+        UnauthorizedException,
+      );
       expect(userService.findByUuid).toHaveBeenCalledWith(undefined);
     });
 
@@ -212,7 +216,9 @@ describe('JwtStrategy', () => {
       };
 
       // Mock user service to throw an error
-      jest.spyOn(userService, 'findByUuid').mockRejectedValue(new Error('Database error'));
+      jest
+        .spyOn(userService, 'findByUuid')
+        .mockRejectedValue(new Error('Database error'));
 
       // Verify that the strategy propagates the error
       await expect(strategy.validate(mockPayload)).rejects.toThrow(Error);
@@ -233,7 +239,9 @@ describe('JwtStrategy', () => {
       };
 
       // Mock user service to throw an unexpected error
-      jest.spyOn(userService, 'findByUuid').mockRejectedValue(new TypeError('Unexpected error'));
+      jest
+        .spyOn(userService, 'findByUuid')
+        .mockRejectedValue(new TypeError('Unexpected error'));
 
       // Verify that the strategy propagates the error
       await expect(strategy.validate(mockPayload)).rejects.toThrow(TypeError);

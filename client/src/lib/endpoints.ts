@@ -1,0 +1,23 @@
+/**
+ * API Endpoints Configuration
+ * Centralized management of all API endpoints
+ */
+
+// Base endpoints
+export const ENDPOINTS = {
+  AUTH: {
+    LOGIN: '/auth/login',
+    REGISTER: '/auth/register',
+    VERIFY_REGISTRATION_OTP: '/auth/verify-registration-otp',
+    RESEND_REGISTRATION_OTP: '/auth/resend-registration-otp',
+  },
+} as const;
+
+// Helper function to build full URL
+export const buildUrl = (endpoint: string, baseUrl?: string) => {
+  return baseUrl ? `${baseUrl}${endpoint}` : endpoint;
+};
+
+// Type for endpoint keys
+export type EndpointKey = keyof typeof ENDPOINTS;
+export type AuthEndpointKey = keyof typeof ENDPOINTS.AUTH;

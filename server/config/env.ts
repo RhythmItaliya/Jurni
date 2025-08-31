@@ -17,6 +17,14 @@ export const ENV_VARS = {
   // CORS
   CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
   
+  // SMTP Configuration (for registration OTP)
+  SMTP_HOST: process.env.SMTP_HOST || 'smtp.gmail.com',
+  SMTP_PORT: parseInt(process.env.SMTP_PORT || '587', 10),
+  SMTP_SECURE: process.env.SMTP_SECURE === 'true',
+  SMTP_USER: process.env.SMTP_USER || 'littlemovie00@gmail.com',
+  SMTP_PASS: process.env.SMTP_PASS || 'savynzlzsuajspnh',
+  SMTP_FROM: process.env.SMTP_FROM || 'littlemovie00@gmail.com',
+  
   // Logging
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
   

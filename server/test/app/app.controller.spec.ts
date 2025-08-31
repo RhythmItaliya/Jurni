@@ -61,7 +61,7 @@ describe('AppController', () => {
 
       // Verify the controller returns the expected response
       expect(appController.getHello()).toBe(expectedResponse);
-      
+
       // Verify the service method was called
       expect(appService.getHello).toHaveBeenCalled();
     });

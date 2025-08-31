@@ -2,7 +2,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 
-export type UserDocument = User & Document;
+export type UserDocument = User &
+  Document & {
+    createdAt: Date;
+    updatedAt: Date;
+  };
 
 @Schema({ timestamps: true })
 export class User {
@@ -46,6 +50,20 @@ export class User {
   })
   @Prop({ default: false })
   isActive: boolean;
+
+  @ApiProperty({
+    description: 'User creation timestamp',
+    example: '2024-01-01T00:00:00.000Z',
+    type: Date,
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'User last update timestamp',
+    example: '2024-01-01T00:00:00.000Z',
+    type: Date,
+  })
+  updatedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

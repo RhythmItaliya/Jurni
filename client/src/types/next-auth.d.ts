@@ -1,35 +1,22 @@
-declare module "next-auth" {
+import { AuthUser } from './user';
+
+declare module 'next-auth' {
   interface Session {
-    accessToken?: string;
-    user: {
-      uuid: string; // Required, never null - primary identifier
-      email: string;
-      name?: string;
-    };
+    accessToken: string;
+    user: AuthUser;
   }
 
-  interface User {
-    uuid: string; // Required, never null - primary identifier
-    email: string;
-    name?: string;
-    accessToken?: string;
-    username?: string;
+  interface User extends AuthUser {
+    accessToken: string;
   }
 }
 
-declare module "next-auth/jwt" {
-  interface JWT {
-    accessToken?: string;
-    uuid: string; // Required, never null
-    username?: string;
+declare module 'next-auth/jwt' {
+  interface JWT extends AuthUser {
+    accessToken: string;
   }
 }
 
-// Override NextAuth's default User type to use uuid instead of id
-declare module "next-auth/adapters" {
-  interface User {
-    uuid: string;
-    email: string;
-    name?: string;
-  }
+declare module 'next-auth/adapters' {
+  interface User extends AuthUser {}
 }

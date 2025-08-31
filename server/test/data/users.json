@@ -69,14 +69,18 @@
       "username": "mockuser1",
       "email": "mockuser1@example.com",
       "password": "mockpassword1",
-      "isActive": true
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
     },
     "user2": {
       "uuid": "mock-user-2",
       "username": "mockuser2",
       "email": "mockuser2@example.com",
       "password": "mockpassword2",
-      "isActive": true
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
     }
   },
   "testUuids": {

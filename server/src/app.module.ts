@@ -16,10 +16,10 @@ import { ENV_VARS } from '@config/env';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    
+
     // Database connection module
     MongooseModule.forRoot(ENV_VARS.MONGODB_URI),
-    
+
     // Feature modules
     AppFeatureModule,
     UserModule,

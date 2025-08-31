@@ -69,6 +69,8 @@ describe('AuthController', () => {
           username: registerDto.username,
           email: registerDto.email,
           isActive: usersData.validUser.isActive,
+          createdAt: usersData.validUser.createdAt,
+          updatedAt: usersData.validUser.updatedAt,
         },
       };
 
@@ -95,12 +97,18 @@ describe('AuthController', () => {
       };
 
       // Mock auth service to throw ConflictException
-      jest.spyOn(authService, 'register').mockRejectedValue(
-        new ConflictException('User with this email or username already exists')
-      );
+      jest
+        .spyOn(authService, 'register')
+        .mockRejectedValue(
+          new ConflictException(
+            'User with this email or username already exists',
+          ),
+        );
 
       // Verify that the controller propagates the exception
-      await expect(controller.register(registerDto)).rejects.toThrow(ConflictException);
+      await expect(controller.register(registerDto)).rejects.toThrow(
+        ConflictException,
+      );
       expect(authService.register).toHaveBeenCalledWith(registerDto);
     });
 
@@ -117,7 +125,9 @@ describe('AuthController', () => {
       };
 
       // Mock auth service to throw a generic error
-      jest.spyOn(authService, 'register').mockRejectedValue(new Error('Validation failed'));
+      jest
+        .spyOn(authService, 'register')
+        .mockRejectedValue(new Error('Validation failed'));
 
       // Verify that the controller propagates the error
       await expect(controller.register(registerDto)).rejects.toThrow(Error);
@@ -147,6 +157,8 @@ describe('AuthController', () => {
           username: usersData.validUser.username,
           email: loginDto.email,
           isActive: usersData.validUser.isActive,
+          createdAt: usersData.validUser.createdAt,
+          updatedAt: usersData.validUser.updatedAt,
         },
       };
 
@@ -172,12 +184,14 @@ describe('AuthController', () => {
       };
 
       // Mock auth service to throw UnauthorizedException
-      jest.spyOn(authService, 'login').mockRejectedValue(
-        new UnauthorizedException('Invalid credentials')
-      );
+      jest
+        .spyOn(authService, 'login')
+        .mockRejectedValue(new UnauthorizedException('Invalid credentials'));
 
       // Verify that the controller propagates the exception
-      await expect(controller.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
       expect(authService.login).toHaveBeenCalledWith(loginDto);
     });
 
@@ -193,12 +207,14 @@ describe('AuthController', () => {
       };
 
       // Mock auth service to throw UnauthorizedException
-      jest.spyOn(authService, 'login').mockRejectedValue(
-        new UnauthorizedException('User not found')
-      );
+      jest
+        .spyOn(authService, 'login')
+        .mockRejectedValue(new UnauthorizedException('User not found'));
 
       // Verify that the controller propagates the exception
-      await expect(controller.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
       expect(authService.login).toHaveBeenCalledWith(loginDto);
     });
 
@@ -214,7 +230,9 @@ describe('AuthController', () => {
       };
 
       // Mock auth service to throw a generic error
-      jest.spyOn(authService, 'login').mockRejectedValue(new Error('Authentication failed'));
+      jest
+        .spyOn(authService, 'login')
+        .mockRejectedValue(new Error('Authentication failed'));
 
       // Verify that the controller propagates the error
       await expect(controller.login(loginDto)).rejects.toThrow(Error);
@@ -240,7 +258,9 @@ describe('AuthController', () => {
       };
 
       // Mock auth service to throw an unexpected error
-      jest.spyOn(authService, 'register').mockRejectedValue(new TypeError('Unexpected error'));
+      jest
+        .spyOn(authService, 'register')
+        .mockRejectedValue(new TypeError('Unexpected error'));
 
       // Verify that the controller propagates the error
       await expect(controller.register(registerDto)).rejects.toThrow(TypeError);

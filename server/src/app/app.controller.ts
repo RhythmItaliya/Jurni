@@ -17,13 +17,13 @@ export class AppController {
    */
   @Get()
   @ApiOperation({ summary: 'Get application name' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Application name returned successfully',
     schema: {
       type: 'string',
-      example: 'Jurni Platform API'
-    }
+      example: 'Jurni Platform API',
+    },
   })
   getHello(): string {
     return this.appService.getHello();
@@ -35,8 +35,8 @@ export class AppController {
    */
   @Get('health')
   @ApiOperation({ summary: 'Health check endpoint' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Health status returned successfully',
     schema: {
       type: 'object',
@@ -44,9 +44,9 @@ export class AppController {
         status: { type: 'string', example: 'ok' },
         timestamp: { type: 'string', format: 'date-time' },
         version: { type: 'string', example: '1.0.0' },
-        uptime: { type: 'number', example: 3600000 }
-      }
-    }
+        uptime: { type: 'number', example: 3600000 },
+      },
+    },
   })
   getHealth() {
     return this.appService.getHealth();
@@ -63,25 +63,25 @@ export class AppController {
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string', example: 'Test message' }
-      }
-    }
+        message: { type: 'string', example: 'Test message' },
+      },
+    },
   })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'Test message processed successfully',
     schema: {
       type: 'object',
       properties: {
         message: { type: 'string', example: 'Test response' },
-        received: { 
+        received: {
           type: 'object',
           properties: {
-            message: { type: 'string', example: 'Test message' }
-          }
-        }
-      }
-    }
+            message: { type: 'string', example: 'Test message' },
+          },
+        },
+      },
+    },
   })
   testEndpoint(@Body() body: { message: string }) {
     return this.appService.testEndpoint(body);

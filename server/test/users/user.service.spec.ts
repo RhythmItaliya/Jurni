@@ -6,6 +6,7 @@ import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { TEST_CONFIG } from '../test-config';
 import { usersData } from '../data';
+import { authData } from '../data';
 
 /**
  * Unit tests for UserService
@@ -21,18 +22,23 @@ describe('UserService', () => {
    * Uses data from JSON test files to ensure consistency
    */
   const mockUser = {
-    uuid: usersData.mockUsers.user1.uuid,           // Use predefined UUID
-    username: usersData.mockUsers.user1.username,   // Use predefined username
-    email: usersData.mockUsers.user1.email,         // Use predefined email
-    password: usersData.mockUsers.user1.password,   // Use predefined password
-    isActive: usersData.mockUsers.user1.isActive,   // Use predefined active status
-    save: jest.fn(),                               // Mock save method
-    toObject: jest.fn(() => ({                     // Mock toObject method
+    uuid: usersData.mockUsers.user1.uuid, // Use predefined UUID
+    username: usersData.mockUsers.user1.username, // Use predefined username
+    email: usersData.mockUsers.user1.email, // Use predefined email
+    password: usersData.mockUsers.user1.password, // Use predefined password
+    isActive: usersData.mockUsers.user1.isActive, // Use predefined active status
+    createdAt: new Date(usersData.mockUsers.user1.createdAt), // Use JSON data
+    updatedAt: new Date(usersData.mockUsers.user1.updatedAt), // Use JSON data
+    save: jest.fn(), // Mock save method
+    toObject: jest.fn(() => ({
+      // Mock toObject method
       uuid: usersData.mockUsers.user1.uuid,
       username: usersData.mockUsers.user1.username,
       email: usersData.mockUsers.user1.email,
       password: usersData.mockUsers.user1.password,
       isActive: usersData.mockUsers.user1.isActive,
+      createdAt: new Date(usersData.mockUsers.user1.createdAt),
+      updatedAt: new Date(usersData.mockUsers.user1.updatedAt),
     })),
   };
 
@@ -43,7 +49,7 @@ describe('UserService', () => {
   beforeEach(async () => {
     // Create a mock constructor function that returns mockUser when called with 'new'
     const MockUserModel = jest.fn().mockImplementation(() => mockUser) as any;
-    
+
     // Add static methods to the constructor
     MockUserModel.findOne = jest.fn();
     MockUserModel.find = jest.fn();
@@ -92,7 +98,7 @@ describe('UserService', () => {
         password: usersData.validUser.password,
       };
 
-      // Mock that no existing user is found (allowing registration)
+      // Mock that no existing user is found by email
       mockUserModel.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
@@ -104,10 +110,13 @@ describe('UserService', () => {
 
       // Verify the service returns the created user
       expect(result).toBe(mockUser);
-      
-      // Verify the service checked for existing users with correct criteria
+
+      // Verify the service checked for existing users separately (email first, then username)
       expect(mockUserModel.findOne).toHaveBeenCalledWith({
-        $or: [{ email: registerDto.email }, { username: registerDto.username }],
+        email: registerDto.email,
+      });
+      expect(mockUserModel.findOne).toHaveBeenCalledWith({
+        username: registerDto.username,
       });
     });
 
@@ -130,7 +139,9 @@ describe('UserService', () => {
       });
 
       // Verify that the service throws the correct exception
-      await expect(service.register(registerDto)).rejects.toThrow(ConflictException);
+      await expect(service.register(registerDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     /**
@@ -152,7 +163,9 @@ describe('UserService', () => {
       });
 
       // Verify that the service throws the correct exception
-      await expect(service.register(registerDto)).rejects.toThrow(ConflictException);
+      await expect(service.register(registerDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     /**
@@ -173,7 +186,9 @@ describe('UserService', () => {
       });
 
       // Verify that the service throws the correct exception
-      await expect(service.register(registerDto)).rejects.toThrow(ConflictException);
+      await expect(service.register(registerDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
@@ -189,18 +204,54 @@ describe('UserService', () => {
     it('should login user successfully with valid credentials', async () => {
       // Prepare login data using predefined test data
       const loginDto = {
-        email: usersData.validUser.email,
+        usernameOrEmail: usersData.validUser.email,
         password: usersData.validUser.password,
       };
 
       // Hash the password to simulate stored hashed password
-      const hashedPassword = await bcrypt.hash(usersData.validUser.password, 10);
+      const hashedPassword = await bcrypt.hash(
+        usersData.validUser.password,
+        10,
+      );
       const userWithHashedPassword = { ...mockUser, password: hashedPassword };
 
-      // Mock successful user lookup
+      // Mock successful user lookup by email
       mockUserModel.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(userWithHashedPassword),
       });
+
+      const result = await service.login(loginDto);
+
+      // Verify the service returns the authenticated user
+      expect(result).toBe(userWithHashedPassword);
+    });
+
+    /**
+     * Test successful user login with username
+     * Verifies that username-based login works correctly
+     */
+    it('should login user successfully with username credentials', async () => {
+      // Prepare login data using predefined test data
+      const loginDto = {
+        usernameOrEmail: usersData.validUser.username,
+        password: usersData.validUser.password,
+      };
+
+      // Hash the password to simulate stored hashed password
+      const hashedPassword = await bcrypt.hash(
+        usersData.validUser.password,
+        10,
+      );
+      const userWithHashedPassword = { ...mockUser, password: hashedPassword };
+
+      // Mock that no user is found by email first
+      mockUserModel.findOne
+        .mockReturnValueOnce({
+          exec: jest.fn().mockResolvedValue(null),
+        })
+        .mockReturnValueOnce({
+          exec: jest.fn().mockResolvedValue(userWithHashedPassword),
+        });
 
       const result = await service.login(loginDto);
 
@@ -215,17 +266,20 @@ describe('UserService', () => {
     it('should throw UnauthorizedException if user not found', async () => {
       // Prepare login data using predefined test data
       const loginDto = {
-        email: usersData.loginCredentials.invalidEmail.email,
-        password: usersData.loginCredentials.invalidEmail.password,
+        usernameOrEmail:
+          authData.invalidCredentials.nonExistentEmail.usernameOrEmail,
+        password: authData.invalidCredentials.nonExistentEmail.password,
       };
 
-      // Mock that no user is found
+      // Mock that no user is found by email
       mockUserModel.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
       // Verify that the service throws the correct exception
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 
@@ -250,7 +304,7 @@ describe('UserService', () => {
 
       // Verify the service returns the found user
       expect(result).toBe(mockUser);
-      
+
       // Verify the service searched with the correct UUID
       expect(mockUserModel.findOne).toHaveBeenCalledWith({ uuid });
     });
@@ -284,15 +338,21 @@ describe('UserService', () => {
     it('should return all users without passwords', async () => {
       // Prepare mock user data without passwords
       const usersWithoutPasswords = [
-        { 
-          uuid: usersData.mockUsers.user1.uuid, 
-          username: usersData.mockUsers.user1.username, 
-          email: usersData.mockUsers.user1.email 
+        {
+          uuid: usersData.mockUsers.user1.uuid,
+          username: usersData.mockUsers.user1.username,
+          email: usersData.mockUsers.user1.email,
+          isActive: usersData.mockUsers.user1.isActive,
+          createdAt: new Date(usersData.mockUsers.user1.createdAt),
+          updatedAt: new Date(usersData.mockUsers.user1.updatedAt),
         },
-        { 
-          uuid: usersData.mockUsers.user2.uuid, 
-          username: usersData.mockUsers.user2.username, 
-          email: usersData.mockUsers.user2.email 
+        {
+          uuid: usersData.mockUsers.user2.uuid,
+          username: usersData.mockUsers.user2.username,
+          email: usersData.mockUsers.user2.email,
+          isActive: usersData.mockUsers.user2.isActive,
+          createdAt: new Date(usersData.mockUsers.user2.createdAt),
+          updatedAt: new Date(usersData.mockUsers.user2.updatedAt),
         },
       ];
 
@@ -307,7 +367,7 @@ describe('UserService', () => {
 
       // Verify the service returns the expected user list
       expect(result).toEqual(usersWithoutPasswords);
-      
+
       // Verify the service called the find method
       expect(mockUserModel.find).toHaveBeenCalled();
     });
