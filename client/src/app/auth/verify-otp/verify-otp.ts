@@ -1,77 +1,43 @@
-import api from '@/lib/axios';
-import { ENDPOINTS } from '@/lib/endpoints';
-
+/**
+ * OTP verification data interface
+ * @interface VerifyOTPData
+ * @property {string} email - User's email address
+ * @property {string} otp - 6-character OTP code
+ */
 export interface VerifyOTPData {
   email: string;
   otp: string;
 }
 
-export interface ResendOTPResponse {
-  message: string;
-  email: string;
-  username: string;
-  otpInfo: {
-    expiresIn: string;
-    type: string;
-  };
-}
-
-/**
- * Handle OTP verification for registration
- * @param verifyData - Email and OTP data
- * @returns Promise with verification result
- */
-export const handleVerifyOTP = async (verifyData: VerifyOTPData) => {
-  try {
-    const response = await api.post(
-      ENDPOINTS.AUTH.VERIFY_REGISTRATION_OTP,
-      verifyData
-    );
-    return { success: true, data: response.data };
-  } catch (error: any) {
-    // Use only direct backend error responses
-    return {
-      success: false,
-      error: error.response?.data?.message || 'Verification failed',
-    };
-  }
-};
-
-/**
- * Handle resend OTP request
- * @param email - User email address
- * @returns Promise with resend result
- */
-export const handleResendOTP = async (email: string) => {
-  try {
-    const response = await api.post(ENDPOINTS.AUTH.RESEND_REGISTRATION_OTP, {
-      email,
-    });
-    return { success: true, data: response.data };
-  } catch (error: any) {
-    // Use only direct backend error responses
-    return {
-      success: false,
-      error: error.response?.data?.message || 'Failed to resend OTP',
-    };
-  }
-};
-
 /**
  * Validate OTP form data
- * @param otp - 6-character OTP string
- * @returns Validation result object
+ * @param {string} otp - OTP string to validate
+ * @returns {Object} Validation result with error message
+ * @returns {boolean} isValid - Whether OTP is valid
+ * @returns {string} [error] - Error message if invalid
  */
 export const validateOTPForm = (otp: string) => {
   if (!otp || otp.length !== 6) {
-    return { isValid: false, error: 'Please enter the 6-character OTP' };
+    return { isValid: false, error: 'OTP must be 6 characters' };
   }
 
-  // Check if OTP contains only valid characters (A-Z, 0-9)
-  const validOTPRegex = /^[A-Z0-9]{6}$/;
-  if (!validOTPRegex.test(otp)) {
-    return { isValid: false, error: 'OTP must be 6 characters (A-Z, 0-9)' };
+  if (!/^\d{6}$/.test(otp)) {
+    return { isValid: false, error: 'OTP must contain only numbers' };
   }
 
-  return { isValid: true, error: '' };
+  return { isValid: true };
+};
+
+/**
+ * Format OTP error messages for better user experience
+ * @param {string} error - Raw error message from API
+ * @returns {string} Formatted error message
+ */
+export const formatOTPError = (error: string) => {
+  if (error.includes('Invalid OTP')) return 'Invalid OTP code';
+  if (error.includes('OTP expired'))
+    return 'OTP has expired. Please request a new one';
+  if (error.includes('User not found'))
+    return 'User not found. Please register again';
+  return error;
 };

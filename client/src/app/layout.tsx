@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import SessionProvider from '@/components/providers/SessionProvider';
+import { QueryClientProviderWrapper } from '@/components/providers/QueryClientProvider';
 
 export const metadata: Metadata = {
   title: 'Jurni - Full Stack App',
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <SessionProvider>{children}</SessionProvider>
+        <QueryClientProviderWrapper>
+          <SessionProvider>{children}</SessionProvider>
+        </QueryClientProviderWrapper>
       </body>
     </html>
   );

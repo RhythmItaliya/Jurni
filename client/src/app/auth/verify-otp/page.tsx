@@ -3,122 +3,117 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import {
-  handleVerifyOTP,
-  validateOTPForm,
-  handleResendOTP,
-} from './verify-otp';
+import { validateOTPForm } from './verify-otp';
+import { LoadingPage } from '@/components/ui';
+import { useVerifyOTP, useResendOTP } from '@/hooks/useAuth';
 
+/**
+ * OTP verification page component for user registration
+ * Handles 6-character OTP input with auto-focus and validation
+ * @returns {JSX.Element | null} The OTP verification form or null if redirecting
+ */
 export default function VerifyOTPPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isResending, setIsResending] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const verifyOTPMutation = useVerifyOTP();
+  const resendOTPMutation = useResendOTP();
 
   const email = searchParams.get('email');
   const username = searchParams.get('username');
 
-  // Decode the URL parameters properly
   const decodedEmail = email ? decodeURIComponent(email) : null;
   const decodedUsername = username ? decodeURIComponent(username) : null;
 
-  // Redirect if no email or username
+  /**
+   * Redirect to registration if email is missing or if coming from registration without username
+   * @param {string | null} decodedEmail - Decoded email from URL params
+   * @param {string | null} decodedUsername - Decoded username from URL params
+   * @param {Object} router - Next.js router instance
+   */
   useEffect(() => {
-    if (!decodedEmail || !decodedUsername) {
+    if (!decodedEmail) {
+      router.push('/auth/register');
+    } else if (!decodedUsername) {
       router.push('/auth/register');
     }
   }, [decodedEmail, decodedUsername, router]);
 
-  // Auto-focus next input
+  /**
+   * Handle OTP input change with auto-focus to next field
+   * @param {number} index - Current input field index
+   * @param {string} value - Input value (converted to uppercase)
+   */
   const handleInputChange = (index: number, value: string) => {
     const newOtp = [...otp];
     newOtp[index] = value.toUpperCase();
     setOtp(newOtp);
 
-    // Move to next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  // Handle backspace
+  /**
+   * Handle backspace key to move to previous input field
+   * @param {number} index - Current input field index
+   * @param {React.KeyboardEvent} e - Keyboard event
+   */
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
+  /**
+   * Handle OTP form submission and verification
+   * @param {React.FormEvent} e - Form submit event
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
 
     const otpString = otp.join('');
     const validation = validateOTPForm(otpString);
 
     if (!validation.isValid) {
-      setError(validation.error);
       return;
     }
 
     if (!decodedEmail) {
-      setError('Email not found. Please register again.');
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      const result = await handleVerifyOTP({
-        email: decodedEmail,
-        otp: otpString,
-      });
-
-      if (result.success) {
-        // Redirect to login with success message
-        router.push('/auth/login');
-      } else {
-        setError(result.error || 'Verification failed');
-      }
-    } catch (err) {
-      setError('Verification failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    verifyOTPMutation.mutate({
+      email: decodedEmail,
+      otp: otpString,
+    });
   };
 
+  /**
+   * Handle resend OTP request
+   * @param {string | null} decodedEmail - User's email address
+   */
   const handleResendOTPRequest = async () => {
     if (!decodedEmail) {
-      setError('Email not found. Please register again.');
       return;
     }
 
-    setIsResending(true);
-    setError('');
-
-    try {
-      const result = await handleResendOTP(decodedEmail);
-
-      if (result.success) {
-        // Reset OTP input
+    resendOTPMutation.mutate(decodedEmail, {
+      onSuccess: () => {
         setOtp(['', '', '', '', '', '']);
-        // Focus first input
         inputRefs.current[0]?.focus();
-        setError(''); // Clear any previous errors
-      } else {
-        setError(result.error || 'Failed to resend OTP');
-      }
-    } catch (err) {
-      setError('Failed to resend OTP. Please try again.');
-    } finally {
-      setIsResending(false);
-    }
+      },
+    });
   };
 
   if (!decodedEmail || !decodedUsername) {
-    return null; // Will redirect
+    return <LoadingPage />;
+  }
+
+  if (verifyOTPMutation.isPending) {
+    return <LoadingPage />;
   }
 
   return (
@@ -132,12 +127,14 @@ export default function VerifyOTPPage() {
             We sent a 6-character code to{' '}
             <span className="font-medium text-indigo-600">{decodedEmail}</span>
           </p>
-          <p className="mt-1 text-center text-sm text-gray-600">
-            for user{' '}
-            <span className="font-medium text-indigo-600">
-              {decodedUsername}
-            </span>
-          </p>
+          {decodedUsername && (
+            <p className="mt-1 text-center text-sm text-gray-600">
+              for user{' '}
+              <span className="font-medium text-indigo-600">
+                {decodedUsername}
+              </span>
+            </p>
+          )}
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -164,17 +161,25 @@ export default function VerifyOTPPage() {
             </div>
           </div>
 
-          {error && (
-            <div className="text-red-600 text-sm text-center">{error}</div>
+          {verifyOTPMutation.error && (
+            <div className="text-red-600 text-sm text-center">
+              {verifyOTPMutation.error.message || 'Verification failed'}
+            </div>
+          )}
+
+          {resendOTPMutation.error && (
+            <div className="text-red-600 text-sm text-center">
+              {resendOTPMutation.error.message || 'Failed to resend OTP'}
+            </div>
           )}
 
           <div>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={verifyOTPMutation.isPending}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Verifying...' : 'Verify OTP'}
+              {verifyOTPMutation.isPending ? 'Verifying...' : 'Verify OTP'}
             </button>
           </div>
 
@@ -182,14 +187,23 @@ export default function VerifyOTPPage() {
             <button
               type="button"
               onClick={handleResendOTPRequest}
-              disabled={isResending}
+              disabled={resendOTPMutation.isPending}
               className="text-indigo-600 hover:text-indigo-500 text-sm disabled:text-gray-400 disabled:cursor-not-allowed"
             >
-              {isResending ? 'Sending...' : "Didn't receive the code? Resend"}
+              {resendOTPMutation.isPending
+                ? 'Sending...'
+                : "Didn't receive the code? Resend"}
             </button>
           </div>
 
-          <div className="text-center">
+          <div className="text-center space-y-2">
+            <Link
+              href={`/auth/register?email=${encodeURIComponent(decodedEmail || '')}&username=${encodeURIComponent(decodedUsername || '')}&changeEmail=true`}
+              className="text-indigo-600 hover:text-indigo-500 text-sm font-medium"
+            >
+              Change Email Address
+            </Link>
+            <div className="text-gray-400">•</div>
             <Link
               href="/auth/register"
               className="text-gray-600 hover:text-gray-500 text-sm"

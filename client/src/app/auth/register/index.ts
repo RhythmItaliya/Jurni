@@ -1,5 +1,1 @@
-export {
-  handleRegister,
-  validateRegisterForm,
-  formatRegisterError,
-} from './register';
+export { validateRegisterForm, formatRegisterError } from './register';

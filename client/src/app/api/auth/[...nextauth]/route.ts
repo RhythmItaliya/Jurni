@@ -7,6 +7,7 @@ import { CLIENT_ENV } from '@/config/env';
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
+      id: 'credentials',
       name: 'Credentials',
       credentials: {
         usernameOrEmail: { label: 'Username or Email', type: 'text' },
@@ -36,13 +37,6 @@ const handler = NextAuth({
           }
 
           if (user && accessToken) {
-            // Check if user account is active
-            if (!user.isActive) {
-              throw new Error(
-                'Your account is inactive. Please contact support.'
-              );
-            }
-
             return {
               id: user.uuid,
               uuid: user.uuid,
@@ -50,6 +44,7 @@ const handler = NextAuth({
               accessToken: accessToken,
               username: user.username,
               isActive: user.isActive,
+              otpVerifiedAt: user.otpVerifiedAt,
               createdAt: user.createdAt,
               updatedAt: user.updatedAt,
             };
@@ -91,6 +86,7 @@ const handler = NextAuth({
         token.uuid = user.uuid;
         token.username = user.username;
         token.isActive = user.isActive;
+        token.otpVerifiedAt = user.otpVerifiedAt;
         token.createdAt = user.createdAt;
         token.updatedAt = user.updatedAt;
       }
@@ -112,6 +108,7 @@ const handler = NextAuth({
         session.user.uuid = token.uuid;
         session.user.name = token.username;
         session.user.isActive = token.isActive;
+        session.user.otpVerifiedAt = token.otpVerifiedAt;
         session.user.createdAt = token.createdAt;
         session.user.updatedAt = token.updatedAt;
       }

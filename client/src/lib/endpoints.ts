@@ -10,6 +10,8 @@ export const ENDPOINTS = {
     REGISTER: '/auth/register',
     VERIFY_REGISTRATION_OTP: '/auth/verify-registration-otp',
     RESEND_REGISTRATION_OTP: '/auth/resend-registration-otp',
+    UPDATE_TEMP_USER_EMAIL: '/auth/update-temp-user-email',
+    UPDATE_TEMP_USER_USERNAME: '/auth/update-temp-user-username',
   },
 } as const;
 

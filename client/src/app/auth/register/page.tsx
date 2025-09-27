@@ -1,33 +1,64 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import {
-  handleRegister,
-  validateRegisterForm,
-  formatRegisterError,
-  RegistrationResponse,
-} from './register';
+import { validateRegisterForm, formatRegisterError } from './register';
+import { LoadingPage } from '@/components/ui';
+import { RegisterData } from '@/types/user';
+import { useRegister } from '@/hooks/useAuth';
 
-interface FormData {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
+/**
+ * Registration page component for creating new user accounts
+ * @returns {JSX.Element} The registration form component with loading state
+ */
 export default function RegisterPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState<FormData>({
+  const searchParams = useSearchParams();
+  const [formData, setFormData] = useState<RegisterData>({
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState('');
+  const [originalData, setOriginalData] = useState<{
+    email: string;
+    username: string;
+  } | null>(null);
 
+  const registerMutation = useRegister();
+
+  /**
+   * Pre-fill form with URL parameters when coming from OTP page
+   * @param {URLSearchParams} searchParams - URL search parameters
+   */
+  useEffect(() => {
+    const email = searchParams.get('email');
+    const username = searchParams.get('username');
+    const changeEmail = searchParams.get('changeEmail');
+
+    if (changeEmail === 'true' && email && username) {
+      const decodedEmail = decodeURIComponent(email);
+      const decodedUsername = decodeURIComponent(username);
+
+      setFormData(prev => ({
+        ...prev,
+        email: decodedEmail,
+        username: decodedUsername,
+      }));
+
+      setOriginalData({
+        email: decodedEmail,
+        username: decodedUsername,
+      });
+    }
+  }, [searchParams]);
+
+  /**
+   * Handle form input changes
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event
+   */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -36,34 +67,29 @@ export default function RegisterPage() {
     }));
   };
 
+  /**
+   * Handle form submission and registration
+   * @param {React.FormEvent} e - Form submit event
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
 
-    // Validate form
     const validation = validateRegisterForm(formData);
     if (!validation.isValid) {
-      setError(validation.errors[0]);
-      setIsLoading(false);
       return;
     }
 
-    // Handle registration
-    const result = await handleRegister(formData);
-
-    if (result.success && result.data) {
-      // Registration successful, redirect directly to OTP verification
-      router.push(
-        `/auth/verify-otp?email=${encodeURIComponent(result.data.user.email)}&username=${encodeURIComponent(result.data.user.username)}`
-      );
-    } else {
-      setError(formatRegisterError(result.error || 'Registration failed'));
-      setIsLoading(false);
+    if (originalData) {
+      setUpdateMessage('Account details updated successfully!');
     }
+
+    registerMutation.mutate(formData);
   };
 
-  // Remove the success screen logic - go directly to OTP verification
+  if (registerMutation.isPending) {
+    return <LoadingPage />;
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -124,17 +150,29 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {error && (
-            <div className="text-red-600 text-sm text-center">{error}</div>
+          {updateMessage && (
+            <div className="text-green-600 text-sm text-center bg-green-50 p-2 rounded">
+              {updateMessage}
+            </div>
+          )}
+
+          {registerMutation.error && (
+            <div className="text-red-600 text-sm text-center">
+              {formatRegisterError(
+                registerMutation.error.message || 'Registration failed'
+              )}
+            </div>
           )}
 
           <div>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={registerMutation.isPending}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
             >
-              {isLoading ? 'Creating account...' : 'Create account'}
+              {registerMutation.isPending
+                ? 'Creating account...'
+                : 'Create account'}
             </button>
           </div>
 

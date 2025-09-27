@@ -3,16 +3,17 @@
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { logoutToHome } from '@/app/auth/logout';
+import { LoadingPage } from '@/components/ui';
 
+/**
+ * Main home page component that handles authentication states
+ * @returns {JSX.Element} The home page component with different states based on authentication
+ */
 export default function Home() {
   const { data: session, status } = useSession();
 
   if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (status === 'unauthenticated') {
@@ -48,7 +49,6 @@ export default function Home() {
     );
   }
 
-  // Type assertion to access custom session properties
   const userSession = session as any;
 
   return (
@@ -57,7 +57,7 @@ export default function Home() {
         <div className="bg-white shadow rounded-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-gray-900">
-              Welcome, {userSession?.user?.name || 'User'}!
+              Welcome, {userSession?.user?.username || 'User'}!
             </h1>
             <button
               onClick={logoutToHome}
@@ -73,14 +73,13 @@ export default function Home() {
             </h2>
             <div className="space-y-2 text-sm text-gray-600">
               <p>
-                <strong>Username:</strong> {userSession?.user?.name}
+                <strong>Username:</strong> {userSession?.user?.username}
               </p>
               <p>
                 <strong>Email:</strong> {userSession?.user?.email}
               </p>
               <p>
-                <strong>User ID:</strong>{' '}
-                {userSession?.user?.id || userSession?.user?.uuid || 'N/A'}
+                <strong>User ID:</strong> {userSession?.user?.uuid || 'N/A'}
               </p>
               <p>
                 <strong>Status:</strong>{' '}
