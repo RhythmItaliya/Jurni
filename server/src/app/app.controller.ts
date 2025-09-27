@@ -51,39 +51,4 @@ export class AppController {
   getHealth() {
     return this.appService.getHealth();
   }
-
-  /**
-   * Test endpoint for development/testing
-   * @param body - Test message data
-   * @returns object - Test response with received data
-   */
-  @Post('test')
-  @ApiOperation({ summary: 'Test endpoint for development' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Test message' },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Test message processed successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Test response' },
-        received: {
-          type: 'object',
-          properties: {
-            message: { type: 'string', example: 'Test message' },
-          },
-        },
-      },
-    },
-  })
-  testEndpoint(@Body() body: { message: string }) {
-    return this.appService.testEndpoint(body);
-  }
 }

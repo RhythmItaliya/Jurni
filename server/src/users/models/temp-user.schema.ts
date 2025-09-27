@@ -2,16 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 
-export type UserDocument = User &
-  Document & {
-    createdAt: Date;
-    updatedAt: Date;
-  };
+export type TempUserDocument = TempUser & Document;
 
 @Schema({ timestamps: true })
-export class User {
+export class TempUser {
   @ApiProperty({
-    description: 'User UUID',
+    description: 'Temporary user UUID',
     example: '123e4567-e89b-12d3-a456-426614174000',
     type: String,
   })
@@ -43,27 +39,23 @@ export class User {
   password: string;
 
   @ApiProperty({
-    description: 'User active status',
-    example: true,
-    type: Boolean,
-    default: false,
-  })
-  @Prop({ default: false })
-  isActive: boolean;
-
-  @ApiProperty({
-    description: 'User creation timestamp',
+    description: 'Temporary user creation timestamp',
     example: '2024-01-01T00:00:00.000Z',
     type: Date,
   })
   createdAt: Date;
 
   @ApiProperty({
-    description: 'User last update timestamp',
+    description: 'Temporary user last update timestamp',
     example: '2024-01-01T00:00:00.000Z',
     type: Date,
   })
   updatedAt: Date;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const TempUserSchema = SchemaFactory.createForClass(TempUser);
+
+// Index for faster queries
+TempUserSchema.index({ email: 1 });
+TempUserSchema.index({ username: 1 });
+TempUserSchema.index({ createdAt: 1 }, { expireAfterSeconds: 3600 }); // TTL index - auto delete after 1 hour

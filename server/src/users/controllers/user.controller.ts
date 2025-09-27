@@ -14,9 +14,10 @@ import {
   ApiParam,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { UserService } from './user.service';
-import { UserDocument } from './user.schema';
+import { UserService } from '../services/user.service';
+import { UserDocument } from '../models/user.schema';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
+import { UpdateUserDto, UserResponseDto } from '../dto/user.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')
@@ -124,7 +125,7 @@ export class UserController {
   })
   update(
     @Param('uuid') uuid: string,
-    @Body() updateUserDto: any,
+    @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserDocument> {
     return this.userService.update(uuid, updateUserDto);
   }

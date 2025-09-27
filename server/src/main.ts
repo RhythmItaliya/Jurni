@@ -44,4 +44,5 @@ async function bootstrap() {
   await app.listen(ENV_VARS.PORT);
   console.log(`Server running on http://localhost:${ENV_VARS.PORT}`);
 }
+
 bootstrap();

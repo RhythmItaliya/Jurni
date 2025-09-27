@@ -72,17 +72,4 @@ export class EmailService {
       throw new Error(`Failed to send email: ${error.message}`);
     }
   }
-
-  /**
-   * Test email connection
-   * @returns Promise<boolean>
-   */
-  async testConnection(): Promise<boolean> {
-    try {
-      await this.transporter.verify();
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
 }

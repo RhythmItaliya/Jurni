@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 /**
  * Application service for basic app functionality
- * Handles application name, health checks, and test endpoints
+ * Handles application name and health checks
  */
 @Injectable()
 export class AppService {
@@ -24,18 +24,6 @@ export class AppService {
       timestamp: new Date().toISOString(),
       version: '1.0.0',
       uptime: process.uptime() * 1000, // Convert to milliseconds
-    };
-  }
-
-  /**
-   * Processes test endpoint requests
-   * @param body - Test message data
-   * @returns object - Test response with received data
-   */
-  testEndpoint(body: { message: string }) {
-    return {
-      message: 'Test response',
-      received: body,
     };
   }
 }
