@@ -1,0 +1,341 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// FORM COMPONENTS
+// ========================================
+
+// Form Container
+.form-container {
+  background-color: $bg-surface;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: 0 4px 6px $shadow-light;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 6px 8px $shadow-medium;
+  }
+}
+
+// Form Group
+.form-group {
+  margin-bottom: $spacing-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Labels
+.form-label {
+  display: block;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  color: $text-primary;
+  margin-bottom: $spacing-xs;
+  transition: color 0.3s ease;
+}
+
+.form-label-required {
+  &::after {
+    content: ' *';
+    color: $accent;
+  }
+}
+
+// Input Fields
+.form-input {
+  width: 100%;
+  padding: $spacing-md;
+  font-size: $text-base;
+  font-weight: $font-normal;
+  color: $text-primary;
+  background-color: $bg-primary;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  transition: all 0.3s ease;
+  outline: none;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px $primary-light;
+  }
+
+  &:hover {
+    border-color: $border-hover;
+  }
+
+  &::placeholder {
+    color: $text-secondary;
+  }
+
+  &:disabled {
+    background-color: $bg-secondary;
+    color: $text-secondary;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.form-input-error {
+  border-color: $accent;
+
+  &:focus {
+    border-color: $accent;
+    box-shadow: 0 0 0 3px rgba($accent, 0.1);
+  }
+}
+
+.form-input-success {
+  border-color: $primary;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px $primary-light;
+  }
+}
+
+// Textarea
+.form-textarea {
+  @extend .form-input;
+  min-height: 6rem;
+  resize: vertical;
+}
+
+// Select
+.form-select {
+  @extend .form-input;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right $spacing-sm center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  padding-right: $spacing-2xl;
+}
+
+// Checkbox
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  input[type='checkbox'] {
+    width: 1rem;
+    height: 1rem;
+    accent-color: $primary;
+    cursor: pointer;
+  }
+
+  .form-checkbox-label {
+    font-size: $text-sm;
+    font-weight: $font-normal;
+    color: $text-primary;
+    cursor: pointer;
+  }
+
+  &:hover {
+    .form-checkbox-label {
+      color: $primary;
+    }
+  }
+}
+
+// Radio
+.form-radio {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  input[type='radio'] {
+    width: 1rem;
+    height: 1rem;
+    accent-color: $primary;
+    cursor: pointer;
+  }
+
+  .form-radio-label {
+    font-size: $text-sm;
+    font-weight: $font-normal;
+    color: $text-primary;
+    cursor: pointer;
+  }
+
+  &:hover {
+    .form-radio-label {
+      color: $primary;
+    }
+  }
+}
+
+// Form Help Text
+.form-help {
+  font-size: $text-xs;
+  color: $text-secondary;
+  margin-top: $spacing-xs;
+  line-height: $leading-normal;
+}
+
+// Form Error
+.form-error {
+  font-size: $text-xs;
+  color: $accent;
+  margin-top: $spacing-xs;
+  line-height: $leading-normal;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &::before {
+    content: '⚠';
+    font-size: $text-xs;
+  }
+}
+
+// Form Success
+.form-success {
+  font-size: $text-xs;
+  color: $primary;
+  margin-top: $spacing-xs;
+  line-height: $leading-normal;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &::before {
+    content: '✓';
+    font-size: $text-xs;
+  }
+}
+
+// Form Actions
+.form-actions {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+  flex-wrap: wrap;
+
+  &.form-actions-center {
+    justify-content: center;
+  }
+
+  &.form-actions-end {
+    justify-content: flex-end;
+  }
+
+  &.form-actions-between {
+    justify-content: space-between;
+  }
+}
+
+// Form Row
+.form-row {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  .form-group {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  @include mobile {
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: $spacing-md;
+
+    .form-group {
+      margin-bottom: $spacing-lg;
+    }
+  }
+}
+
+// Form Section
+.form-section {
+  margin-bottom: $spacing-2xl;
+  padding-bottom: $spacing-xl;
+  border-bottom: 1px solid $border;
+
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .form-section-title {
+    font-size: $text-lg;
+    font-weight: $font-semibold;
+    color: $text-primary;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+// Search Input
+.form-search {
+  position: relative;
+
+  .form-input {
+    padding-left: $spacing-2xl;
+  }
+
+  .form-search-icon {
+    position: absolute;
+    left: $spacing-md;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-secondary;
+    pointer-events: none;
+  }
+}
+
+// File Input
+.form-file {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+
+  input[type='file'] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .form-file-label {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+    background-color: $bg-primary;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: $bg-secondary;
+      border-color: $border-hover;
+    }
+  }
+}
+
+// Responsive Forms
+@include mobile {
+  .form-container {
+    padding: $spacing-lg;
+  }
+
+  .form-actions {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}

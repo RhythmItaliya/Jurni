@@ -1,0 +1,45 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// AUTH LINKS STYLES
+// ========================================
+.auth-links {
+  text-align: center;
+  margin-top: $spacing-xl;
+
+  .auth-link {
+    color: $primary;
+    text-decoration: none;
+    font-size: 0.875rem;
+
+    &:hover {
+      color: color.adjust($primary, $lightness: -10%);
+      text-decoration: underline;
+    }
+  }
+
+  .auth-divider {
+    margin: $spacing-lg 0;
+    text-align: center;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background-color: $stone;
+    }
+
+    span {
+      background-color: white;
+      padding: 0 $spacing-md;
+      color: $stone;
+      font-size: 0.75rem;
+    }
+  }
+}

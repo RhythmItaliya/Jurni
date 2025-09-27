@@ -1,0 +1,27 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// OTP INPUT STYLES
+// ========================================
+.otp-inputs {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-sm;
+
+  .otp-input {
+    width: 3rem;
+    height: 3rem;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: $font-bold;
+    border: 2px solid $stone;
+    border-radius: $radius-md;
+
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba($primary, 0.2);
+    }
+  }
+}

@@ -1,0 +1,30 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// AUTH HEADER STYLES
+// ========================================
+.auth-header {
+  text-align: center;
+  margin-bottom: $spacing-2xl;
+
+  .auth-logo {
+    font-size: 2rem;
+    font-weight: $font-bold;
+    color: $charcoal;
+    margin-bottom: $spacing-sm;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+    font-weight: $font-semibold;
+    color: $charcoal;
+    margin-bottom: $spacing-sm;
+  }
+
+  .auth-subtitle {
+    color: $stone;
+    font-size: 0.875rem;
+  }
+}

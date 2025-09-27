@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { validateRegisterForm } from './register';
-import { LoadingPage, Input } from '@/components/ui';
+import { LoadingPage, Input, Button } from '@/components/ui';
 import { RegisterData } from '@/types/user';
 import { useRegister } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
@@ -112,86 +112,87 @@ function RegisterForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
+    <div className="auth-layout">
+      <div className="auth-container">
+        <div className="auth-header">
+          <div className="auth-logo">Jurni</div>
+          <h1 className="auth-title">Create your account</h1>
+          <p className="auth-subtitle">Join us and start your journey today.</p>
         </div>
-        <form
-          className="mt-8 space-y-6"
-          onSubmit={handleSubmit}
-          suppressHydrationWarning
-        >
-          <div className="space-y-4">
-            <div>
-              <Input
-                id="username"
-                name="username"
-                type="text"
-                required
-                className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username"
-                value={formData.username}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-              />
-            </div>
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <Input
+              id="username"
+              name="username"
+              type="text"
+              required
+              className="form-input"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleInputChange}
+            />
           </div>
 
-          <div>
-            <button
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              required
+              className="form-input"
+              placeholder="Email address"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              required
+              className="form-input"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              required
+              className="form-input"
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-actions">
+            <Button
               type="submit"
+              variant="primary"
+              size="lg"
               disabled={registerMutation.isPending}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              className="auth-button"
             >
               {registerMutation.isPending
                 ? 'Creating account...'
                 : 'Create account'}
-            </button>
+            </Button>
           </div>
 
-          <div className="text-center">
-            <Link
-              href="/auth/login"
-              className="text-indigo-600 hover:text-indigo-500"
-            >
+          <div className="auth-links">
+            <Link href="/auth/login" className="auth-link">
               Already have an account? Sign in
             </Link>
           </div>

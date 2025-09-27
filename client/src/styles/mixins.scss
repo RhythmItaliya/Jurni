@@ -1,0 +1,157 @@
+@use 'sass:color';
+@use 'variables' as *;
+
+// Responsive Mixins
+@mixin mobile {
+  @media (max-width: #{$mobile - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$tablet}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$desktop}) {
+    @content;
+  }
+}
+
+@mixin wide {
+  @media (min-width: #{$wide}) {
+    @content;
+  }
+}
+
+// Flexbox Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Button Mixins
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-md;
+  font-weight: $font-medium;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  outline: none;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  background-color: $primary;
+  color: var(--text-on-green);
+  border: 1px solid $primary;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust($primary, $lightness: -10%);
+    border-color: color.adjust($primary, $lightness: -10%);
+    box-shadow: 0 0 15px $primary-medium;
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    background-color: color.adjust($primary, $lightness: -15%);
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background-color: $secondary;
+  color: var(--text-on-green);
+  border: 1px solid $secondary;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust($secondary, $lightness: -10%);
+    border-color: color.adjust($secondary, $lightness: -10%);
+    box-shadow: 0 0 15px $secondary-medium;
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    background-color: color.adjust($secondary, $lightness: -15%);
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+@mixin button-outline {
+  @include button-base;
+  background-color: transparent;
+  color: $primary;
+  border: 2px solid $primary;
+
+  &:hover:not(:disabled) {
+    background-color: $primary;
+    color: var(--text-on-green);
+    box-shadow: 0 0 15px $primary-medium;
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    background-color: color.adjust($primary, $lightness: -10%);
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+@mixin button-ghost {
+  @include button-base;
+  background-color: transparent;
+  color: $text-primary;
+  border: 1px solid transparent;
+
+  &:hover:not(:disabled) {
+    background-color: $primary-light;
+    color: $primary;
+    border-color: $primary;
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    background-color: $primary-medium;
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+// Input Mixins
+@mixin input-base {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  font-family: $font-family-base;
+  background-color: $bg-surface;
+  color: $text-primary;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 2px rgba($primary, 0.2);
+  }
+}

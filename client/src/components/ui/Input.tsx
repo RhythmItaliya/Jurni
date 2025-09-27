@@ -35,19 +35,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     if (!mounted) {
       // Return a placeholder that matches the expected input size
-      const baseClasses = className.includes('h-') ? className : 'h-10';
-      return (
-        <div
-          className={`${baseClasses} w-full bg-mist rounded animate-pulse`}
-        />
-      );
+      return <div className={`input-placeholder ${className}`} />;
     }
 
     return (
       <input
         {...props}
         ref={ref}
-        className={className}
+        className={`input ${className}`}
         suppressHydrationWarning
       />
     );

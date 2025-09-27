@@ -1,0 +1,359 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// NAVIGATION COMPONENTS
+// ========================================
+
+// Navigation Base
+.nav {
+  display: flex;
+  align-items: center;
+  background-color: $bg-surface;
+  border-bottom: 1px solid $border;
+  padding: $spacing-md $spacing-lg;
+  transition: all 0.3s ease;
+}
+
+// Navigation Items
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  color: $text-primary;
+  text-decoration: none;
+  border-radius: $radius-md;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-weight: $font-medium;
+  font-size: $text-sm;
+
+  &:hover {
+    background-color: $bg-secondary;
+    color: $primary;
+  }
+
+  &.nav-item-active {
+    background-color: $primary;
+    color: white;
+
+    &:hover {
+      background-color: $secondary;
+    }
+  }
+
+  &.nav-item-disabled {
+    color: $text-secondary;
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+      background-color: transparent;
+      color: $text-secondary;
+    }
+  }
+}
+
+// Navigation Brand
+.nav-brand {
+  font-size: $text-xl;
+  font-weight: $font-bold;
+  color: $text-primary;
+  text-decoration: none;
+  margin-right: $spacing-xl;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+// Navigation Menu
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex: 1;
+}
+
+.nav-menu-left {
+  justify-content: flex-start;
+}
+
+.nav-menu-center {
+  justify-content: center;
+}
+
+.nav-menu-right {
+  justify-content: flex-end;
+}
+
+.nav-menu-between {
+  justify-content: space-between;
+}
+
+// Navigation Dropdown
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+
+  .nav-dropdown-toggle {
+    @extend .nav-item;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    &::after {
+      content: '▼';
+      font-size: $text-xs;
+      transition: transform 0.3s ease;
+    }
+
+    &.nav-dropdown-open::after {
+      transform: rotate(180deg);
+    }
+  }
+
+  .nav-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 12rem;
+    background-color: $bg-surface;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    box-shadow: 0 4px 6px $shadow-light;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+
+    &.nav-dropdown-menu-open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .nav-dropdown-item {
+      display: block;
+      padding: $spacing-sm $spacing-md;
+      color: $text-primary;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid $border;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background-color: $bg-secondary;
+        color: $primary;
+      }
+
+      &.nav-dropdown-item-active {
+        background-color: $primary;
+        color: white;
+
+        &:hover {
+          background-color: $secondary;
+        }
+      }
+    }
+  }
+}
+
+// Navigation Tabs
+.nav-tabs {
+  display: flex;
+  border-bottom: 1px solid $border;
+  background-color: $bg-surface;
+
+  .nav-tab {
+    padding: $spacing-md $spacing-lg;
+    color: $text-secondary;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    font-weight: $font-medium;
+    font-size: $text-sm;
+
+    &:hover {
+      color: $text-primary;
+      background-color: $bg-secondary;
+    }
+
+    &.nav-tab-active {
+      color: $primary;
+      border-bottom-color: $primary;
+      background-color: $bg-primary;
+    }
+  }
+}
+
+// Navigation Pills
+.nav-pills {
+  display: flex;
+  gap: $spacing-xs;
+  background-color: $bg-secondary;
+  padding: $spacing-xs;
+  border-radius: $radius-lg;
+
+  .nav-pill {
+    padding: $spacing-sm $spacing-md;
+    color: $text-secondary;
+    text-decoration: none;
+    border-radius: $radius-md;
+    transition: all 0.3s ease;
+    font-weight: $font-medium;
+    font-size: $text-sm;
+
+    &:hover {
+      color: $text-primary;
+      background-color: $bg-primary;
+    }
+
+    &.nav-pill-active {
+      color: white;
+      background-color: $primary;
+
+      &:hover {
+        background-color: $secondary;
+      }
+    }
+  }
+}
+
+// Navigation Breadcrumb
+.nav-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $text-sm;
+  color: $text-secondary;
+  margin-bottom: $spacing-md;
+
+  .nav-breadcrumb-item {
+    color: $text-secondary;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: $primary;
+    }
+
+    &.nav-breadcrumb-item-active {
+      color: $text-primary;
+      font-weight: $font-medium;
+    }
+  }
+
+  .nav-breadcrumb-separator {
+    color: $text-secondary;
+    font-size: $text-xs;
+  }
+}
+
+// Navigation Mobile
+.nav-mobile {
+  display: none;
+  flex-direction: column;
+  background-color: $bg-surface;
+  border-bottom: 1px solid $border;
+  padding: $spacing-md;
+
+  &.nav-mobile-open {
+    display: flex;
+  }
+
+  .nav-mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-md;
+  }
+
+  .nav-mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    .nav-item {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+}
+
+// Navigation Toggle
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 3px;
+  padding: $spacing-sm;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  span {
+    width: 20px;
+    height: 2px;
+    background-color: $text-primary;
+    transition: all 0.3s ease;
+  }
+
+  &.nav-toggle-open {
+    span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+    }
+
+    span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+  }
+}
+
+// Responsive Navigation
+@include mobile {
+  .nav {
+    flex-wrap: wrap;
+    padding: $spacing-sm $spacing-md;
+  }
+
+  .nav-menu {
+    display: none;
+  }
+
+  .nav-mobile {
+    display: flex;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-brand {
+    margin-right: $spacing-md;
+  }
+
+  .nav-tabs {
+    flex-wrap: wrap;
+    overflow-x: auto;
+
+    .nav-tab {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+  }
+
+  .nav-pills {
+    flex-wrap: wrap;
+  }
+}

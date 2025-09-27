@@ -1,0 +1,18 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// UI COMPONENTS INDEX
+// ========================================
+// This file imports all UI components for easy access
+
+@use 'typography';
+@use 'forms';
+@use 'cards';
+@use 'navigation';
+@use 'buttons';
+@use 'inputs';
+@use 'spinners';
+@use 'toasts';
+@use 'theme-toggle';

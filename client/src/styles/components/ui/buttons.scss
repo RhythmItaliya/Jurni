@@ -1,0 +1,377 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// BUTTON COMPONENT STYLES - FOREST THEME
+// ========================================
+.button {
+  @include button-base;
+  border-radius: $radius-lg;
+  font-weight: $font-semibold;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  // Button Variants
+  &.primary {
+    @include button-primary;
+    box-shadow: 0 4px 12px $primary-medium;
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 6px 20px $primary-strong;
+    }
+  }
+
+  &.secondary {
+    @include button-secondary;
+    box-shadow: 0 4px 12px $secondary-medium;
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 6px 20px $secondary-strong;
+    }
+  }
+
+  &.outline {
+    @include button-outline;
+    box-shadow: 0 2px 8px $primary-light;
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 15px $primary-medium;
+    }
+  }
+
+  &.ghost {
+    @include button-ghost;
+    box-shadow: none;
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 2px 8px $primary-light;
+    }
+  }
+
+  &.travel {
+    @include button-base;
+    background: linear-gradient(135deg, $warm, $accent);
+    color: white;
+    border: 1px solid $warm;
+    box-shadow: 0 4px 12px rgba($warm, 0.3);
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(
+        135deg,
+        color.adjust($warm, $lightness: -10%),
+        color.adjust($accent, $lightness: -10%)
+      );
+      box-shadow: 0 6px 20px rgba($warm, 0.5);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  &.explore {
+    @include button-base;
+    background: linear-gradient(135deg, $accent, $warm);
+    color: white;
+    border: 1px solid $accent;
+    box-shadow: 0 4px 12px rgba($accent, 0.3);
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(
+        135deg,
+        color.adjust($accent, $lightness: -10%),
+        color.adjust($warm, $lightness: -10%)
+      );
+      box-shadow: 0 6px 20px rgba($accent, 0.5);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  &.forest {
+    @include button-base;
+    background: linear-gradient(135deg, $primary, $secondary);
+    color: var(--text-on-green);
+    border: 1px solid $primary;
+    box-shadow: 0 4px 12px $primary-medium;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(
+        135deg,
+        color.adjust($primary, $lightness: -10%),
+        color.adjust($secondary, $lightness: -10%)
+      );
+      box-shadow: 0 6px 20px $primary-strong;
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  &.nature {
+    @include button-base;
+    background: linear-gradient(135deg, $green-accent, $green-glow);
+    color: var(--text-on-green);
+    border: 1px solid $green-shine;
+    box-shadow: 0 4px 12px $green-accent;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(
+        135deg,
+        color.adjust($green-accent, $lightness: -10%),
+        color.adjust($green-glow, $lightness: -10%)
+      );
+      box-shadow: 0 6px 20px $green-shine;
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  // Status Button Variants
+  &.success {
+    @include button-base;
+    background-color: #10b981;
+    color: white;
+    border: 1px solid #059669;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+
+    &:hover:not(:disabled) {
+      background-color: #059669;
+      border-color: #047857;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  &.warning {
+    @include button-base;
+    background-color: #f59e0b;
+    color: white;
+    border: 1px solid #d97706;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+
+    &:hover:not(:disabled) {
+      background-color: #d97706;
+      border-color: #b45309;
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  &.error {
+    @include button-base;
+    background-color: #ef4444;
+    color: white;
+    border: 1px solid #dc2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+
+    &:hover:not(:disabled) {
+      background-color: #dc2626;
+      border-color: #b91c1c;
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  &.info {
+    @include button-base;
+    background-color: #3b82f6;
+    color: white;
+    border: 1px solid #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+
+    &:hover:not(:disabled) {
+      background-color: #2563eb;
+      border-color: #1d4ed8;
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  &.danger {
+    @include button-base;
+    background-color: #dc2626;
+    color: white;
+    border: 1px solid #b91c1c;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+
+    &:hover:not(:disabled) {
+      background-color: #b91c1c;
+      border-color: #991b1b;
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  &.neutral {
+    @include button-base;
+    background-color: #6b7280;
+    color: white;
+    border: 1px solid #4b5563;
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+
+    &:hover:not(:disabled) {
+      background-color: #4b5563;
+      border-color: #374151;
+      box-shadow: 0 6px 20px rgba(107, 114, 128, 0.5);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  &.light {
+    @include button-base;
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    &:hover:not(:disabled) {
+      background-color: #e5e7eb;
+      border-color: #9ca3af;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  &.dark {
+    @include button-base;
+    background-color: #1f2937;
+    color: white;
+    border: 1px solid #111827;
+    box-shadow: 0 4px 12px rgba(31, 41, 55, 0.3);
+
+    &:hover:not(:disabled) {
+      background-color: #111827;
+      border-color: #0f172a;
+      box-shadow: 0 6px 20px rgba(31, 41, 55, 0.5);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  // Button Sizes
+  &.sm {
+    padding: $spacing-sm $spacing-md;
+    font-size: $text-sm;
+    min-height: 2rem;
+  }
+
+  &.md {
+    padding: $spacing-md $spacing-lg;
+    font-size: $text-base;
+    min-height: 2.5rem;
+  }
+
+  &.lg {
+    padding: $spacing-lg $spacing-xl;
+    font-size: $text-lg;
+    min-height: 3rem;
+  }
+
+  &.xl {
+    padding: $spacing-xl $spacing-2xl;
+    font-size: $text-xl;
+    min-height: 3.5rem;
+  }
+
+  // Special Effects
+  &.shine {
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        $white-overlay,
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
+
+    &:hover::before {
+      left: 100%;
+    }
+  }
+
+  &.glow {
+    box-shadow: 0 0 20px $primary-medium;
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 0 30px $primary-strong;
+    }
+  }
+
+  &.pulse {
+    animation: pulse-glow 2s infinite;
+
+    &:hover:not(:disabled) {
+      animation: none;
+    }
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 15px $primary-medium;
+  }
+  50% {
+    box-shadow: 0 0 25px $primary-strong;
+  }
+}

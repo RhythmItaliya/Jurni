@@ -1,0 +1,252 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// TYPOGRAPHY COMPONENTS
+// ========================================
+
+// Headings
+.heading-1 {
+  font-size: $text-5xl;
+  font-weight: $font-bold;
+  line-height: $leading-tight;
+  color: $text-primary;
+  margin-bottom: $spacing-lg;
+}
+
+.heading-2 {
+  font-size: $text-4xl;
+  font-weight: $font-bold;
+  line-height: $leading-tight;
+  color: $text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.heading-3 {
+  font-size: $text-3xl;
+  font-weight: $font-semibold;
+  line-height: $leading-snug;
+  color: $text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.heading-4 {
+  font-size: $text-2xl;
+  font-weight: $font-semibold;
+  line-height: $leading-snug;
+  color: $text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.heading-5 {
+  font-size: $text-xl;
+  font-weight: $font-medium;
+  line-height: $leading-normal;
+  color: $text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.heading-6 {
+  font-size: $text-lg;
+  font-weight: $font-medium;
+  line-height: $leading-normal;
+  color: $text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+// Body Text
+.text-body {
+  font-size: $text-base;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.text-body-sm {
+  font-size: $text-sm;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.text-body-xs {
+  font-size: $text-xs;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+// Secondary Text
+.text-secondary {
+  font-size: $text-base;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $text-secondary;
+  margin-bottom: $spacing-md;
+}
+
+.text-secondary-sm {
+  font-size: $text-sm;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $text-secondary;
+  margin-bottom: $spacing-sm;
+}
+
+.text-secondary-xs {
+  font-size: $text-xs;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $text-secondary;
+  margin-bottom: $spacing-xs;
+}
+
+// Links
+.text-link {
+  font-size: $text-base;
+  font-weight: $font-medium;
+  line-height: $leading-normal;
+  color: $primary;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: $secondary;
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
+}
+
+.text-link-sm {
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  line-height: $leading-normal;
+  color: $primary;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: $secondary;
+    text-decoration: underline;
+  }
+}
+
+// Labels
+.text-label {
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  line-height: $leading-normal;
+  color: $text-primary;
+  margin-bottom: $spacing-xs;
+  display: block;
+}
+
+.text-label-sm {
+  font-size: $text-xs;
+  font-weight: $font-medium;
+  line-height: $leading-normal;
+  color: $text-primary;
+  margin-bottom: $spacing-xs;
+  display: block;
+}
+
+// Captions
+.text-caption {
+  font-size: $text-xs;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $text-secondary;
+  margin-bottom: $spacing-xs;
+}
+
+// Error Text
+.text-error {
+  font-size: $text-sm;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $accent;
+  margin-bottom: $spacing-xs;
+}
+
+// Success Text
+.text-success {
+  font-size: $text-sm;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $primary;
+  margin-bottom: $spacing-xs;
+}
+
+// Warning Text
+.text-warning {
+  font-size: $text-sm;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $warm;
+  margin-bottom: $spacing-xs;
+}
+
+// Info Text
+.text-info {
+  font-size: $text-sm;
+  font-weight: $font-normal;
+  line-height: $leading-normal;
+  color: $sky;
+  margin-bottom: $spacing-xs;
+}
+
+// Utility Classes
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.text-lowercase {
+  text-transform: lowercase;
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Responsive Typography
+@include mobile {
+  .heading-1 {
+    font-size: $text-4xl;
+  }
+
+  .heading-2 {
+    font-size: $text-3xl;
+  }
+
+  .heading-3 {
+    font-size: $text-2xl;
+  }
+}

@@ -7,13 +7,6 @@ interface SpinnerProps {
   className?: string;
 }
 
-const sizeClasses = {
-  sm: 'w-4 h-4',
-  md: 'w-6 h-6',
-  lg: 'w-8 h-8',
-  xl: 'w-12 h-12',
-};
-
 /**
  * A simple round loading spinner component
  * @param {SpinnerProps} props - The component props
@@ -25,11 +18,7 @@ export const Spinner: React.FC<SpinnerProps> = ({
   size = 'md',
   className = '',
 }) => {
-  return (
-    <div
-      className={`animate-spin rounded-full border-2 border-mist border-t-primary ${sizeClasses[size]} ${className}`}
-    />
-  );
+  return <div className={`spinner ${size} ${className}`} />;
 };
 
 /**
@@ -42,9 +31,7 @@ export const LoadingPage: React.FC<{ className?: string }> = ({
   className = '',
 }) => {
   return (
-    <div
-      className={`min-h-screen flex items-center justify-center bg-mist ${className}`}
-    >
+    <div className={`loading-page ${className}`}>
       <Spinner size="xl" />
     </div>
   );

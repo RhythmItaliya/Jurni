@@ -10,59 +10,77 @@ interface ButtonProps {
     | 'outline'
     | 'ghost'
     | 'travel'
-    | 'explore';
+    | 'explore'
+    | 'forest'
+    | 'nature'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'info'
+    | 'danger'
+    | 'neutral'
+    | 'light'
+    | 'dark';
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  effect?: 'shine' | 'glow' | 'pulse' | 'none';
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
 }
 
-const variantStyles = {
-  primary:
-    'bg-primary hover:bg-primary-600 text-white shadow-lg hover:shadow-xl',
-  secondary:
-    'bg-secondary hover:bg-secondary-600 text-white shadow-lg hover:shadow-xl',
-  outline:
-    'border-2 border-primary text-primary hover:bg-primary hover:text-white',
-  ghost: 'text-primary hover:bg-primary-50',
-  travel:
-    'bg-gradient-travel hover:opacity-90 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200',
-  explore:
-    'bg-gradient-sunset hover:opacity-90 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200',
-};
-
-const sizeStyles = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg',
-  xl: 'px-8 py-4 text-xl',
-};
-
 export const Button: React.FC<ButtonProps> = ({
   children,
   variant = 'primary',
   size = 'md',
+  effect = 'none',
+  icon,
+  iconPosition = 'left',
   className = '',
   onClick,
   disabled = false,
   type = 'button',
 }) => {
+  const effectClass = effect !== 'none' ? effect : '';
+
+  const renderContent = () => {
+    if (!icon) {
+      return children;
+    }
+
+    const iconElement = (
+      <span
+        className="button-icon"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          marginRight: iconPosition === 'left' ? '0.5rem' : '0',
+          marginLeft: iconPosition === 'right' ? '0.5rem' : '0',
+        }}
+      >
+        {icon}
+      </span>
+    );
+
+    return (
+      <>
+        {iconPosition === 'left' && iconElement}
+        <span className="button-text">{children}</span>
+        {iconPosition === 'right' && iconElement}
+      </>
+    );
+  };
+
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`
-        ${variantStyles[variant]}
-        ${sizeStyles[size]}
-        ${className}
-        rounded-lg font-semibold transition-all duration-200
-        disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
-        active:scale-95
-      `}
+      className={`button ${variant} ${size} ${effectClass} ${className}`.trim()}
     >
-      {children}
+      {renderContent()}
     </button>
   );
 };

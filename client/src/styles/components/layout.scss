@@ -1,0 +1,280 @@
+@use 'sass:color';
+@use '../variables' as *;
+@use '../mixins' as *;
+
+.app-layout {
+  height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  background-color: $bg-primary;
+  position: relative;
+  transition: background-color 0.3s ease;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $shine-gradient;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.left-sidebar {
+  width: 16rem;
+  height: 100vh;
+  background-color: $bg-surface;
+  border-right: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 20px $shadow;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.sidebar-top {
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, $primary, $green-glow);
+  border-bottom: 1px solid $green-shine;
+  min-height: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: $text-primary;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      $white-overlay,
+      transparent
+    );
+    animation: shine 3s infinite;
+  }
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.logo {
+  font-size: $text-xl;
+  font-weight: $font-bold;
+  line-height: $leading-normal;
+  color: var(--text-on-green);
+  text-shadow: 0 0 10px var(--text-on-green-shadow);
+  margin: 0;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: $spacing-md;
+  background-color: $bg-surface;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  overflow-y: auto;
+  transition: background-color 0.3s ease;
+}
+
+// Simple navigation styles
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  margin-bottom: $spacing-xs;
+  color: $text-primary;
+  cursor: pointer;
+  border-radius: $radius-md;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  border: 1px solid transparent;
+
+  &:hover {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #2563eb;
+    transform: translateX(4px);
+  }
+
+  &:active {
+    background-color: #1d4ed8;
+    transform: translateX(2px);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  margin-right: $spacing-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+}
+
+.nav-text {
+  font-weight: $font-medium;
+  font-size: $text-sm;
+}
+
+.sidebar-bottom {
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-top: 1px solid #4f46e5;
+  min-height: 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    animation: shine 3s infinite 1.5s;
+  }
+}
+
+.profile-item {
+  &:hover {
+    background-color: #4f46e5;
+    color: white;
+    border-color: #3730a3;
+  }
+}
+
+.logout-item {
+  &:hover {
+    background-color: #dc2626;
+    color: white;
+    border-color: #b91c1c;
+  }
+}
+
+.main-content {
+  flex: 1;
+  background-color: $bg-surface;
+  border-left: 1px solid $border;
+  border-right: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 20px $shadow;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+  height: 100vh;
+  max-height: 100vh;
+}
+
+.main-header {
+  background-color: $bg-surface;
+  border-bottom: 1px solid $border;
+  padding: $spacing-lg;
+  min-height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+  height: 4rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: $shine-gradient;
+  }
+}
+
+.main-body {
+  flex: 1;
+  background-color: $bg-surface;
+  padding: $spacing-lg;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  transition: background-color 0.3s ease;
+  min-height: 0;
+  max-height: calc(100vh - 8rem);
+}
+
+.right-sidebar {
+  width: 20rem;
+  height: 100vh;
+  max-height: 100vh;
+  background-color: $bg-surface;
+  border-left: 1px solid $border;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 20px $shadow;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+@include mobile {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .left-sidebar,
+  .right-sidebar {
+    width: 100%;
+    height: 10rem;
+  }
+
+  .main-content {
+    min-height: 20rem;
+  }
+}

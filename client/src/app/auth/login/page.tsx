@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { validateLoginForm } from './login';
 import { LoginCredentials } from '@/types/user';
-import { LoadingPage, Input } from '@/components/ui';
+import { LoadingPage, Input, Button } from '@/components/ui';
 import { useLogin } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
 
@@ -86,67 +86,61 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
+    <div className="auth-layout">
+      <div className="auth-container">
+        <div className="auth-header">
+          <div className="auth-logo">Jurni</div>
+          <h1 className="auth-title">Sign in to your account</h1>
+          <p className="auth-subtitle">
+            Welcome back! Please sign in to continue.
+          </p>
         </div>
 
-        {message && (
-          <div className="text-green-600 text-sm text-center bg-green-50 p-3 rounded">
-            {message}
-          </div>
-        )}
+        {message && <div className="auth-message success">{message}</div>}
 
-        <form
-          className="mt-8 space-y-6"
-          onSubmit={handleSubmit}
-          suppressHydrationWarning
-        >
-          <div className="space-y-4">
-            <div>
-              <Input
-                id="usernameOrEmail"
-                name="usernameOrEmail"
-                type="text"
-                required
-                className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username or Email address"
-                value={formData.usernameOrEmail}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
-            </div>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="usernameOrEmail">Username or Email</label>
+            <Input
+              id="usernameOrEmail"
+              name="usernameOrEmail"
+              type="text"
+              required
+              className="form-input"
+              placeholder="Username or Email address"
+              value={formData.usernameOrEmail}
+              onChange={handleInputChange}
+            />
           </div>
 
-          <div>
-            <button
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              required
+              className="form-input"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-actions">
+            <Button
               type="submit"
+              variant="primary"
+              size="lg"
               disabled={loginMutation.isPending}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              className="auth-button"
             >
               {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
-            </button>
+            </Button>
           </div>
 
-          <div className="text-center">
-            <Link
-              href="/auth/register"
-              className="text-indigo-600 hover:text-indigo-500"
-            >
+          <div className="auth-links">
+            <Link href="/auth/register" className="auth-link">
               Don&apos;t have an account? Register
             </Link>
           </div>

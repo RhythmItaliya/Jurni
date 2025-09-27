@@ -1,0 +1,43 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// AUTH FORM STYLES
+// ========================================
+.auth-form {
+  .form-group {
+    margin-bottom: $spacing-lg;
+
+    label {
+      display: block;
+      font-weight: $font-medium;
+      color: $charcoal;
+      margin-bottom: $spacing-sm;
+      font-size: 0.875rem;
+    }
+
+    .form-input {
+      @include input-base;
+      width: 100%;
+    }
+
+    .form-error {
+      color: $accent;
+      font-size: 0.75rem;
+      margin-top: $spacing-xs;
+    }
+  }
+
+  .form-actions {
+    margin-top: $spacing-xl;
+
+    .auth-button {
+      @include button-primary;
+      width: 100%;
+      padding: $spacing-md;
+      font-size: 1rem;
+      font-weight: $font-semibold;
+    }
+  }
+}

@@ -1,0 +1,38 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// AUTH RESPONSIVE STYLES
+// ========================================
+@include mobile {
+  .auth-layout {
+    padding: $spacing-sm;
+  }
+
+  .auth-container {
+    padding: $spacing-xl;
+  }
+
+  .auth-header {
+    margin-bottom: $spacing-xl;
+
+    .auth-logo {
+      font-size: 1.75rem;
+    }
+
+    .auth-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  .otp-inputs {
+    gap: $spacing-xs;
+
+    .otp-input {
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 1rem;
+    }
+  }
+}

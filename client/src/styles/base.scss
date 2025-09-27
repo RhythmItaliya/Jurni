@@ -1,0 +1,188 @@
+@use 'sass:color';
+@use 'variables' as *;
+
+// ========================================
+// RESET & BASE STYLES
+// ========================================
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+body {
+  font-family: $font-family-base;
+  color: $text-primary;
+  background-color: $bg-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+// ========================================
+// TYPOGRAPHY
+// ========================================
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: $font-bold;
+  line-height: 1.2;
+  margin-bottom: $spacing-md;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+h2 {
+  font-size: 2rem;
+}
+h3 {
+  font-size: 1.75rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
+h5 {
+  font-size: 1.25rem;
+}
+h6 {
+  font-size: 1rem;
+}
+
+p {
+  margin-bottom: $spacing-md;
+  line-height: 1.6;
+}
+
+// ========================================
+// LINKS
+// ========================================
+a {
+  color: $primary;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: color.adjust($primary, $lightness: -10%);
+  }
+}
+
+// ========================================
+// LISTS
+// ========================================
+ul,
+ol {
+  margin-bottom: $spacing-md;
+  padding-left: $spacing-lg;
+}
+
+li {
+  margin-bottom: $spacing-xs;
+}
+
+// ========================================
+// IMAGES
+// ========================================
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+// ========================================
+// FORM ELEMENTS
+// ========================================
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+// ========================================
+// UTILITY CLASSES
+// ========================================
+
+// Text Alignment
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+
+// Font Weights
+.font-thin {
+  font-weight: $font-thin;
+}
+.font-light {
+  font-weight: $font-light;
+}
+.font-normal {
+  font-weight: $font-normal;
+}
+.font-medium {
+  font-weight: $font-medium;
+}
+.font-semibold {
+  font-weight: $font-semibold;
+}
+.font-bold {
+  font-weight: $font-bold;
+}
+.font-extrabold {
+  font-weight: $font-extrabold;
+}
+.font-black {
+  font-weight: $font-black;
+}
+
+// Text Colors
+.text-primary {
+  color: $primary;
+}
+.text-secondary {
+  color: $secondary;
+}
+.text-accent {
+  color: $accent;
+}
+.text-charcoal {
+  color: $charcoal;
+}
+.text-stone {
+  color: $stone;
+}
+
+// Background Colors
+.bg-primary {
+  background-color: $primary;
+}
+.bg-secondary {
+  background-color: $secondary;
+}
+.bg-accent {
+  background-color: $accent;
+}
+.bg-mist {
+  background-color: $mist;
+}
+
+// Border Colors
+.border-stone {
+  border-color: $stone;
+}
+.border-primary {
+  border-color: $primary;
+}

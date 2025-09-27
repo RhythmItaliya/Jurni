@@ -1,0 +1,22 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// AUTH LAYOUT STYLES
+// ========================================
+.auth-layout {
+  min-height: 100vh;
+  @include flex-center;
+  background: linear-gradient(135deg, $primary, $secondary);
+  padding: $spacing-md;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 24rem;
+  background-color: white;
+  border-radius: $radius-xl;
+  box-shadow: 0 10px 25px $shadow-light;
+  padding: $spacing-2xl;
+}

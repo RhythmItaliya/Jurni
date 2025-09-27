@@ -3,6 +3,7 @@ import './globals.css';
 import SessionProvider from '@/components/providers/SessionProvider';
 import { QueryClientProviderWrapper } from '@/components/providers/QueryClientProvider';
 import ReduxProvider from '@/components/providers/ReduxProvider';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastContainer } from '@/components/ui/Toast';
 
 export const metadata: Metadata = {
@@ -18,14 +19,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <ReduxProvider>
-          <QueryClientProviderWrapper>
-            <SessionProvider>
-              {children}
-              <ToastContainer />
-            </SessionProvider>
-          </QueryClientProviderWrapper>
-        </ReduxProvider>
+        <ThemeProvider>
+          <ReduxProvider>
+            <QueryClientProviderWrapper>
+              <SessionProvider>
+                {children}
+                <ToastContainer />
+              </SessionProvider>
+            </QueryClientProviderWrapper>
+          </ReduxProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,0 +1,167 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// TOAST COMPONENT STYLES
+// ========================================
+.toast {
+  position: relative;
+  max-width: 24rem;
+  width: 100%;
+  transform: translateX(0);
+  opacity: 1;
+  scale: 1;
+  transition: all 0.3s ease-in-out;
+  border-radius: $radius-lg;
+  box-shadow: 0 4px 6px $shadow-light;
+  padding: $spacing-md;
+  margin-bottom: $spacing-sm;
+
+  &.leaving {
+    transform: translateX(100%);
+    opacity: 0;
+    scale: 0.95;
+  }
+
+  // Toast Types
+  &.success {
+    background-color: white;
+    border: 1px solid color.adjust($primary, $lightness: 30%);
+
+    .toast-icon {
+      background-color: $primary;
+      color: white;
+    }
+
+    .toast-text {
+      color: color.adjust($primary, $lightness: -20%);
+    }
+  }
+
+  &.error {
+    background-color: white;
+    border: 1px solid color.adjust($accent, $lightness: 30%);
+
+    .toast-icon {
+      background-color: $accent;
+      color: white;
+    }
+
+    .toast-text {
+      color: color.adjust($accent, $lightness: -20%);
+    }
+  }
+
+  &.warning {
+    background-color: white;
+    border: 1px solid color.adjust($warm, $lightness: 30%);
+
+    .toast-icon {
+      background-color: $warm;
+      color: white;
+    }
+
+    .toast-text {
+      color: color.adjust($warm, $lightness: -20%);
+    }
+  }
+
+  &.info {
+    background-color: white;
+    border: 1px solid color.adjust($sky, $lightness: 30%);
+
+    .toast-icon {
+      background-color: $sky;
+      color: white;
+    }
+
+    .toast-text {
+      color: color.adjust($sky, $lightness: -20%);
+    }
+  }
+}
+
+.toast-content {
+  @include flex-center;
+  align-items: flex-start;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  @include flex-center;
+  font-size: 0.875rem;
+  font-weight: $font-bold;
+}
+
+.toast-text {
+  margin-left: $spacing-sm;
+  flex: 1;
+  min-width: 0;
+
+  h3 {
+    font-size: 0.875rem;
+    font-weight: $font-semibold;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  p {
+    margin-top: $spacing-xs;
+    font-size: 0.875rem;
+    opacity: 0.9;
+    line-height: 1.4;
+    margin-bottom: 0;
+  }
+}
+
+.toast-close {
+  margin-left: $spacing-sm;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  padding: $spacing-xs;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+    background-color: $shadow-light;
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.toast-container {
+  position: fixed;
+  top: $spacing-md;
+  right: $spacing-md;
+  z-index: 50;
+  @include flex-column;
+  gap: $spacing-sm;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+// ========================================
+// ACCESSIBILITY UTILITIES
+// ========================================
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

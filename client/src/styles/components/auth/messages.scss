@@ -1,0 +1,31 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// AUTH MESSAGES STYLES
+// ========================================
+.auth-message {
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-lg;
+  font-size: 0.875rem;
+
+  &.success {
+    background-color: color.adjust($primary, $lightness: 90%);
+    color: color.adjust($primary, $lightness: -20%);
+    border: 1px solid color.adjust($primary, $lightness: 70%);
+  }
+
+  &.error {
+    background-color: color.adjust($accent, $lightness: 90%);
+    color: color.adjust($accent, $lightness: -20%);
+    border: 1px solid color.adjust($accent, $lightness: 70%);
+  }
+
+  &.warning {
+    background-color: color.adjust($warm, $lightness: 90%);
+    color: color.adjust($warm, $lightness: -20%);
+    border: 1px solid color.adjust($warm, $lightness: 70%);
+  }
+}

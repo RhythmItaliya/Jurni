@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { validateOTPForm } from './verify-otp';
-import { LoadingPage, Input } from '@/components/ui';
+import { LoadingPage, Input, Button } from '@/components/ui';
 import { useVerifyOTP, useResendOTP } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
 
@@ -157,36 +157,27 @@ function VerifyOTPForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Verify Your Registration
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            We sent a 6-character code (letters and numbers) to{' '}
-            <span className="font-medium text-indigo-600">{decodedEmail}</span>
+    <div className="auth-layout">
+      <div className="auth-container">
+        <div className="auth-header">
+          <div className="auth-logo">Jurni</div>
+          <h1 className="auth-title">Verify Your Registration</h1>
+          <p className="auth-subtitle">
+            We sent a 6-character code to{' '}
+            <span className="text-primary">{decodedEmail}</span>
+            {decodedUsername && (
+              <>
+                {' '}
+                for user <span className="text-primary">{decodedUsername}</span>
+              </>
+            )}
           </p>
-          {decodedUsername && (
-            <p className="mt-1 text-center text-sm text-gray-600">
-              for user{' '}
-              <span className="font-medium text-indigo-600">
-                {decodedUsername}
-              </span>
-            </p>
-          )}
         </div>
 
-        <form
-          className="mt-8 space-y-6"
-          onSubmit={handleSubmit}
-          suppressHydrationWarning
-        >
-          <div>
-            <label htmlFor="otp" className="sr-only">
-              Enter OTP
-            </label>
-            <div className="flex justify-center space-x-2">
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="otp">Enter OTP</label>
+            <div className="otp-inputs">
               {otp.map((digit, index) => (
                 <Input
                   key={index}
@@ -202,48 +193,49 @@ function VerifyOTPForm() {
                   onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
                     handleKeyDown(index, e)
                   }
-                  className="w-12 h-12 text-center text-xl font-bold border-2 border-black rounded-lg focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none text-black"
+                  className="otp-input"
                   placeholder="?"
                 />
               ))}
             </div>
           </div>
 
-          <div>
-            <button
+          <div className="form-actions">
+            <Button
               type="submit"
+              variant="primary"
+              size="lg"
               disabled={verifyOTPMutation.isPending}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="auth-button"
             >
               {verifyOTPMutation.isPending ? 'Verifying...' : 'Verify OTP'}
-            </button>
+            </Button>
           </div>
 
-          <div className="text-center">
+          <div className="auth-links">
             <button
               type="button"
               onClick={handleResendOTPRequest}
               disabled={resendOTPMutation.isPending}
-              className="text-indigo-600 hover:text-indigo-500 text-sm disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="auth-link"
             >
               {resendOTPMutation.isPending
                 ? 'Sending...'
                 : "Didn't receive the code? Resend"}
             </button>
-          </div>
 
-          <div className="text-center space-y-2">
+            <div className="auth-divider">
+              <span>or</span>
+            </div>
+
             <Link
               href={`/auth/register?email=${encodeURIComponent(decodedEmail || '')}&username=${encodeURIComponent(decodedUsername || '')}&changeEmail=true`}
-              className="text-indigo-600 hover:text-indigo-500 text-sm font-medium"
+              className="auth-link"
             >
               Change Email Address
             </Link>
-            <div className="text-gray-400">•</div>
-            <Link
-              href="/auth/register"
-              className="text-gray-600 hover:text-gray-500 text-sm"
-            >
+
+            <Link href="/auth/register" className="auth-link">
               Back to registration
             </Link>
           </div>

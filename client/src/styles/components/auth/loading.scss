@@ -1,0 +1,20 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// AUTH LOADING STYLES
+// ========================================
+.auth-loading {
+  @include flex-center;
+  padding: $spacing-xl;
+
+  .loading-spinner {
+    margin-right: $spacing-md;
+  }
+
+  .loading-text {
+    color: $stone;
+    font-size: 0.875rem;
+  }
+}

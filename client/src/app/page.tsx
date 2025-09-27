@@ -4,11 +4,12 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { LoadingPage } from '@/components/ui';
+import { AppLayout } from '@/components/layout';
 
 /**
  * Main home page component - only accessible to authenticated users
  * Redirects unauthenticated users to login page
- * @returns {JSX.Element} Loading state or main page content
+ * @returns {JSX.Element} Loading state or main page content with layout
  */
 export default function Home() {
   const { data: session, status } = useSession();
@@ -33,18 +34,5 @@ export default function Home() {
     return null;
   }
 
-  return (
-    <div className="min-h-screen bg-white w-full">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-charcoal mb-4">
-            Welcome to Jurni
-          </h1>
-          <p className="text-xl text-stone mb-8">
-            Hello, {session.user?.username || session.user?.email}!
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+  return <AppLayout />;
 }

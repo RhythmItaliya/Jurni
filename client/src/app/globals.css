@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import '../styles/main.scss';
 
 /* Custom Lexend Font */
 @font-face {
