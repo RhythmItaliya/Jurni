@@ -78,7 +78,8 @@ module.exports = {
         },
       },
       fontFamily: {
-        travel: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Lexend', 'system-ui', 'sans-serif'],
+        travel: ['Lexend', 'system-ui', 'sans-serif'],
         playful: ['Comic Neue', 'cursive'],
       },
       animation: {

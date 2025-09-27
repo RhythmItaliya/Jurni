@@ -19,11 +19,13 @@ interface ButtonProps {
 }
 
 const variantStyles = {
-  primary: 'bg-forest hover:bg-forest/90 text-white shadow-lg hover:shadow-xl',
-  secondary: 'bg-sage hover:bg-sage/90 text-white shadow-lg hover:shadow-xl',
+  primary:
+    'bg-primary hover:bg-primary-600 text-white shadow-lg hover:shadow-xl',
+  secondary:
+    'bg-secondary hover:bg-secondary-600 text-white shadow-lg hover:shadow-xl',
   outline:
-    'border-2 border-forest text-forest hover:bg-forest hover:text-white',
-  ghost: 'text-forest hover:bg-cream',
+    'border-2 border-primary text-primary hover:bg-primary hover:text-white',
+  ghost: 'text-primary hover:bg-primary-50',
   travel:
     'bg-gradient-travel hover:opacity-90 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200',
   explore:

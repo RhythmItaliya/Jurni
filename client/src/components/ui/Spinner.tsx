@@ -27,7 +27,7 @@ export const Spinner: React.FC<SpinnerProps> = ({
 }) => {
   return (
     <div
-      className={`animate-spin rounded-full border-2 border-gray-300 border-t-indigo-600 ${sizeClasses[size]} ${className}`}
+      className={`animate-spin rounded-full border-2 border-mist border-t-primary ${sizeClasses[size]} ${className}`}
     />
   );
 };
@@ -43,7 +43,7 @@ export const LoadingPage: React.FC<{ className?: string }> = ({
 }) => {
   return (
     <div
-      className={`min-h-screen flex items-center justify-center bg-gray-50 ${className}`}
+      className={`min-h-screen flex items-center justify-center bg-mist ${className}`}
     >
       <Spinner size="xl" />
     </div>

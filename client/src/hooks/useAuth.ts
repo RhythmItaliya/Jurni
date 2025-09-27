@@ -209,7 +209,7 @@ export function useLogin() {
       if (!result?.error) {
         queryClient.invalidateQueries({ queryKey: authKeys.all });
         showSuccess('Login Successful', 'Welcome back!');
-        router.push('/dashboard');
+        router.push('/');
       } else {
         const serverMessage = result.error;
         showError('Login Failed', serverMessage);
@@ -229,7 +229,6 @@ export function useLogin() {
  * - Ensures complete session cleanup for security
  *
  * @usedIn
- * - DashboardPage component (/app/dashboard/page.tsx)
  * - LogoutPage component (/app/auth/logout/page.tsx)
  *
  * @returns {UseMutationResult} Mutation object with logout state and methods
@@ -281,7 +280,6 @@ export function useLogout() {
  *
  * @usedIn
  * - HomePage component (/app/page.tsx)
- * - DashboardPage component (/app/dashboard/page.tsx)
  *
  * @returns {UseQueryResult} Query object with session data and loading states
  */

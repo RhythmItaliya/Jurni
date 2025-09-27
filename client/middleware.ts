@@ -12,7 +12,6 @@ const publicRoutes = [
 // Routes that require authentication
 const protectedRoutes = [
   '/', // Root page (home)
-  '/dashboard',
   '/profile',
   '/settings',
 ];

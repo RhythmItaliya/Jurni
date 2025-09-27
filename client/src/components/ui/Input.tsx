@@ -38,7 +38,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       const baseClasses = className.includes('h-') ? className : 'h-10';
       return (
         <div
-          className={`${baseClasses} w-full bg-gray-100 rounded animate-pulse`}
+          className={`${baseClasses} w-full bg-mist rounded animate-pulse`}
         />
       );
     }
