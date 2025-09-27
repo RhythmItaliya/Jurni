@@ -1,1 +1,1 @@
-export { handleLogin, validateLoginForm, formatLoginError } from './login';
+export { validateLoginForm, formatLoginError } from './login';

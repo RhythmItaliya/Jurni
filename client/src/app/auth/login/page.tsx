@@ -1,25 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { validateLoginForm, formatLoginError } from './login';
+import { validateLoginForm } from './login';
 import { LoginCredentials } from '@/types/user';
 import { LoadingPage, Input } from '@/components/ui';
 import { useLogin } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
 
 /**
- * Login page component for user authentication
- * @returns {JSX.Element} The login form component with loading state
+ * Login form component that uses search params
  */
-export default function Login() {
+function LoginForm() {
   const [formData, setFormData] = useState<LoginCredentials>({
     usernameOrEmail: '',
     password: '',
   });
   const [message, setMessage] = useState('');
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const loginMutation = useLogin();
@@ -65,11 +63,20 @@ export default function Login() {
     loginMutation.mutate(formData, {
       onError: error => {
         const serverMessage =
-          (error as any)?.response?.data?.message ||
-          (error as any)?.response?.data?.error ||
-          (error as any)?.response?.data ||
-          error?.message;
-        showError('Login Failed', serverMessage);
+          error && typeof error === 'object' && 'response' in error
+            ? (
+                error as {
+                  response: { data?: { message?: string; error?: string } };
+                }
+              ).response.data?.message ||
+              (
+                error as {
+                  response: { data?: { message?: string; error?: string } };
+                }
+              ).response.data?.error ||
+              String((error as { response: { data?: unknown } }).response.data)
+            : (error as { message?: string })?.message;
+        showError('Login Failed', serverMessage || 'An error occurred');
       },
     });
   };
@@ -140,11 +147,23 @@ export default function Login() {
               href="/auth/register"
               className="text-indigo-600 hover:text-indigo-500"
             >
-              Don't have an account? Register
+              Don&apos;t have an account? Register
             </Link>
           </div>
         </form>
       </div>
     </div>
+  );
+}
+
+/**
+ * Login page component for user authentication
+ * @returns {JSX.Element} The login form component with loading state
+ */
+export default function Login() {
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <LoginForm />
+    </Suspense>
   );
 }

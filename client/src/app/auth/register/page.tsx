@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { validateRegisterForm } from './register';
 import { LoadingPage, Input } from '@/components/ui';
@@ -10,11 +10,9 @@ import { useRegister } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
 
 /**
- * Registration page component for creating new user accounts
- * @returns {JSX.Element} The registration form component with loading state
+ * Registration form component that uses search params
  */
-export default function RegisterPage() {
-  const router = useRouter();
+function RegisterForm() {
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState<RegisterData>({
     username: '',
@@ -22,10 +20,6 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
   });
-  const [originalData, setOriginalData] = useState<{
-    email: string;
-    username: string;
-  } | null>(null);
 
   const registerMutation = useRegister();
   const { showSuccess, showError } = useReduxToast();
@@ -51,11 +45,6 @@ export default function RegisterPage() {
         email: decodedEmail,
         username: decodedUsername,
       }));
-
-      setOriginalData({
-        email: decodedEmail,
-        username: decodedUsername,
-      });
     }
   }, [searchParams]);
 
@@ -100,11 +89,20 @@ export default function RegisterPage() {
       },
       onError: error => {
         const serverMessage =
-          (error as any)?.response?.data?.message ||
-          (error as any)?.response?.data?.error ||
-          (error as any)?.response?.data ||
-          error?.message;
-        showError('Registration Failed', serverMessage);
+          error && typeof error === 'object' && 'response' in error
+            ? (
+                error as {
+                  response: { data?: { message?: string; error?: string } };
+                }
+              ).response.data?.message ||
+              (
+                error as {
+                  response: { data?: { message?: string; error?: string } };
+                }
+              ).response.data?.error ||
+              String((error as { response: { data?: unknown } }).response.data)
+            : (error as { message?: string })?.message;
+        showError('Registration Failed', serverMessage || 'An error occurred');
       },
     });
   };
@@ -200,5 +198,17 @@ export default function RegisterPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+/**
+ * Registration page component for creating new user accounts
+ * @returns {JSX.Element} The registration form component with loading state
+ */
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <RegisterForm />
+    </Suspense>
   );
 }

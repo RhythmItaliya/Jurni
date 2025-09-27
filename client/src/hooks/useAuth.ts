@@ -32,7 +32,7 @@ export const authKeys = {
 export function useRegister() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { showSuccess, showError } = useReduxToast();
+  const { showError } = useReduxToast();
 
   return useMutation({
     mutationFn: async (data: RegisterData) => {
@@ -52,11 +52,20 @@ export function useRegister() {
     },
     onError: error => {
       const serverMessage =
-        (error as any)?.response?.data?.message ||
-        (error as any)?.response?.data?.error ||
-        (error as any)?.response?.data ||
-        error?.message;
-      showError('Registration Failed', serverMessage);
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError('Registration Failed', serverMessage || 'An error occurred');
     },
   });
 }
@@ -100,11 +109,20 @@ export function useVerifyOTP() {
     },
     onError: error => {
       const serverMessage =
-        (error as any)?.response?.data?.message ||
-        (error as any)?.response?.data?.error ||
-        (error as any)?.response?.data ||
-        error?.message;
-      showError('Verification Failed', serverMessage);
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError('Verification Failed', serverMessage || 'An error occurred');
     },
   });
 }
@@ -139,11 +157,20 @@ export function useResendOTP() {
     },
     onError: error => {
       const serverMessage =
-        (error as any)?.response?.data?.message ||
-        (error as any)?.response?.data?.error ||
-        (error as any)?.response?.data ||
-        error?.message;
-      showError('Resend Failed', serverMessage);
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError('Resend Failed', serverMessage || 'An error occurred');
     },
   });
 }
@@ -223,11 +250,20 @@ export function useLogout() {
     },
     onError: error => {
       const serverMessage =
-        (error as any)?.response?.data?.message ||
-        (error as any)?.response?.data?.error ||
-        (error as any)?.response?.data ||
-        error?.message;
-      showError('Logout Failed', serverMessage);
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError('Logout Failed', serverMessage || 'An error occurred');
     },
   });
 }

@@ -50,13 +50,16 @@ const handler = NextAuth({
             };
           }
           return null;
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error('Auth error:', error);
 
-          if (error.response) {
-            const backendMessage = error.response.data?.message;
+          if (error && typeof error === 'object' && 'response' in error) {
+            const axiosError = error as {
+              response: { data?: { message?: string }; status: number };
+            };
+            const backendMessage = axiosError.response.data?.message;
             throw new Error(
-              backendMessage || `Login failed (${error.response.status})`
+              backendMessage || `Login failed (${axiosError.response.status})`
             );
           }
 
@@ -76,6 +79,7 @@ const handler = NextAuth({
      * @param user - User object
      * @returns Updated token
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async jwt({ token, user }: any) {
       if (user) {
         if (!user.uuid) {
@@ -98,6 +102,7 @@ const handler = NextAuth({
      * @param token - JWT token
      * @returns Updated session
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, token }: any) {
       if (token) {
         if (!token.uuid) {

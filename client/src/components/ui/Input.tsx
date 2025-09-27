@@ -21,7 +21,11 @@ import { useState, useEffect, forwardRef } from 'react';
  * @param {any} [props.ref] - Forwarded ref
  * @returns {JSX.Element} Input element or loading placeholder
  */
-const Input = forwardRef<HTMLInputElement, any>(
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  className?: string;
+}
+
+const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className = '', ...props }, ref) => {
     const [mounted, setMounted] = useState(false);
 

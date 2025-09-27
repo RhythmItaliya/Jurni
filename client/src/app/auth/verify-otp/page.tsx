@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { validateOTPForm } from './verify-otp';
@@ -9,11 +9,11 @@ import { useVerifyOTP, useResendOTP } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
 
 /**
- * OTP verification page component for user registration
+ * OTP verification form component that uses search params
  * Handles 6-character OTP input with auto-focus and validation
  * @returns {JSX.Element | null} The OTP verification form or null if redirecting
  */
-export default function VerifyOTPPage() {
+function VerifyOTPForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -97,11 +97,25 @@ export default function VerifyOTPPage() {
       {
         onError: error => {
           const serverMessage =
-            (error as any)?.response?.data?.message ||
-            (error as any)?.response?.data?.error ||
-            (error as any)?.response?.data ||
-            error?.message;
-          showError('Verification Failed', serverMessage);
+            error && typeof error === 'object' && 'response' in error
+              ? (
+                  error as {
+                    response: { data?: { message?: string; error?: string } };
+                  }
+                ).response.data?.message ||
+                (
+                  error as {
+                    response: { data?: { message?: string; error?: string } };
+                  }
+                ).response.data?.error ||
+                String(
+                  (error as { response: { data?: unknown } }).response.data
+                )
+              : (error as { message?: string })?.message;
+          showError(
+            'Verification Failed',
+            serverMessage || 'An error occurred'
+          );
         },
       }
     );
@@ -125,8 +139,11 @@ export default function VerifyOTPPage() {
       },
       onError: error => {
         const serverMessage =
-          (error as any)?.response?.data?.message || error?.message;
-        showError('Resend Failed', serverMessage);
+          error && typeof error === 'object' && 'response' in error
+            ? (error as { response: { data?: { message?: string } } }).response
+                .data?.message
+            : (error as { message?: string })?.message;
+        showError('Resend Failed', serverMessage || 'An error occurred');
       },
     });
   };
@@ -233,5 +250,18 @@ export default function VerifyOTPPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+/**
+ * OTP verification page component for user registration
+ * Handles 6-character OTP input with auto-focus and validation
+ * @returns {JSX.Element | null} The OTP verification form or null if redirecting
+ */
+export default function VerifyOTPPage() {
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <VerifyOTPForm />
+    </Suspense>
   );
 }
