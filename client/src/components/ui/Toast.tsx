@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { removeToast } from '@/store/slices/toastSlice';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -11,49 +13,51 @@ export interface ToastProps {
   title: string;
   message?: string;
   duration?: number;
-  onClose: (id: string) => void;
 }
 
 const toastStyles = {
   success: {
-    bg: 'bg-green-50',
+    bg: 'bg-white',
     border: 'border-green-200',
     text: 'text-green-800',
     icon: '✓',
-    iconBg: 'bg-green-100',
+    iconBg: 'bg-green-500',
+    iconText: 'text-white',
   },
   error: {
-    bg: 'bg-red-50',
+    bg: 'bg-white',
     border: 'border-red-200',
     text: 'text-red-800',
     icon: '✕',
-    iconBg: 'bg-red-100',
+    iconBg: 'bg-red-500',
+    iconText: 'text-white',
   },
   warning: {
-    bg: 'bg-yellow-50',
+    bg: 'bg-white',
     border: 'border-yellow-200',
     text: 'text-yellow-800',
     icon: '⚠',
-    iconBg: 'bg-yellow-100',
+    iconBg: 'bg-yellow-500',
+    iconText: 'text-white',
   },
   info: {
-    bg: 'bg-blue-50',
+    bg: 'bg-white',
     border: 'border-blue-200',
     text: 'text-blue-800',
     icon: 'ℹ',
-    iconBg: 'bg-blue-100',
+    iconBg: 'bg-blue-500',
+    iconText: 'text-white',
   },
 };
 
 /**
- * Individual toast notification component
+ * Individual toast notification component with Redux integration
  * @param {ToastProps} props - Toast component props
  * @param {string} props.id - Unique identifier for the toast
  * @param {ToastType} props.type - Type of toast (success, error, warning, info)
  * @param {string} props.title - Toast title
  * @param {string} [props.message] - Optional toast message
  * @param {number} [props.duration] - Auto-close duration in milliseconds (default: 5000)
- * @param {Function} props.onClose - Callback function when toast is closed
  * @returns {JSX.Element} Toast notification component
  */
 export const Toast: React.FC<ToastProps> = ({
@@ -62,8 +66,8 @@ export const Toast: React.FC<ToastProps> = ({
   title,
   message,
   duration = 5000,
-  onClose,
 }) => {
+  const dispatch = useAppDispatch();
   const [isVisible, setIsVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
@@ -85,7 +89,7 @@ export const Toast: React.FC<ToastProps> = ({
   const handleClose = () => {
     setIsLeaving(true);
     setTimeout(() => {
-      onClose(id);
+      dispatch(removeToast(id));
     }, 300);
   };
 
@@ -94,29 +98,33 @@ export const Toast: React.FC<ToastProps> = ({
   return (
     <div
       className={`
-        fixed top-4 right-4 z-50 max-w-sm w-full
+        relative max-w-sm w-full
         transform transition-all duration-300 ease-in-out
-        ${isVisible && !isLeaving ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}
-        ${styles.bg} ${styles.border} border rounded-lg shadow-lg p-4
+        ${isVisible && !isLeaving ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-full opacity-0 scale-95'}
+        ${styles.bg} ${styles.border} border rounded-lg shadow-lg p-4 mb-3
       `}
     >
       <div className="flex items-start">
         <div
-          className={`flex-shrink-0 w-8 h-8 rounded-full ${styles.iconBg} flex items-center justify-center text-sm font-bold ${styles.text}`}
+          className={`flex-shrink-0 w-8 h-8 rounded-full ${styles.iconBg} flex items-center justify-center text-sm font-bold ${styles.iconText}`}
         >
           {styles.icon}
         </div>
-        <div className="ml-3 flex-1">
-          <h3 className={`text-sm font-medium ${styles.text}`}>{title}</h3>
+        <div className="ml-3 flex-1 min-w-0">
+          <h3 className={`text-sm font-semibold ${styles.text} leading-tight`}>
+            {title}
+          </h3>
           {message && (
-            <p className={`mt-1 text-sm ${styles.text} opacity-90`}>
+            <p
+              className={`mt-1 text-sm ${styles.text} opacity-90 leading-relaxed`}
+            >
               {message}
             </p>
           )}
         </div>
         <button
           onClick={handleClose}
-          className={`ml-4 flex-shrink-0 ${styles.text} hover:opacity-70 transition-opacity`}
+          className={`ml-3 flex-shrink-0 ${styles.text} hover:opacity-70 transition-opacity p-1 rounded-full hover:bg-black hover:bg-opacity-10`}
         >
           <span className="sr-only">Close</span>
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -133,16 +141,11 @@ export const Toast: React.FC<ToastProps> = ({
 };
 
 /**
- * Toast container component that renders toasts in a portal
- * @param {Object} props - ToastContainer props
- * @param {ToastProps[]} props.toasts - Array of toast objects
- * @param {Function} props.onClose - Callback function when toast is closed
+ * Toast container component that renders toasts from Redux store
  * @returns {JSX.Element} Toast container component
  */
-export const ToastContainer: React.FC<{
-  toasts: ToastProps[];
-  onClose: (id: string) => void;
-}> = ({ toasts, onClose }) => {
+export const ToastContainer: React.FC = () => {
+  const toasts = useAppSelector(state => state.toast.toasts);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -152,9 +155,17 @@ export const ToastContainer: React.FC<{
   if (!mounted) return null;
 
   return createPortal(
-    <div className="fixed top-4 right-4 z-50 space-y-2">
-      {toasts.map(toast => (
-        <Toast key={toast.id} {...toast} onClose={onClose} />
+    <div className="fixed top-4 right-4 z-50 flex flex-col space-y-2 max-h-screen overflow-hidden">
+      {toasts.map((toast, index) => (
+        <div
+          key={toast.id}
+          className="transform transition-all duration-300 ease-in-out"
+          style={{
+            zIndex: 50 - index,
+          }}
+        >
+          <Toast {...toast} />
+        </div>
       ))}
     </div>,
     document.body

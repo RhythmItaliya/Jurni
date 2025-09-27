@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 import SessionProvider from '@/components/providers/SessionProvider';
 import { QueryClientProviderWrapper } from '@/components/providers/QueryClientProvider';
-import { ToastProvider } from '@/components/providers/ToastProvider';
+import ReduxProvider from '@/components/providers/ReduxProvider';
+import { ToastContainer } from '@/components/ui/Toast';
 
 export const metadata: Metadata = {
   title: 'Jurni - Full Stack App',
@@ -17,11 +18,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <QueryClientProviderWrapper>
-          <SessionProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </SessionProvider>
-        </QueryClientProviderWrapper>
+        <ReduxProvider>
+          <QueryClientProviderWrapper>
+            <SessionProvider>
+              {children}
+              <ToastContainer />
+            </SessionProvider>
+          </QueryClientProviderWrapper>
+        </ReduxProvider>
       </body>
     </html>
   );

@@ -7,7 +7,7 @@ import { validateRegisterForm } from './register';
 import { LoadingPage, Input } from '@/components/ui';
 import { RegisterData } from '@/types/user';
 import { useRegister } from '@/hooks/useAuth';
-import { useToastContext } from '@/components/providers/ToastProvider';
+import { useReduxToast } from '@/hooks/useReduxToast';
 
 /**
  * Registration page component for creating new user accounts
@@ -28,7 +28,7 @@ export default function RegisterPage() {
   } | null>(null);
 
   const registerMutation = useRegister();
-  const { showSuccess, showError } = useToastContext();
+  const { showSuccess, showError } = useReduxToast();
 
   // Check if this is a temp user update (coming from OTP page)
   const isTempUserUpdate = searchParams.get('changeEmail') === 'true';

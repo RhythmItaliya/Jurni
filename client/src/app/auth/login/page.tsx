@@ -7,7 +7,7 @@ import { validateLoginForm, formatLoginError } from './login';
 import { LoginCredentials } from '@/types/user';
 import { LoadingPage, Input } from '@/components/ui';
 import { useLogin } from '@/hooks/useAuth';
-import { useToastContext } from '@/components/providers/ToastProvider';
+import { useReduxToast } from '@/hooks/useReduxToast';
 
 /**
  * Login page component for user authentication
@@ -23,7 +23,7 @@ export default function Login() {
   const searchParams = useSearchParams();
 
   const loginMutation = useLogin();
-  const { showSuccess, showError } = useToastContext();
+  const { showSuccess, showError } = useReduxToast();
 
   /**
    * Handle URL message parameter

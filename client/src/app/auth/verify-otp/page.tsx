@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { validateOTPForm } from './verify-otp';
 import { LoadingPage, Input } from '@/components/ui';
 import { useVerifyOTP, useResendOTP } from '@/hooks/useAuth';
-import { useToastContext } from '@/components/providers/ToastProvider';
+import { useReduxToast } from '@/hooks/useReduxToast';
 
 /**
  * OTP verification page component for user registration
@@ -21,7 +21,7 @@ export default function VerifyOTPPage() {
 
   const verifyOTPMutation = useVerifyOTP();
   const resendOTPMutation = useResendOTP();
-  const { showSuccess, showError } = useToastContext();
+  const { showSuccess, showError } = useReduxToast();
 
   const email = searchParams.get('email');
   const username = searchParams.get('username');

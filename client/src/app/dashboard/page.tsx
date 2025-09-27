@@ -4,7 +4,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { LoadingPage } from '@/components/ui';
-import { useToastContext } from '@/components/providers/ToastProvider';
+import { useReduxToast } from '@/hooks/useReduxToast';
 
 /**
  * Dashboard page component for authenticated users
@@ -14,7 +14,7 @@ import { useToastContext } from '@/components/providers/ToastProvider';
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { showSuccess, showError } = useToastContext();
+  const { showSuccess, showError } = useReduxToast();
 
   /**
    * Redirect unauthenticated users to login page

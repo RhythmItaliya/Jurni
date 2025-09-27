@@ -5,7 +5,7 @@ import api from '@/lib/axios';
 import { ENDPOINTS } from '@/lib/endpoints';
 import { RegisterData, LoginCredentials } from '@/types/user';
 import { VerifyOTPData } from '@/app/auth/verify-otp/verify-otp';
-import { useToastContext } from '@/components/providers/ToastProvider';
+import { useReduxToast } from '@/hooks/useReduxToast';
 
 // Query keys for consistent caching
 export const authKeys = {
@@ -32,7 +32,7 @@ export const authKeys = {
 export function useRegister() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { showSuccess, showError } = useToastContext();
+  const { showSuccess, showError } = useReduxToast();
 
   return useMutation({
     mutationFn: async (data: RegisterData) => {
@@ -79,7 +79,7 @@ export function useRegister() {
 export function useVerifyOTP() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { showSuccess, showError } = useToastContext();
+  const { showSuccess, showError } = useReduxToast();
 
   return useMutation({
     mutationFn: async (data: VerifyOTPData) => {
@@ -125,7 +125,7 @@ export function useVerifyOTP() {
  * @returns {UseMutationResult} Mutation object with resend OTP state and methods
  */
 export function useResendOTP() {
-  const { showSuccess, showError } = useToastContext();
+  const { showSuccess, showError } = useReduxToast();
 
   return useMutation({
     mutationFn: async (email: string) => {
@@ -167,7 +167,7 @@ export function useResendOTP() {
 export function useLogin() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { showSuccess, showError } = useToastContext();
+  const { showSuccess, showError } = useReduxToast();
 
   return useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
@@ -210,7 +210,7 @@ export function useLogin() {
 export function useLogout() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { showSuccess, showError } = useToastContext();
+  const { showSuccess, showError } = useReduxToast();
 
   return useMutation({
     mutationFn: async () => {
