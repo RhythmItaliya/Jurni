@@ -4,6 +4,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { LoadingPage } from '@/components/ui';
+import { useToastContext } from '@/components/providers/ToastProvider';
 
 /**
  * Dashboard page component for authenticated users
@@ -13,6 +14,7 @@ import { LoadingPage } from '@/components/ui';
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { showSuccess, showError } = useToastContext();
 
   /**
    * Redirect unauthenticated users to login page
@@ -40,7 +42,13 @@ export default function DashboardPage() {
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
             <button
-              onClick={() => signOut({ callbackUrl: '/auth/login' })}
+              onClick={() => {
+                showSuccess(
+                  'Logged Out',
+                  'You have been successfully logged out'
+                );
+                signOut({ callbackUrl: '/auth/login' });
+              }}
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md"
             >
               Logout

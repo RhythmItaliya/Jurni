@@ -5,27 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { validateLoginForm, formatLoginError } from './login';
 import { LoginCredentials } from '@/types/user';
-import { LoadingPage } from '@/components/ui';
+import { LoadingPage, Input } from '@/components/ui';
 import { useLogin } from '@/hooks/useAuth';
-
-/**
- * Client-only input component to prevent hydration mismatches
- * @param {any} props - Input component props
- * @returns {JSX.Element} Input element or loading placeholder
- */
-const ClientInput = ({ ...props }: any) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <div className="h-10 w-full bg-gray-100 rounded animate-pulse" />;
-  }
-
-  return <input {...props} />;
-};
+import { useToastContext } from '@/components/providers/ToastProvider';
 
 /**
  * Login page component for user authentication
@@ -41,6 +23,7 @@ export default function Login() {
   const searchParams = useSearchParams();
 
   const loginMutation = useLogin();
+  const { showSuccess, showError } = useToastContext();
 
   /**
    * Handle URL message parameter
@@ -50,8 +33,9 @@ export default function Login() {
     const msg = searchParams.get('message');
     if (msg) {
       setMessage(msg);
+      showSuccess('Success', msg);
     }
-  }, [searchParams]);
+  }, [searchParams, showSuccess]);
 
   /**
    * Handle form input changes
@@ -74,10 +58,20 @@ export default function Login() {
 
     const validation = validateLoginForm(formData);
     if (!validation.isValid) {
+      showError('Validation Error', validation.errors.join(', '));
       return;
     }
 
-    loginMutation.mutate(formData);
+    loginMutation.mutate(formData, {
+      onError: error => {
+        const serverMessage =
+          (error as any)?.response?.data?.message ||
+          (error as any)?.response?.data?.error ||
+          (error as any)?.response?.data ||
+          error?.message;
+        showError('Login Failed', serverMessage);
+      },
+    });
   };
 
   if (loginMutation.isPending) {
@@ -99,10 +93,14 @@ export default function Login() {
           </div>
         )}
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form
+          className="mt-8 space-y-6"
+          onSubmit={handleSubmit}
+          suppressHydrationWarning
+        >
           <div className="space-y-4">
             <div>
-              <ClientInput
+              <Input
                 id="usernameOrEmail"
                 name="usernameOrEmail"
                 type="text"
@@ -114,7 +112,7 @@ export default function Login() {
               />
             </div>
             <div>
-              <ClientInput
+              <Input
                 id="password"
                 name="password"
                 type="password"
@@ -126,12 +124,6 @@ export default function Login() {
               />
             </div>
           </div>
-
-          {loginMutation.error && (
-            <div className="text-red-600 text-sm text-center">
-              {formatLoginError(loginMutation.error.message || 'Login failed')}
-            </div>
-          )}
 
           <div>
             <button

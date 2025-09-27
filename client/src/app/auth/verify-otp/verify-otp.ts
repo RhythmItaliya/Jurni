@@ -21,8 +21,11 @@ export const validateOTPForm = (otp: string) => {
     return { isValid: false, error: 'OTP must be 6 characters' };
   }
 
-  if (!/^\d{6}$/.test(otp)) {
-    return { isValid: false, error: 'OTP must contain only numbers' };
+  if (!/^[A-Za-z0-9]{6}$/.test(otp)) {
+    return {
+      isValid: false,
+      error: 'OTP must contain only letters and numbers',
+    };
   }
 
   return { isValid: true };

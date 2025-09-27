@@ -4,8 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { validateOTPForm } from './verify-otp';
-import { LoadingPage } from '@/components/ui';
+import { LoadingPage, Input } from '@/components/ui';
 import { useVerifyOTP, useResendOTP } from '@/hooks/useAuth';
+import { useToastContext } from '@/components/providers/ToastProvider';
 
 /**
  * OTP verification page component for user registration
@@ -20,6 +21,7 @@ export default function VerifyOTPPage() {
 
   const verifyOTPMutation = useVerifyOTP();
   const resendOTPMutation = useResendOTP();
+  const { showSuccess, showError } = useToastContext();
 
   const email = searchParams.get('email');
   const username = searchParams.get('username');
@@ -78,17 +80,31 @@ export default function VerifyOTPPage() {
     const validation = validateOTPForm(otpString);
 
     if (!validation.isValid) {
+      showError('Invalid OTP', validation.error || 'OTP must be 6 characters');
       return;
     }
 
     if (!decodedEmail) {
+      showError('Error', 'Email not found. Please try again.');
       return;
     }
 
-    verifyOTPMutation.mutate({
-      email: decodedEmail,
-      otp: otpString,
-    });
+    verifyOTPMutation.mutate(
+      {
+        email: decodedEmail,
+        otp: otpString,
+      },
+      {
+        onError: error => {
+          const serverMessage =
+            (error as any)?.response?.data?.message ||
+            (error as any)?.response?.data?.error ||
+            (error as any)?.response?.data ||
+            error?.message;
+          showError('Verification Failed', serverMessage);
+        },
+      }
+    );
   };
 
   /**
@@ -97,6 +113,7 @@ export default function VerifyOTPPage() {
    */
   const handleResendOTPRequest = async () => {
     if (!decodedEmail) {
+      showError('Error', 'Email not found. Please try again.');
       return;
     }
 
@@ -104,6 +121,12 @@ export default function VerifyOTPPage() {
       onSuccess: () => {
         setOtp(['', '', '', '', '', '']);
         inputRefs.current[0]?.focus();
+        showSuccess('OTP Sent', 'A new OTP has been sent to your email');
+      },
+      onError: error => {
+        const serverMessage =
+          (error as any)?.response?.data?.message || error?.message;
+        showError('Resend Failed', serverMessage);
       },
     });
   };
@@ -124,7 +147,7 @@ export default function VerifyOTPPage() {
             Verify Your Registration
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            We sent a 6-character code to{' '}
+            We sent a 6-character code (letters and numbers) to{' '}
             <span className="font-medium text-indigo-600">{decodedEmail}</span>
           </p>
           {decodedUsername && (
@@ -137,14 +160,18 @@ export default function VerifyOTPPage() {
           )}
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form
+          className="mt-8 space-y-6"
+          onSubmit={handleSubmit}
+          suppressHydrationWarning
+        >
           <div>
             <label htmlFor="otp" className="sr-only">
               Enter OTP
             </label>
             <div className="flex justify-center space-x-2">
               {otp.map((digit, index) => (
-                <input
+                <Input
                   key={index}
                   ref={el => {
                     inputRefs.current[index] = el;
@@ -152,26 +179,18 @@ export default function VerifyOTPPage() {
                   type="text"
                   maxLength={1}
                   value={digit}
-                  onChange={e => handleInputChange(index, e.target.value)}
-                  onKeyDown={e => handleKeyDown(index, e)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleInputChange(index, e.target.value)
+                  }
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+                    handleKeyDown(index, e)
+                  }
                   className="w-12 h-12 text-center text-xl font-bold border-2 border-black rounded-lg focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none text-black"
-                  placeholder="•"
+                  placeholder="?"
                 />
               ))}
             </div>
           </div>
-
-          {verifyOTPMutation.error && (
-            <div className="text-red-600 text-sm text-center">
-              {verifyOTPMutation.error.message || 'Verification failed'}
-            </div>
-          )}
-
-          {resendOTPMutation.error && (
-            <div className="text-red-600 text-sm text-center">
-              {resendOTPMutation.error.message || 'Failed to resend OTP'}
-            </div>
-          )}
 
           <div>
             <button

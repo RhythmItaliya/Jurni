@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { validateRegisterForm, formatRegisterError } from './register';
-import { LoadingPage } from '@/components/ui';
+import { validateRegisterForm } from './register';
+import { LoadingPage, Input } from '@/components/ui';
 import { RegisterData } from '@/types/user';
 import { useRegister } from '@/hooks/useAuth';
+import { useToastContext } from '@/components/providers/ToastProvider';
 
 /**
  * Registration page component for creating new user accounts
@@ -21,13 +22,16 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
   });
-  const [updateMessage, setUpdateMessage] = useState('');
   const [originalData, setOriginalData] = useState<{
     email: string;
     username: string;
   } | null>(null);
 
   const registerMutation = useRegister();
+  const { showSuccess, showError } = useToastContext();
+
+  // Check if this is a temp user update (coming from OTP page)
+  const isTempUserUpdate = searchParams.get('changeEmail') === 'true';
 
   /**
    * Pre-fill form with URL parameters when coming from OTP page
@@ -76,14 +80,33 @@ export default function RegisterPage() {
 
     const validation = validateRegisterForm(formData);
     if (!validation.isValid) {
+      showError('Validation Error', validation.errors.join(', '));
       return;
     }
 
-    if (originalData) {
-      setUpdateMessage('Account details updated successfully!');
+    if (isTempUserUpdate) {
+      // Silent update for temp user - no messages at all
     }
 
-    registerMutation.mutate(formData);
+    registerMutation.mutate(formData, {
+      onSuccess: () => {
+        // Only show success toast for new registrations, not temp user updates
+        if (!isTempUserUpdate) {
+          showSuccess(
+            'Registration Successful',
+            'Please check your email for OTP verification'
+          );
+        }
+      },
+      onError: error => {
+        const serverMessage =
+          (error as any)?.response?.data?.message ||
+          (error as any)?.response?.data?.error ||
+          (error as any)?.response?.data ||
+          error?.message;
+        showError('Registration Failed', serverMessage);
+      },
+    });
   };
 
   if (registerMutation.isPending) {
@@ -98,10 +121,14 @@ export default function RegisterPage() {
             Create your account
           </h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form
+          className="mt-8 space-y-6"
+          onSubmit={handleSubmit}
+          suppressHydrationWarning
+        >
           <div className="space-y-4">
             <div>
-              <input
+              <Input
                 id="username"
                 name="username"
                 type="text"
@@ -113,7 +140,7 @@ export default function RegisterPage() {
               />
             </div>
             <div>
-              <input
+              <Input
                 id="email"
                 name="email"
                 type="email"
@@ -125,7 +152,7 @@ export default function RegisterPage() {
               />
             </div>
             <div>
-              <input
+              <Input
                 id="password"
                 name="password"
                 type="password"
@@ -137,7 +164,7 @@ export default function RegisterPage() {
               />
             </div>
             <div>
-              <input
+              <Input
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
@@ -149,20 +176,6 @@ export default function RegisterPage() {
               />
             </div>
           </div>
-
-          {updateMessage && (
-            <div className="text-green-600 text-sm text-center bg-green-50 p-2 rounded">
-              {updateMessage}
-            </div>
-          )}
-
-          {registerMutation.error && (
-            <div className="text-red-600 text-sm text-center">
-              {formatRegisterError(
-                registerMutation.error.message || 'Registration failed'
-              )}
-            </div>
-          )}
 
           <div>
             <button

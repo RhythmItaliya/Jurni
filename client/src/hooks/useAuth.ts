@@ -5,6 +5,7 @@ import api from '@/lib/axios';
 import { ENDPOINTS } from '@/lib/endpoints';
 import { RegisterData, LoginCredentials } from '@/types/user';
 import { VerifyOTPData } from '@/app/auth/verify-otp/verify-otp';
+import { useToastContext } from '@/components/providers/ToastProvider';
 
 // Query keys for consistent caching
 export const authKeys = {
@@ -31,6 +32,7 @@ export const authKeys = {
 export function useRegister() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { showSuccess, showError } = useToastContext();
 
   return useMutation({
     mutationFn: async (data: RegisterData) => {
@@ -47,6 +49,14 @@ export function useRegister() {
       router.push(
         `/auth/verify-otp?email=${encodeURIComponent(data.user.email)}&username=${encodeURIComponent(data.user.username)}`
       );
+    },
+    onError: error => {
+      const serverMessage =
+        (error as any)?.response?.data?.message ||
+        (error as any)?.response?.data?.error ||
+        (error as any)?.response?.data ||
+        error?.message;
+      showError('Registration Failed', serverMessage);
     },
   });
 }
@@ -69,6 +79,7 @@ export function useRegister() {
 export function useVerifyOTP() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { showSuccess, showError } = useToastContext();
 
   return useMutation({
     mutationFn: async (data: VerifyOTPData) => {
@@ -80,9 +91,20 @@ export function useVerifyOTP() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: authKeys.all });
-      router.push(
-        '/auth/login?message=Registration verified successfully! You can now login.'
+      showSuccess(
+        'Verification Successful',
+        'Your account has been verified! You can now login.'
       );
+
+      router.push('/auth/login');
+    },
+    onError: error => {
+      const serverMessage =
+        (error as any)?.response?.data?.message ||
+        (error as any)?.response?.data?.error ||
+        (error as any)?.response?.data ||
+        error?.message;
+      showError('Verification Failed', serverMessage);
     },
   });
 }
@@ -103,12 +125,25 @@ export function useVerifyOTP() {
  * @returns {UseMutationResult} Mutation object with resend OTP state and methods
  */
 export function useResendOTP() {
+  const { showSuccess, showError } = useToastContext();
+
   return useMutation({
     mutationFn: async (email: string) => {
       const response = await api.post(ENDPOINTS.AUTH.RESEND_REGISTRATION_OTP, {
         email,
       });
       return response.data;
+    },
+    onSuccess: () => {
+      showSuccess('OTP Sent', 'A new OTP has been sent to your email');
+    },
+    onError: error => {
+      const serverMessage =
+        (error as any)?.response?.data?.message ||
+        (error as any)?.response?.data?.error ||
+        (error as any)?.response?.data ||
+        error?.message;
+      showError('Resend Failed', serverMessage);
     },
   });
 }
@@ -132,6 +167,7 @@ export function useResendOTP() {
 export function useLogin() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { showSuccess, showError } = useToastContext();
 
   return useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
@@ -145,7 +181,11 @@ export function useLogin() {
     onSuccess: result => {
       if (!result?.error) {
         queryClient.invalidateQueries({ queryKey: authKeys.all });
+        showSuccess('Login Successful', 'Welcome back!');
         router.push('/dashboard');
+      } else {
+        const serverMessage = result.error;
+        showError('Login Failed', serverMessage);
       }
     },
   });
@@ -170,6 +210,7 @@ export function useLogin() {
 export function useLogout() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { showSuccess, showError } = useToastContext();
 
   return useMutation({
     mutationFn: async () => {
@@ -177,7 +218,16 @@ export function useLogout() {
     },
     onSuccess: () => {
       queryClient.clear();
+      showSuccess('Logged Out', 'You have been successfully logged out');
       router.push('/auth/login');
+    },
+    onError: error => {
+      const serverMessage =
+        (error as any)?.response?.data?.message ||
+        (error as any)?.response?.data?.error ||
+        (error as any)?.response?.data ||
+        error?.message;
+      showError('Logout Failed', serverMessage);
     },
   });
 }
