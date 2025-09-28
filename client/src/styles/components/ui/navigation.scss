@@ -321,7 +321,7 @@
 }
 
 // Responsive Navigation
-@include mobile {
+@include very-small {
   .nav {
     flex-wrap: wrap;
     padding: $spacing-sm $spacing-md;

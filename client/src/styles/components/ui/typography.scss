@@ -237,7 +237,35 @@
 }
 
 // Responsive Typography
-@include mobile {
+@include very-small {
+  .heading-1 {
+    font-size: $text-2xl;
+  }
+
+  .heading-2 {
+    font-size: $text-xl;
+  }
+
+  .heading-3 {
+    font-size: $text-lg;
+  }
+}
+
+@include small {
+  .heading-1 {
+    font-size: $text-3xl;
+  }
+
+  .heading-2 {
+    font-size: $text-2xl;
+  }
+
+  .heading-3 {
+    font-size: $text-xl;
+  }
+}
+
+@include medium {
   .heading-1 {
     font-size: $text-4xl;
   }

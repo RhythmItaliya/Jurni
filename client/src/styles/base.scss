@@ -27,6 +27,19 @@ body {
 }
 
 // ========================================
+// GLOBAL SCROLLBAR HIDING
+// ========================================
+* {
+  // Hide scrollbars for all browsers
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE/Edge
+}
+
+*::-webkit-scrollbar {
+  display: none; // Chrome/Safari
+}
+
+// ========================================
 // TYPOGRAPHY
 // ========================================
 h1,

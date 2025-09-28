@@ -1,7 +1,7 @@
 @use 'sass:color';
 @use 'variables' as *;
 
-// Responsive Mixins - All Device Sizes
+// Responsive Mixins
 @mixin very-small {
   @media (max-width: #{$very-small - 1px}) {
     @content;
@@ -10,6 +10,12 @@
 
 @mixin small {
   @media (max-width: #{$small - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$tablet}) and (max-width: #{$medium - 1px}) {
     @content;
   }
 }
@@ -28,31 +34,6 @@
 
 @mixin very-large {
   @media (min-width: #{$very-large}) {
-    @content;
-  }
-}
-
-// Legacy mixins (for compatibility)
-@mixin mobile {
-  @media (max-width: #{$mobile - 1px}) {
-    @content;
-  }
-}
-
-@mixin tablet {
-  @media (min-width: #{$tablet}) {
-    @content;
-  }
-}
-
-@mixin desktop {
-  @media (min-width: #{$desktop}) {
-    @content;
-  }
-}
-
-@mixin wide {
-  @media (min-width: #{$wide}) {
     @content;
   }
 }

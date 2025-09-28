@@ -51,7 +51,8 @@ body:has(.auth-layout) {
   background: $bg-surface;
   padding: $spacing-2xl;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   height: 100vh;
 }
 
@@ -60,7 +61,7 @@ body:has(.auth-layout) {
   max-width: none;
   background: $bg-surface;
   border-radius: $radius-xl;
-  padding: $spacing-lg;
+  padding: $spacing-md;
   position: relative;
   z-index: 1;
   display: flex;
@@ -70,33 +71,28 @@ body:has(.auth-layout) {
   margin: auto;
 }
 
-@include mobile {
+@include very-small {
   .auth-layout {
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
+    padding: $spacing-xs;
+  }
+
+  .auth-card-width {
+    width: 100% !important;
   }
 
   .auth-promo {
-    flex: none;
-    height: 40vh;
-    padding: $spacing-lg;
-    overflow: hidden;
-  }
-
-  .auth-promo-title {
-    font-size: 1.75rem;
-  }
-
-  .auth-promo-text {
-    font-size: 1rem;
+    display: none;
   }
 
   .auth-form-section {
     flex: 1;
-    padding: $spacing-lg;
-    overflow: hidden;
-    height: 60vh;
+    padding: $spacing-sm;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -106,5 +102,76 @@ body:has(.auth-layout) {
     width: 100%;
     max-width: 100%;
     margin: 0;
+    padding: $spacing-xs $spacing-sm;
+  }
+}
+
+@include small {
+  .auth-layout {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    padding: $spacing-sm;
+  }
+
+  .auth-card-width {
+    width: 100% !important;
+  }
+
+  .auth-promo {
+    display: none;
+  }
+
+  .auth-form-section {
+    flex: 1;
+    padding: $spacing-md;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: $spacing-xs $spacing-md;
+  }
+}
+
+@include tablet {
+  .auth-layout {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    padding: $spacing-md;
+  }
+
+  .auth-card-width {
+    width: 100% !important;
+  }
+
+  .auth-promo {
+    display: none;
+  }
+
+  .auth-form-section {
+    flex: 1;
+    padding: $spacing-md;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: $spacing-md;
   }
 }

@@ -199,7 +199,12 @@
   gap: $spacing-lg;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 
-  @include mobile {
+  @include very-small {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+
+  @include small {
     grid-template-columns: 1fr;
     gap: $spacing-md;
   }
@@ -301,7 +306,29 @@
 }
 
 // Responsive Cards
-@include mobile {
+@include very-small {
+  .card {
+    margin-bottom: $spacing-sm;
+  }
+
+  .card-header,
+  .card-body,
+  .card-footer {
+    padding: $spacing-sm;
+  }
+
+  .card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-xs;
+  }
+
+  .card-actions {
+    justify-content: center;
+  }
+}
+
+@include small {
   .card {
     margin-bottom: $spacing-md;
   }
