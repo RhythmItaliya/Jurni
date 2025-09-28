@@ -2,9 +2,15 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { validateRegisterForm } from './register';
-import { LoadingPage, Input, Button } from '@/components/ui';
+import {
+  LoadingPage,
+  Input,
+  Button,
+  Link,
+  Card,
+  CardBody,
+} from '@/components/ui';
 import { RegisterData } from '@/types/user';
 import { useRegister } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
@@ -67,6 +73,11 @@ function RegisterForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Prevent multiple submissions
+    if (registerMutation.isPending) {
+      return;
+    }
+
     const validation = validateRegisterForm(formData);
     if (!validation.isValid) {
       showError('Validation Error', validation.errors.join(', '));
@@ -87,116 +98,112 @@ function RegisterForm() {
           );
         }
       },
-      onError: error => {
-        const serverMessage =
-          error && typeof error === 'object' && 'response' in error
-            ? (
-                error as {
-                  response: { data?: { message?: string; error?: string } };
-                }
-              ).response.data?.message ||
-              (
-                error as {
-                  response: { data?: { message?: string; error?: string } };
-                }
-              ).response.data?.error ||
-              String((error as { response: { data?: unknown } }).response.data)
-            : (error as { message?: string })?.message;
-        showError('Registration Failed', serverMessage || 'An error occurred');
-      },
+      // Remove onError handler - useRegister hook already handles errors
     });
   };
 
-  if (registerMutation.isPending) {
-    return <LoadingPage />;
-  }
+  // Remove full page loading - use button spinner instead
 
   return (
     <div className="auth-layout">
-      <div className="auth-container">
-        <div className="auth-header">
-          <div className="auth-logo">Jurni</div>
-          <h1 className="auth-title">Create your account</h1>
-          <p className="auth-subtitle">Join us and start your journey today.</p>
-        </div>
+      {/* Left side - Colorful background only */}
+      <div className="auth-promo"></div>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <Input
-              id="username"
-              name="username"
-              type="text"
-              required
-              className="form-input"
-              placeholder="Username"
-              value={formData.username}
-              onChange={handleInputChange}
-            />
-          </div>
+      {/* Right side - Form section with card */}
+      <div className="auth-form-section">
+        <Card variant="elevated" className="card-elevated auth-card-width">
+          <CardBody>
+            <div className="auth-container">
+              <div className="auth-header">
+                <div className="auth-logo-placeholder"></div>
+                <h1 className="auth-title">Create Account</h1>
+                <p className="auth-subtitle">
+                  Join us and start your journey today
+                </p>
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="form-input"
-              placeholder="Email address"
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-          </div>
+              <form className="auth-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="username">Username</label>
+                  <Input
+                    id="username"
+                    name="username"
+                    type="text"
+                    className="form-input"
+                    placeholder="Username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    disabled={registerMutation.isPending}
+                  />
+                </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="form-input"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleInputChange}
-            />
-          </div>
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    className="form-input"
+                    placeholder="Email address"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    disabled={registerMutation.isPending}
+                  />
+                </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              className="form-input"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-            />
-          </div>
+                <div className="form-group">
+                  <label htmlFor="password">Password</label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    className="form-input"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    disabled={registerMutation.isPending}
+                  />
+                </div>
 
-          <div className="form-actions">
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              disabled={registerMutation.isPending}
-              className="auth-button"
-            >
-              {registerMutation.isPending
-                ? 'Creating account...'
-                : 'Create account'}
-            </Button>
-          </div>
+                <div className="form-group">
+                  <label htmlFor="confirmPassword">Confirm Password</label>
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    className="form-input"
+                    placeholder="Confirm Password"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    disabled={registerMutation.isPending}
+                  />
+                </div>
 
-          <div className="auth-links">
-            <Link href="/auth/login" className="auth-link">
-              Already have an account? Sign in
-            </Link>
-          </div>
-        </form>
+                <div className="form-actions">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    loading={registerMutation.isPending}
+                    loadingText="Creating account..."
+                    className="auth-button"
+                  >
+                    Create Account
+                  </Button>
+                </div>
+
+                <Link
+                  href="/auth/login"
+                  variant="forest"
+                  size="sm"
+                  className="auth-link"
+                >
+                  Already have an account? Sign In
+                </Link>
+              </form>
+            </div>
+          </CardBody>
+        </Card>
       </div>
     </div>
   );

@@ -1,0 +1,160 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// UI LINK COMPONENT STYLES - FOREST THEME
+// ========================================
+.ui-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  font-weight: $font-medium;
+  transition: all 0.3s ease;
+  border-radius: $radius-md;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-family: $font-family-base;
+
+  // Link Variants using your color system
+  &.primary {
+    color: $primary;
+    background: transparent;
+
+    &:hover {
+      color: $green-glow;
+      background: transparent;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      background: transparent;
+    }
+  }
+
+  &.secondary {
+    color: $text-secondary;
+    background: transparent;
+
+    &:hover {
+      color: $text-primary;
+      background: transparent;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      background: transparent;
+    }
+  }
+
+  &.ghost {
+    color: $stone;
+    background: transparent;
+
+    &:hover {
+      color: $text-primary;
+      background: transparent;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &.danger {
+    color: $accent;
+    background: transparent;
+
+    &:hover {
+      color: color.adjust($accent, $lightness: -10%);
+      background: transparent;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      background: transparent;
+    }
+  }
+
+  // Forest theme variants
+  &.forest {
+    color: $green-accent;
+    background: transparent;
+
+    &:hover {
+      color: $green-glow;
+      background: transparent;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      background: transparent;
+    }
+  }
+
+  &.warm {
+    color: $warm;
+    background: transparent;
+
+    &:hover {
+      color: color.adjust($warm, $lightness: -10%);
+      background: transparent;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      background: transparent;
+    }
+  }
+
+  &.sky {
+    color: $sky;
+    background: transparent;
+
+    &:hover {
+      color: color.adjust($sky, $lightness: -10%);
+      background: transparent;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      background: transparent;
+    }
+  }
+
+  &.warning {
+    color: $warm;
+    background: transparent;
+
+    &:hover {
+      color: color.adjust($warm, $lightness: -10%);
+      background: transparent;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      background: transparent;
+    }
+  }
+
+  // Link Sizes
+  &.sm {
+    font-size: $text-xs;
+  }
+
+  &.md {
+    font-size: $text-sm;
+  }
+
+  &.lg {
+    font-size: $text-base;
+  }
+}

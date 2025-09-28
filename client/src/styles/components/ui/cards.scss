@@ -12,41 +12,29 @@
   border: 1px solid $border;
   border-radius: $radius-lg;
   box-shadow: 0 4px 6px $shadow-light;
-  transition: all 0.3s ease;
   overflow: hidden;
-
-  &:hover {
-    box-shadow: 0 6px 8px $shadow-medium;
-    transform: translateY(-2px);
-  }
+  // No hover effects
 }
 
 // Card Variants
 .card-elevated {
   box-shadow: 0 10px 25px $shadow-light;
-
-  &:hover {
-    box-shadow: 0 15px 35px $shadow-medium;
-  }
+  // No hover effects
 }
 
 .card-flat {
-  box-shadow: none;
+  box-shadow: 0 2px 8px $shadow-light;
   border: 1px solid $border;
-
-  &:hover {
-    box-shadow: 0 2px 4px $shadow-light;
-  }
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  // No hover effects
 }
 
 .card-outlined {
   background-color: transparent;
   border: 2px solid $border;
-
-  &:hover {
-    border-color: $primary;
-    box-shadow: 0 0 0 3px $primary-light;
-  }
+  // No hover effects
 }
 
 // Card Header
@@ -72,6 +60,9 @@
 // Card Body
 .card-body {
   padding: $spacing-lg;
+  width: 100%;
+  display: flex;
+  flex: 1;
 
   &:first-child {
     padding-top: $spacing-lg;
@@ -187,9 +178,7 @@
       border-bottom: none;
     }
 
-    &:hover {
-      background-color: $bg-secondary;
-    }
+    // No hover effects
 
     .card-list-item-content {
       flex: 1;
@@ -277,16 +266,7 @@
 // Interactive Cards
 .card-interactive {
   cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 12px $shadow-medium;
-  }
-
-  &:active {
-    transform: translateY(-2px);
-  }
+  // No hover effects
 }
 
 // Card Loading

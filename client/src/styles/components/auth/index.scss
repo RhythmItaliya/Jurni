@@ -1,0 +1,13 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// AUTH COMPONENTS INDEX
+// ========================================
+
+@use 'layout' as auth-layout;
+@use 'header' as auth-header;
+@use 'forms' as auth-forms;
+@use 'links' as auth-links;
+@use 'otp' as auth-otp;

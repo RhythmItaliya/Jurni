@@ -66,6 +66,7 @@ $bg-secondary: var(--bg-secondary);
 $bg-surface: var(--bg-surface);
 $text-primary: var(--text-primary);
 $text-secondary: var(--text-secondary);
+$text-on-green: var(--text-on-green);
 $border: var(--border);
 $border-hover: var(--border-hover);
 $shadow: var(--shadow);
@@ -137,8 +138,9 @@ $radius-md: 0.5rem;
 $radius-lg: 0.75rem;
 $radius-xl: 1rem;
 
-// Breakpoints
-$mobile: 480px;
-$tablet: 768px;
-$desktop: 1024px;
-$wide: 1280px;
+// Responsive Breakpoints
+$very-small: 320px; // Very small phones
+$small: 480px; // Small phones
+$medium: 768px; // Tablets
+$large: 1024px; // Small desktops
+$very-large: 1440px; // Large desktops

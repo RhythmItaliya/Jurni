@@ -1,7 +1,38 @@
 @use 'sass:color';
 @use 'variables' as *;
 
-// Responsive Mixins
+// Responsive Mixins - All Device Sizes
+@mixin very-small {
+  @media (max-width: #{$very-small - 1px}) {
+    @content;
+  }
+}
+
+@mixin small {
+  @media (max-width: #{$small - 1px}) {
+    @content;
+  }
+}
+
+@mixin medium {
+  @media (min-width: #{$medium}) and (max-width: #{$large - 1px}) {
+    @content;
+  }
+}
+
+@mixin large {
+  @media (min-width: #{$large}) and (max-width: #{$very-large - 1px}) {
+    @content;
+  }
+}
+
+@mixin very-large {
+  @media (min-width: #{$very-large}) {
+    @content;
+  }
+}
+
+// Legacy mixins (for compatibility)
 @mixin mobile {
   @media (max-width: #{$mobile - 1px}) {
     @content;

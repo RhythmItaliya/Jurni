@@ -2,9 +2,15 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { validateOTPForm } from './verify-otp';
-import { LoadingPage, Input, Button } from '@/components/ui';
+import {
+  LoadingPage,
+  Input,
+  Button,
+  Link,
+  Card,
+  CardBody,
+} from '@/components/ui';
 import { useVerifyOTP, useResendOTP } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
 
@@ -70,11 +76,34 @@ function VerifyOTPForm() {
   };
 
   /**
+   * Handle paste event to fill all OTP inputs at once
+   * @param {React.ClipboardEvent} e - Clipboard event
+   */
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').trim();
+
+    // Only process if pasted data is 6 characters and contains only letters/numbers
+    if (pastedData.length === 6 && /^[A-Za-z0-9]+$/.test(pastedData)) {
+      const newOtp = pastedData.toUpperCase().split('');
+      setOtp(newOtp);
+
+      // Focus the last input
+      inputRefs.current[5]?.focus();
+    }
+  };
+
+  /**
    * Handle OTP form submission and verification
    * @param {React.FormEvent} e - Form submit event
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Prevent multiple submissions
+    if (verifyOTPMutation.isPending) {
+      return;
+    }
 
     const otpString = otp.join('');
     const validation = validateOTPForm(otpString);
@@ -95,28 +124,7 @@ function VerifyOTPForm() {
         otp: otpString,
       },
       {
-        onError: error => {
-          const serverMessage =
-            error && typeof error === 'object' && 'response' in error
-              ? (
-                  error as {
-                    response: { data?: { message?: string; error?: string } };
-                  }
-                ).response.data?.message ||
-                (
-                  error as {
-                    response: { data?: { message?: string; error?: string } };
-                  }
-                ).response.data?.error ||
-                String(
-                  (error as { response: { data?: unknown } }).response.data
-                )
-              : (error as { message?: string })?.message;
-          showError(
-            'Verification Failed',
-            serverMessage || 'An error occurred'
-          );
-        },
+        // Remove onError handler - useVerifyOTP hook already handles errors
       }
     );
   };
@@ -138,12 +146,7 @@ function VerifyOTPForm() {
         showSuccess('OTP Sent', 'A new OTP has been sent to your email');
       },
       onError: error => {
-        const serverMessage =
-          error && typeof error === 'object' && 'response' in error
-            ? (error as { response: { data?: { message?: string } } }).response
-                .data?.message
-            : (error as { message?: string })?.message;
-        showError('Resend Failed', serverMessage || 'An error occurred');
+        // Remove onError handler - useResendOTP hook already handles errors
       },
     });
   };
@@ -152,94 +155,117 @@ function VerifyOTPForm() {
     return <LoadingPage />;
   }
 
-  if (verifyOTPMutation.isPending) {
-    return <LoadingPage />;
-  }
+  // Remove full page loading for OTP verification - use button spinner instead
 
   return (
     <div className="auth-layout">
-      <div className="auth-container">
-        <div className="auth-header">
-          <div className="auth-logo">Jurni</div>
-          <h1 className="auth-title">Verify Your Registration</h1>
-          <p className="auth-subtitle">
-            We sent a 6-character code to{' '}
-            <span className="text-primary">{decodedEmail}</span>
-            {decodedUsername && (
-              <>
-                {' '}
-                for user <span className="text-primary">{decodedUsername}</span>
-              </>
-            )}
-          </p>
-        </div>
+      {/* Left side - Image */}
+      <div className="auth-promo"></div>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="otp">Enter OTP</label>
-            <div className="otp-inputs">
-              {otp.map((digit, index) => (
-                <Input
-                  key={index}
-                  ref={el => {
-                    inputRefs.current[index] = el;
-                  }}
-                  type="text"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleInputChange(index, e.target.value)
-                  }
-                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
-                    handleKeyDown(index, e)
-                  }
-                  className="otp-input"
-                  placeholder="?"
-                />
-              ))}
+      {/* Right side - OTP form section with card */}
+      <div className="auth-form-section">
+        <Card variant="elevated" className="card-flat auth-card-width">
+          <CardBody>
+            <div className="auth-container">
+              <div className="auth-header">
+                <div className="auth-logo-placeholder"></div>
+                <h1 className="auth-title">Verify Your Registration</h1>
+                <p className="auth-subtitle">
+                  We sent a 6-character code to{' '}
+                  <span className="text-primary">{decodedEmail}</span>
+                  {decodedUsername && (
+                    <>
+                      {' '}
+                      for user{' '}
+                      <span className="text-primary">{decodedUsername}</span>
+                    </>
+                  )}
+                </p>
+              </div>
+
+              <form
+                className="auth-form"
+                onSubmit={handleSubmit}
+                onPaste={handlePaste}
+              >
+                <div className="form-group">
+                  <label htmlFor="otp" className="otp-label">
+                    Enter OTP
+                  </label>
+                  <div className="otp-inputs">
+                    {otp.map((digit, index) => (
+                      <Input
+                        key={index}
+                        ref={el => {
+                          inputRefs.current[index] = el;
+                        }}
+                        type="text"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          handleInputChange(index, e.target.value)
+                        }
+                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+                          handleKeyDown(index, e)
+                        }
+                        className="otp-input"
+                        placeholder="•"
+                        disabled={verifyOTPMutation.isPending}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="form-actions">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    loading={verifyOTPMutation.isPending}
+                    loadingText="Verifying..."
+                    className="auth-button"
+                  >
+                    Verify OTP
+                  </Button>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleResendOTPRequest}
+                  loading={resendOTPMutation.isPending}
+                  loadingText="Sending..."
+                  className="auth-link"
+                >
+                  Didn&apos;t receive the code? Resend
+                </Button>
+
+                <div className="auth-divider">
+                  <span>or</span>
+                </div>
+
+                <Link
+                  href={`/auth/register?email=${encodeURIComponent(decodedEmail || '')}&username=${encodeURIComponent(decodedUsername || '')}&changeEmail=true`}
+                  variant="warning"
+                  size="sm"
+                  className="auth-link"
+                >
+                  Change Email Address
+                </Link>
+
+                <Link
+                  href="/auth/register"
+                  variant="ghost"
+                  size="sm"
+                  className="auth-link"
+                >
+                  Back to registration
+                </Link>
+              </form>
             </div>
-          </div>
-
-          <div className="form-actions">
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              disabled={verifyOTPMutation.isPending}
-              className="auth-button"
-            >
-              {verifyOTPMutation.isPending ? 'Verifying...' : 'Verify OTP'}
-            </Button>
-          </div>
-
-          <div className="auth-links">
-            <button
-              type="button"
-              onClick={handleResendOTPRequest}
-              disabled={resendOTPMutation.isPending}
-              className="auth-link"
-            >
-              {resendOTPMutation.isPending
-                ? 'Sending...'
-                : "Didn't receive the code? Resend"}
-            </button>
-
-            <div className="auth-divider">
-              <span>or</span>
-            </div>
-
-            <Link
-              href={`/auth/register?email=${encodeURIComponent(decodedEmail || '')}&username=${encodeURIComponent(decodedUsername || '')}&changeEmail=true`}
-              className="auth-link"
-            >
-              Change Email Address
-            </Link>
-
-            <Link href="/auth/register" className="auth-link">
-              Back to registration
-            </Link>
-          </div>
-        </form>
+          </CardBody>
+        </Card>
       </div>
     </div>
   );

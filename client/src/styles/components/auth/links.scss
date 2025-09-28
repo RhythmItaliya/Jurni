@@ -2,44 +2,42 @@
 @use '../../variables' as *;
 @use '../../mixins' as *;
 
-// ========================================
-// AUTH LINKS STYLES
-// ========================================
-.auth-links {
+.auth-link {
+  display: block;
   text-align: center;
-  margin-top: $spacing-xl;
+  margin-top: $spacing-lg;
+  text-decoration: none;
+  transition: all 0.3s ease;
 
-  .auth-link {
-    color: $primary;
+  &:hover {
     text-decoration: none;
-    font-size: 0.875rem;
+  }
+}
 
-    &:hover {
-      color: color.adjust($primary, $lightness: -10%);
-      text-decoration: underline;
-    }
+.auth-divider {
+  margin: $spacing-lg 0;
+  text-align: center;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: $border;
   }
 
-  .auth-divider {
-    margin: $spacing-lg 0;
-    text-align: center;
+  span {
+    background: $bg-surface;
+    padding: 0 $spacing-md;
+    color: $text-secondary;
+    font-size: $text-xs;
+    font-weight: $font-medium;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background-color: $stone;
-    }
-
-    span {
-      background-color: white;
-      padding: 0 $spacing-md;
-      color: $stone;
-      font-size: 0.75rem;
-    }
+    z-index: 1;
   }
 }

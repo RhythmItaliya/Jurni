@@ -2,42 +2,94 @@
 @use '../../variables' as *;
 @use '../../mixins' as *;
 
-// ========================================
-// AUTH FORM STYLES
-// ========================================
 .auth-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  font-family: $font-family-base;
+  justify-content: center;
+
   .form-group {
     margin-bottom: $spacing-lg;
+    flex-shrink: 0;
 
     label {
       display: block;
-      font-weight: $font-medium;
+      font-weight: $font-semibold;
       color: $charcoal;
       margin-bottom: $spacing-sm;
       font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .form-input {
-      @include input-base;
       width: 100%;
-    }
+      padding: $spacing-sm $spacing-md;
+      border: 2px solid $border;
+      border-radius: $radius-lg;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+      background: $bg-secondary;
+      height: 2.5rem;
 
-    .form-error {
-      color: $accent;
-      font-size: 0.75rem;
-      margin-top: $spacing-xs;
+      &:focus {
+        outline: none;
+        border-color: $primary;
+        background: $bg-surface;
+        box-shadow: 0 0 0 3px $primary-light;
+        transform: translateY(-1px);
+      }
+
+      &:hover {
+        border-color: $border-hover;
+        background: $bg-surface;
+      }
+
+      &::placeholder {
+        color: $text-secondary;
+        font-weight: $font-normal;
+      }
     }
   }
 
   .form-actions {
-    margin-top: $spacing-xl;
+    margin-top: $spacing-lg;
+    flex-shrink: 0;
 
     .auth-button {
-      @include button-primary;
       width: 100%;
       padding: $spacing-md;
-      font-size: 1rem;
+      font-size: 0.875rem;
       font-weight: $font-semibold;
+      border-radius: $radius-lg;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+      cursor: pointer;
+      background: $primary;
+      color: $text-on-green;
+      height: 2.5rem;
+
+      &:hover {
+        background: $green-glow;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px $primary-strong;
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 15px $primary-medium;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
     }
   }
 }

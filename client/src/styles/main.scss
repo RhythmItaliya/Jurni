@@ -4,11 +4,4 @@
 @use 'base';
 @use 'components/ui';
 @use 'components/layout';
-@use 'components/auth/layout' as auth-layout;
-@use 'components/auth/header' as auth-header;
-@use 'components/auth/forms' as auth-forms;
-@use 'components/auth/links' as auth-links;
-@use 'components/auth/messages' as auth-messages;
-@use 'components/auth/otp' as auth-otp;
-@use 'components/auth/loading' as auth-loading;
-@use 'components/auth/responsive' as auth-responsive;
+@use 'components/auth' as auth;

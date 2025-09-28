@@ -364,6 +364,28 @@
       animation: none;
     }
   }
+
+  &.loading {
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+}
+
+.button-loading-content {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.button-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-text {
+  display: flex;
+  align-items: center;
 }
 
 @keyframes pulse-glow {

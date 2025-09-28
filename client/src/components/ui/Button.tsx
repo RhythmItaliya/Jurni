@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Spinner } from './Spinner';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -29,6 +30,8 @@ interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
+  loading?: boolean;
+  loadingText?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -42,10 +45,23 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
   disabled = false,
   type = 'button',
+  loading = false,
+  loadingText,
 }) => {
   const effectClass = effect !== 'none' ? effect : '';
 
   const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="button-loading-content">
+          <span className="button-spinner">
+            <Spinner size="sm" />
+          </span>
+          <span className="button-text">{loadingText || children}</span>
+        </div>
+      );
+    }
+
     if (!icon) {
       return children;
     }
@@ -77,8 +93,8 @@ export const Button: React.FC<ButtonProps> = ({
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
-      className={`button ${variant} ${size} ${effectClass} ${className}`.trim()}
+      disabled={disabled || loading}
+      className={`button ${variant} ${size} ${effectClass} ${loading ? 'loading' : ''} ${className}`.trim()}
     >
       {renderContent()}
     </button>
