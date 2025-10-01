@@ -61,6 +61,15 @@ export class User {
   otpVerifiedAt?: Date;
 
   @ApiProperty({
+    description: 'Password reset token',
+    example: 'abc123def456ghi789',
+    type: String,
+    required: false,
+  })
+  @Prop({ required: false })
+  resetToken?: string;
+
+  @ApiProperty({
     description: 'User creation timestamp',
     example: '2024-01-01T00:00:00.000Z',
     type: Date,

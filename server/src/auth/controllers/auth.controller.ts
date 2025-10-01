@@ -9,6 +9,10 @@ import {
   ResendOTPDto,
   UpdateTempUserEmailDto,
   UpdateTempUserUsernameDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
+  ForgotPasswordResponseDto,
+  ResetPasswordResponseDto,
 } from '../dto/auth.dto';
 
 @ApiTags('Authentication')
@@ -117,5 +121,62 @@ export class AuthController {
       updateUsernameDto.email,
       updateUsernameDto.newUsername,
     );
+  }
+
+  /**
+   * Request password reset
+   * @param forgotPasswordDto - Email address for password reset
+   * @returns Password reset result
+   */
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Request password reset' })
+  @ApiResponse({
+    status: 200,
+    description: 'Password reset link sent if account exists',
+    type: ForgotPasswordResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Invalid email format' })
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(forgotPasswordDto.email);
+  }
+
+  /**
+   * Reset password with token
+   * @param resetPasswordDto - Reset token and new password
+   * @returns Password reset result
+   */
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Reset password with token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Password reset successfully',
+    type: ResetPasswordResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid token or password requirements',
+  })
+  @ApiResponse({ status: 404, description: 'Invalid or expired token' })
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(
+      resetPasswordDto.token,
+      resetPasswordDto.password,
+    );
+  }
+
+  /**
+   * Verify reset token
+   * @param token - Reset token to verify
+   * @returns Token verification result
+   */
+  @Post('verify-reset-token')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify password reset token' })
+  @ApiResponse({ status: 200, description: 'Token is valid' })
+  @ApiResponse({ status: 404, description: 'Invalid or expired token' })
+  async verifyResetToken(@Body() { token }: { token: string }) {
+    return this.authService.verifyResetToken(token);
   }
 }

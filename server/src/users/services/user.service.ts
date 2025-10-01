@@ -362,4 +362,43 @@ export class UserService {
       createdAt: { $lt: oneHourAgo },
     });
   }
+
+  /**
+   * Find user by reset token (for password reset)
+   * @param token - Reset token
+   * @returns User document or null
+   */
+  async findByResetToken(token: string): Promise<UserDocument | null> {
+    return this.userModel.findOne({ resetToken: token }).exec();
+  }
+
+  /**
+   * Update user password
+   * @param uuid - User UUID
+   * @param password - New password (plain text)
+   * @returns Updated user document
+   */
+  async updatePassword(uuid: string, password: string): Promise<UserDocument> {
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update user password
+    const user = await this.userModel
+      .findOneAndUpdate(
+        { uuid },
+        {
+          password: hashedPassword,
+          updatedAt: new Date(),
+          resetToken: null, // Clear any reset token
+        },
+        { new: true, runValidators: true },
+      )
+      .exec();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
 }

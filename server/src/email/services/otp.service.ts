@@ -121,4 +121,27 @@ export class OTPService {
       userUuid,
     });
   }
+
+  /**
+   * Generate a secure reset token for password reset
+   * @param userUuid - User UUID
+   * @returns Generated reset token
+   */
+  async generateResetToken(userUuid: string): Promise<string> {
+    // Generate a secure random token
+    const resetToken = uuidv4() + '-' + Date.now().toString(36);
+    return resetToken;
+  }
+
+  /**
+   * Invalidate OTP/token for a user and type
+   * @param userUuid - User UUID
+   * @param type - OTP/token type
+   */
+  async invalidateOTP(userUuid: string, type: string): Promise<void> {
+    await this.otpModel.deleteMany({
+      userUuid,
+      type,
+    });
+  }
 }

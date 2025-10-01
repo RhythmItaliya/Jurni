@@ -226,3 +226,101 @@ export class UpdateTempUserUsernameDto {
   })
   newUsername: string;
 }
+
+export class ForgotPasswordDto {
+  @ApiProperty({
+    description: 'User email address',
+    example: 'john@example.com',
+    type: String,
+  })
+  @IsEmail({}, { message: 'Please provide a valid email address' })
+  @IsNotEmpty({ message: 'Email is required' })
+  email: string;
+}
+
+export class ResetPasswordDto {
+  @ApiProperty({
+    description: 'Password reset token from email',
+    example: 'abc123def456ghi789',
+    type: String,
+  })
+  @IsString({ message: 'Token must be a string' })
+  @IsNotEmpty({ message: 'Token is required' })
+  token: string;
+
+  @ApiProperty({
+    description: 'New password (minimum 6 characters)',
+    example: 'password123',
+    type: String,
+    minLength: 6,
+  })
+  @IsString({ message: 'Password must be a string' })
+  @IsNotEmpty({ message: 'Password is required' })
+  @MinLength(6, { message: 'Password must be at least 6 characters' })
+  password: string;
+}
+
+export class ForgotPasswordResponseDto {
+  @ApiProperty({
+    description: 'Success message',
+    example:
+      "If an account with that email exists, we've sent a password reset link.",
+    type: String,
+  })
+  message: string;
+
+  @ApiProperty({
+    description: 'Email address where reset link was sent',
+    example: 'john@example.com',
+    type: String,
+  })
+  email: string;
+}
+
+export class ResetPasswordResponseDto {
+  @ApiProperty({
+    description: 'Success message',
+    example: 'Password has been reset successfully',
+    type: String,
+  })
+  message: string;
+
+  @ApiProperty({
+    description: 'User information',
+    type: 'object',
+    properties: {
+      uuid: {
+        type: 'string',
+        description: 'Unique user identifier',
+        example: '123e4567-e89b-12d3-a456-426614174000',
+      },
+      username: {
+        type: 'string',
+        description: 'User username',
+        example: 'johndoe',
+      },
+      email: {
+        type: 'string',
+        description: 'User email address',
+        example: 'john@example.com',
+      },
+      isActive: {
+        type: 'boolean',
+        description: 'User account active status',
+        example: true,
+      },
+      updatedAt: {
+        type: 'string',
+        description: 'Last update timestamp',
+        example: '2024-01-01T00:00:00.000Z',
+      },
+    },
+  })
+  user: {
+    uuid: string;
+    username: string;
+    email: string;
+    isActive: boolean;
+    updatedAt: string;
+  };
+}

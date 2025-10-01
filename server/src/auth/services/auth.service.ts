@@ -258,4 +258,101 @@ export class AuthService {
       },
     };
   }
+
+  /**
+   * Request password reset
+   * @param email - User email address
+   * @returns Password reset result
+   */
+  async forgotPassword(email: string) {
+    try {
+      // Find user by email
+      const user = await this.userService.findByEmail(email);
+
+      // Strict behavior: surface errors for invalid or inactive accounts
+      if (!user) {
+        throw new NotFoundException('No account found with this email');
+      }
+
+      if (!user.isActive) {
+        throw new BadRequestException(
+          'Account is not verified. Please complete your registration first.',
+        );
+      }
+
+      // Generate reset token
+      const resetToken = await this.otpService.generateResetToken(user.uuid);
+
+      // Store reset token in user document
+      await this.userService.update(user.uuid, { resetToken });
+
+      // Send password reset email
+      await this.emailService.sendPasswordResetEmail(
+        user.email,
+        user.username,
+        resetToken,
+      );
+
+      return {
+        message: 'Password reset link sent to your email',
+        email: email,
+      };
+    } catch (error) {
+      throw error instanceof BadRequestException ||
+        error instanceof NotFoundException
+        ? error
+        : new BadRequestException('Failed to process password reset request');
+    }
+  }
+
+  /**
+   * Reset password with token
+   * @param token - Reset token from email
+   * @param password - New password
+   * @returns Reset result
+   */
+  async resetPassword(token: string, password: string) {
+    // Find user by reset token
+    const user = await this.userService.findByResetToken(token);
+
+    if (!user) {
+      throw new NotFoundException('Invalid or expired reset token');
+    }
+
+    // Update user password and clear reset token
+    const updatedUser = await this.userService.updatePassword(
+      user.uuid,
+      password,
+    );
+
+    return {
+      message: 'Password has been reset successfully',
+      user: {
+        uuid: updatedUser.uuid,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        isActive: updatedUser.isActive,
+        updatedAt: updatedUser.updatedAt.toISOString(),
+      },
+    };
+  }
+
+  /**
+   * Verify reset token
+   * @param token - Reset token to verify
+   * @returns Verification result
+   */
+  async verifyResetToken(token: string) {
+    // Find user by reset token
+    const user = await this.userService.findByResetToken(token);
+
+    if (!user) {
+      throw new NotFoundException('Invalid or expired reset token');
+    }
+
+    return {
+      message: 'Token is valid',
+      valid: true,
+    };
+  }
 }
