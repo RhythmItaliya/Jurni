@@ -1,0 +1,195 @@
+'use client';
+
+import { useState, Suspense } from 'react';
+import {
+  LoadingPage,
+  Input,
+  Button,
+  Link,
+  Card,
+  CardBody,
+} from '@/components/ui';
+import { useForgotPassword } from '@/hooks/useAuth';
+import {
+  validateForgotPasswordForm,
+  ForgotPasswordData,
+} from './forgot-password';
+
+/**
+ * Forgot password form component
+ */
+function ForgotPasswordForm() {
+  const [formData, setFormData] = useState<ForgotPasswordData>({
+    email: '',
+  });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const forgotPasswordMutation = useForgotPassword();
+
+  /**
+   * Handle form input changes
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event
+   */
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  /**
+   * Handle form submission
+   * @param {React.FormEvent} e - Form submit event
+   */
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (forgotPasswordMutation.isPending) {
+      return;
+    }
+
+    const validation = validateForgotPasswordForm(formData);
+    if (!validation.isValid) {
+      return; // Error handling is done by the hook
+    }
+
+    forgotPasswordMutation.mutate(formData, {
+      onSuccess: () => {
+        setIsSubmitted(true);
+      },
+    });
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className="auth-layout">
+        {/* Left side - Colorful background only */}
+        <div className="auth-promo"></div>
+
+        {/* Right side - Form section with card */}
+        <div className="auth-form-section">
+          <Card variant="elevated" className="card-elevated auth-card-width">
+            <CardBody>
+              <div className="auth-container">
+                <div className="auth-header">
+                  <div className="auth-logo-placeholder"></div>
+                  <h1 className="auth-title">Check Your Email</h1>
+                  <p className="auth-subtitle">
+                    We&apos;ve sent a password reset link to {formData.email}
+                  </p>
+                </div>
+
+                <div className="auth-form">
+                  <div className="form-actions">
+                    <Button
+                      onClick={() => {
+                        // Send another reset link with the same email
+                        forgotPasswordMutation.mutate(formData, {
+                          onSuccess: () => {
+                            // Keep the success state
+                          },
+                        });
+                      }}
+                      variant="primary"
+                      size="lg"
+                      loading={forgotPasswordMutation.isPending}
+                      loadingText="Sending reset link..."
+                      className="auth-button"
+                    >
+                      Send Another Link
+                    </Button>
+                  </div>
+
+                  <Link
+                    href="/auth/login"
+                    variant="forest"
+                    size="sm"
+                    className="auth-link"
+                  >
+                    Back to Sign In
+                  </Link>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="auth-layout">
+      {/* Left side - Colorful background only */}
+      <div className="auth-promo"></div>
+
+      {/* Right side - Form section with card */}
+      <div className="auth-form-section">
+        <Card variant="elevated" className="card-elevated auth-card-width">
+          <CardBody>
+            <div className="auth-container">
+              <div className="auth-header">
+                <div className="auth-logo-placeholder"></div>
+                <h1 className="auth-title">Forgot Password?</h1>
+                <p className="auth-subtitle">
+                  Enter your email address and we&apos;ll send you a link to
+                  reset your password
+                </p>
+              </div>
+
+              <form className="auth-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="email">Email Address</label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    className="form-input"
+                    placeholder="Enter your email address"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    disabled={forgotPasswordMutation.isPending}
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    loading={forgotPasswordMutation.isPending}
+                    loadingText="Sending reset link..."
+                    className="auth-button"
+                  >
+                    Send Reset Link
+                  </Button>
+                </div>
+
+                <Link
+                  href="/auth/login"
+                  variant="forest"
+                  size="sm"
+                  className="auth-link"
+                >
+                  Back to Sign In
+                </Link>
+              </form>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Forgot password page component
+ * @returns {JSX.Element} The forgot password form component with loading state
+ */
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <ForgotPasswordForm />
+    </Suspense>
+  );
+}

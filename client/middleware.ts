@@ -6,6 +6,8 @@ const publicRoutes = [
   '/auth/login',
   '/auth/register',
   '/auth/verify-otp',
+  '/auth/forgot-password',
+  '/auth/reset-password',
   '/api/auth',
 ];
 

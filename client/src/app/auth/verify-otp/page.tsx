@@ -145,7 +145,7 @@ function VerifyOTPForm() {
         inputRefs.current[0]?.focus();
         showSuccess('OTP Sent', 'A new OTP has been sent to your email');
       },
-      onError: error => {
+      onError: () => {
         // Remove onError handler - useResendOTP hook already handles errors
       },
     });

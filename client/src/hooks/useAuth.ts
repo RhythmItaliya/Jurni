@@ -5,6 +5,8 @@ import api from '@/lib/axios';
 import { ENDPOINTS } from '@/lib/endpoints';
 import { RegisterData, LoginCredentials } from '@/types/user';
 import { VerifyOTPData } from '@/app/auth/verify-otp/verify-otp';
+import { ForgotPasswordData } from '@/app/auth/forgot-password/forgot-password';
+import { ResetPasswordData } from '@/app/auth/reset-password/reset-password';
 import { useReduxToast } from '@/hooks/useReduxToast';
 
 // Query keys for consistent caching
@@ -290,5 +292,158 @@ export function useSession() {
       return null;
     },
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Hook for forgot password request
+ * Handles password reset request with email validation
+ *
+ * @description
+ * - Sends password reset request to user's email
+ * - Validates email format before sending request
+ * - Provides feedback on request success/failure
+ * - Maintains security by not revealing if email exists
+ *
+ * @usedIn
+ * - ForgotPasswordPage component (/app/auth/forgot-password/page.tsx)
+ *
+ * @returns {UseMutationResult} Mutation object with forgot password state and methods
+ */
+export function useForgotPassword() {
+  const { showSuccess, showError } = useReduxToast();
+
+  return useMutation({
+    mutationFn: async (data: ForgotPasswordData) => {
+      const response = await api.post(ENDPOINTS.AUTH.FORGOT_PASSWORD, {
+        email: data.email,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      showSuccess(
+        'Reset Link Sent',
+        "If an account with that email exists, we've sent a password reset link."
+      );
+    },
+    onError: error => {
+      const serverMessage =
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError('Request Failed', serverMessage || 'An error occurred');
+    },
+  });
+}
+
+/**
+ * Hook for reset password
+ * Handles password reset with token validation
+ *
+ * @description
+ * - Resets user password using reset token from email
+ * - Validates password strength requirements
+ * - Automatically redirects to login page on success
+ * - Provides feedback on reset success/failure
+ *
+ * @usedIn
+ * - ResetPasswordPage component (/app/auth/reset-password/page.tsx)
+ *
+ * @returns {UseMutationResult} Mutation object with reset password state and methods
+ */
+export function useResetPassword() {
+  const router = useRouter();
+  const { showSuccess, showError } = useReduxToast();
+
+  return useMutation({
+    mutationFn: async (data: ResetPasswordData & { token: string }) => {
+      const response = await api.post(ENDPOINTS.AUTH.RESET_PASSWORD, {
+        token: data.token,
+        password: data.password,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      showSuccess(
+        'Password Reset Successful',
+        'Your password has been updated successfully'
+      );
+      router.push('/auth/login');
+    },
+    onError: error => {
+      const serverMessage =
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError('Reset Failed', serverMessage || 'An error occurred');
+    },
+  });
+}
+
+/**
+ * Hook for verifying reset token
+ * Handles reset token validation before showing reset form
+ *
+ * @description
+ * - Verifies reset token is valid and not expired
+ * - Used to validate token before showing reset form
+ * - Provides feedback on token validity
+ * - Handles token expiration gracefully
+ *
+ * @usedIn
+ * - ResetPasswordPage component (/app/auth/reset-password/page.tsx)
+ *
+ * @returns {UseMutationResult} Mutation object with token verification state and methods
+ */
+export function useVerifyResetToken() {
+  const { showError } = useReduxToast();
+
+  return useMutation({
+    mutationFn: async (token: string) => {
+      const response = await api.post(ENDPOINTS.AUTH.VERIFY_RESET_TOKEN, {
+        token,
+      });
+      return response.data;
+    },
+    onError: error => {
+      const serverMessage =
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError(
+        'Invalid Link',
+        serverMessage || 'This reset link is invalid or has expired'
+      );
+    },
   });
 }

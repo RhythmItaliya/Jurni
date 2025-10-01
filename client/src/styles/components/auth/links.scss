@@ -14,6 +14,27 @@
   }
 }
 
+.auth-links-container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+}
+
+.auth-link-forgot {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  color: $text-secondary;
+
+  &:hover {
+    text-decoration: none;
+    color: $primary;
+  }
+}
+
 .auth-divider {
   margin: $spacing-lg 0;
   text-align: center;

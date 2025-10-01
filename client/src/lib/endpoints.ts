@@ -12,6 +12,9 @@ export const ENDPOINTS = {
     RESEND_REGISTRATION_OTP: '/auth/resend-registration-otp',
     UPDATE_TEMP_USER_EMAIL: '/auth/update-temp-user-email',
     UPDATE_TEMP_USER_USERNAME: '/auth/update-temp-user-username',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
+    VERIFY_RESET_TOKEN: '/auth/verify-reset-token',
   },
 } as const;
 

@@ -134,14 +134,25 @@ function LoginForm() {
                   </Button>
                 </div>
 
-                <Link
-                  href="/auth/register"
-                  variant="forest"
-                  size="sm"
-                  className="auth-link"
-                >
-                  Don&apos;t have an account? Sign Up
-                </Link>
+                <div className="auth-links-container">
+                  <Link
+                    href="/auth/forgot-password"
+                    variant="forest"
+                    size="sm"
+                    className="auth-link-forgot"
+                  >
+                    Forgot Password?
+                  </Link>
+
+                  <Link
+                    href="/auth/register"
+                    variant="forest"
+                    size="sm"
+                    className="auth-link"
+                  >
+                    Don&apos;t have an account? Sign Up
+                  </Link>
+                </div>
               </form>
             </div>
           </CardBody>
