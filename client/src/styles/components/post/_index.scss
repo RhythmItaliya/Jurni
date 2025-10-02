@@ -1,0 +1,134 @@
+@use '../../variables' as *;
+
+.post-card-body {
+  padding: 0;
+}
+
+.post-container {
+  position: relative;
+  width: 540px;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .navigation-arrows {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    pointer-events: none;
+
+    button {
+      pointer-events: auto !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      width: 36px !important;
+      height: 36px !important;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .prev,
+    .next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba($bg-surface, 0.9) !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+
+      &:hover {
+        background: $bg-surface !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+      }
+
+      svg {
+        color: $text-primary;
+      }
+    }
+
+    .prev {
+      left: -25px;
+    }
+
+    .next {
+      right: -25px;
+    }
+  }
+}
+
+.post-card {
+  background: $bg-surface;
+  border-radius: $radius-lg;
+  width: 500px;
+  height: 600px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-body {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.post-media {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  flex: 1;
+  background: $bg-secondary;
+
+  .post-swiper {
+    width: 100%;
+    height: 100%;
+  }
+
+  .media-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($bg-surface, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+
+    .spinner {
+      border-width: 3px;
+    }
+  }
+}
+
+.post-image,
+.post-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+
+.post-footer {
+  padding: $spacing-sm;
+  border-top: 1px solid $border;
+  background: $bg-surface;
+}

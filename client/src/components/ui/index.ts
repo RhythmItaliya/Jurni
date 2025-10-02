@@ -6,3 +6,6 @@ export { default as Input } from './Input';
 export { Button } from './Button';
 export { Link } from './Link';
 export { Card, CardHeader, CardBody, CardFooter } from './Card';
+export { default as PostCard } from './post/PostCard';
+export { default as PostActions } from './post/PostActions';
+export { default as SkeletonPost } from './post/SkeletonPost';

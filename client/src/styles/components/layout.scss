@@ -239,13 +239,22 @@
 .main-body {
   flex: 1;
   background-color: $bg-surface;
-  padding: $spacing-lg;
+  padding: 2rem 0;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
   transition: background-color 0.3s ease;
   min-height: 0;
-  max-height: calc(100vh - 8rem);
+  height: calc(100vh - 8rem);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  &:first-child {
+    padding-top: 2rem;
+  }
+
+  scroll-behavior: smooth;
 }
 
 .right-sidebar {

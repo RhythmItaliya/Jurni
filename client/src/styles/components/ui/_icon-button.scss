@@ -1,0 +1,135 @@
+@use '../../variables' as *;
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  padding: 0;
+  background: transparent;
+
+  // Sizes
+  &.icon-xs {
+    width: 24px;
+    height: 24px;
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  &.icon-sm {
+    width: 32px;
+    height: 32px;
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &.icon-md {
+    width: 40px;
+    height: 40px;
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  &.icon-lg {
+    width: 48px;
+    height: 48px;
+    svg {
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  // Variants
+  &.primary {
+    color: var(--text-on-green);
+    background: $primary;
+    &:hover {
+      background: $green-hover;
+    }
+  }
+
+  &.secondary {
+    color: var(--text-on-green);
+    background: $secondary;
+    &:hover {
+      background: $green-accent;
+    }
+  }
+
+  &.outline {
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    &:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-secondary);
+    }
+  }
+
+  &.ghost {
+    color: var(--text-primary);
+    &:hover {
+      background: var(--bg-secondary);
+    }
+  }
+
+  &.accent {
+    color: white;
+    background: $accent;
+    &:hover {
+      background: darken($accent, 10%);
+    }
+  }
+
+  &.warm {
+    color: white;
+    background: $warm;
+    &:hover {
+      background: darken($warm, 10%);
+    }
+  }
+
+  &.sky {
+    color: white;
+    background: $sky;
+    &:hover {
+      background: darken($sky, 10%);
+    }
+  }
+
+  // States
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    &:hover {
+      transform: none;
+    }
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--bg-primary),
+      0 0 0 4px rgba($primary, 0.2);
+  }
+
+  // With text
+  &.with-text {
+    border-radius: $radius-lg;
+    padding: 0 $spacing-sm;
+    gap: $spacing-xs;
+
+    span {
+      font-size: $text-sm;
+      font-weight: $font-medium;
+    }
+  }
+}
