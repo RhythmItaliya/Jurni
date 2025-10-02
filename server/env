@@ -1,0 +1,12 @@
+NODE_ENV=development
+PORT=8081
+
+MONGODB_URI=mongodb://localhost:27017/jurni
+
+JWT_SECRET=your-secret-key-change-this
+
+CORS_ORIGIN=http://localhost:3000
+
+LOG_LEVEL=info
+
+SWAGGER_PATH=api
