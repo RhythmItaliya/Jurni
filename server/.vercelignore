@@ -1,13 +1,5 @@
 node_modules
 dist
-.env
 .env.local
 .git
 *.log
-src
-config
-nest-cli.json
-tsconfig.json
-tsconfig.build.json
-eslint.config.mjs
-.prettierrc
