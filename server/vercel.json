@@ -1,6 +1,8 @@
 {
   "version": 2,
-  "buildCommand": null,
+  "buildCommand": "",
+  "installCommand": "npm install --only=production",
+  "devCommand": "",
   "rewrites": [
     { "source": "/(.*)", "destination": "/api" }
   ]

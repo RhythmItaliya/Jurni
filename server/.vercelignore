@@ -10,3 +10,7 @@ src/
 config/
 .prettierrc
 eslint.config.mjs
+index.js
+package-nestjs.json
+package.json.bak
+package-lock.json
