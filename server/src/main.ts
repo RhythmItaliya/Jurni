@@ -62,8 +62,13 @@ async function createExpressApp(): Promise<express.Express> {
 
 // For Vercel serverless
 export default async (req: any, res: any) => {
-  const app = await createExpressApp();
-  app(req, res);
+  try {
+    const app = await createExpressApp();
+    return app(req, res);
+  } catch (error) {
+    console.error('Error in serverless function:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };
 
 // For local development

@@ -1,1 +1,3 @@
-module.exports = require('./dist/src/main.js');
+const { default: handler } = require('./dist/src/main.js');
+
+module.exports = handler;
