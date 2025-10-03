@@ -3,3 +3,10 @@ dist
 .env.local
 .git
 *.log
+nest-cli.json
+tsconfig.json
+tsconfig.build.json
+src/
+config/
+.prettierrc
+eslint.config.mjs
