@@ -50,9 +50,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         version: '1.0.0',
         endpoints: {
           health: '/api/health',
-          root: '/'
+          root: '/',
+          auth: {
+            login: '/auth/login',
+            register: '/auth/register',
+            'verify-otp': '/auth/verify-registration-otp',
+            'forgot-password': '/auth/forgot-password',
+            'reset-password': '/auth/reset-password'
+          }
         },
         timestamp: new Date().toISOString()
+      });
+    }
+
+    // Handle authentication endpoints (placeholder responses)
+    if (url?.startsWith('/auth/')) {
+      return res.status(200).json({
+        message: 'Auth endpoint placeholder',
+        endpoint: url,
+        method,
+        timestamp: new Date().toISOString(),
+        note: 'Authentication endpoints will be implemented with full NestJS integration'
       });
     }
 
@@ -62,7 +80,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       method,
       url,
       timestamp: new Date().toISOString(),
-      note: 'This is a test response - NestJS integration coming soon'
+      note: 'API is working! Ready for NestJS integration'
     });
   } catch (error) {
     console.error('Handler error:', error);
