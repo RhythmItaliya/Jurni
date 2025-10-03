@@ -1,9 +1,15 @@
 {
-  "version": 2,
-  "buildCommand": "",
-  "installCommand": "npm install --only=production",
-  "devCommand": "",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api" }
-  ]
+    "version": 2,
+    "builds": [
+        {
+            "src": "index.js",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/index.js"
+        }
+    ]
 }
