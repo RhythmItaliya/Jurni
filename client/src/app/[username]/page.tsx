@@ -142,7 +142,7 @@ export default function ProfilePage() {
 
           <div className="profile-posts">
             <p className="page-description">
-              {profileData.username}'s posts will appear here...
+              {profileData.username}&apos;s posts will appear here...
             </p>
           </div>
         </div>

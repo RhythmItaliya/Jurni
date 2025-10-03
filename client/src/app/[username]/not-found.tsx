@@ -11,7 +11,7 @@ export default function NotFound() {
         <div className="not-found-content">
           <h1>404</h1>
           <h2>Profile Not Found</h2>
-          <p>Sorry, we couldn't find the profile you're looking for.</p>
+          <p>Sorry, we couldn&apos;t find the profile you&apos;re looking for.</p>
           <p>
             The user might have changed their username or the profile may no
             longer exist.

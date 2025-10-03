@@ -91,7 +91,7 @@ export default function PostCard({ post }: Pick<PostCardProps, 'post'>) {
         other.pause();
         try {
           other.currentTime = 0;
-        } catch (_e) {
+        } catch {
           /* ignore */
         }
       }
@@ -214,7 +214,7 @@ export default function PostCard({ post }: Pick<PostCardProps, 'post'>) {
                         v.pause();
                         try {
                           v.currentTime = 0;
-                        } catch (_e) {}
+                        } catch {}
                       }
                     }
                   });

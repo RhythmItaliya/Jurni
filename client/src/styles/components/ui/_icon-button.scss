@@ -1,4 +1,5 @@
 @use '../../variables' as *;
+@use 'sass:color';
 
 .icon-button {
   display: inline-flex;
@@ -85,7 +86,7 @@
     color: white;
     background: $accent;
     &:hover {
-      background: darken($accent, 10%);
+      background: color.adjust($accent, $lightness: -10%);
     }
   }
 
@@ -93,7 +94,7 @@
     color: white;
     background: $warm;
     &:hover {
-      background: darken($warm, 10%);
+      background: color.adjust($warm, $lightness: -10%);
     }
   }
 
@@ -101,7 +102,7 @@
     color: white;
     background: $sky;
     &:hover {
-      background: darken($sky, 10%);
+      background: color.adjust($sky, $lightness: -10%);
     }
   }
 

@@ -16,7 +16,7 @@ interface ClientLayoutProps {
  * @returns Authenticated layout or loading/redirect states
  */
 export default function ClientLayout({ children }: ClientLayoutProps) {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
 

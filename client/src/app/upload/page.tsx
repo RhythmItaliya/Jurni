@@ -21,7 +21,7 @@ export default function UploadPage() {
           </div>
           <p className="page-description">
             This is the upload page content. It takes the full width since
-            there's no right sidebar. Only the left navigation sidebar is shown.
+            there&apos;s no right sidebar. Only the left navigation sidebar is shown.
           </p>
         </div>
       </div>
