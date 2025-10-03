@@ -21,29 +21,24 @@ async function createExpressApp(): Promise<express.Express> {
     credentials: true,
   });
 
-  // Global validation pipe with detailed error messages
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
       exceptionFactory: (errors) => {
-        // Extract validation error messages
         const messages = errors.map((error) => {
           const constraints = error.constraints;
           if (constraints) {
-            return Object.values(constraints)[0]; // Get first constraint message
+            return Object.values(constraints)[0];
           }
           return `${error.property} is invalid`;
         });
-
-        // Return first validation error message
         return new BadRequestException(messages[0]);
       },
     }),
   );
 
-  // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('Jurni Platform API')
     .setDescription('The Jurni Platform API documentation')
@@ -60,7 +55,6 @@ async function createExpressApp(): Promise<express.Express> {
   return expressApp;
 }
 
-// For Vercel serverless
 export default async (req: any, res: any) => {
   try {
     const app = await createExpressApp();
@@ -76,24 +70,19 @@ async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') {
     const app = await NestFactory.create(AppModule);
     app.enableCors();
-
-    // Global validation pipe with detailed error messages
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
         forbidNonWhitelisted: true,
         transform: true,
         exceptionFactory: (errors) => {
-          // Extract validation error messages
           const messages = errors.map((error) => {
             const constraints = error.constraints;
             if (constraints) {
-              return Object.values(constraints)[0]; // Get first constraint message
+              return Object.values(constraints)[0];
             }
             return `${error.property} is invalid`;
           });
-
-          // Return first validation error message
           return new BadRequestException(messages[0]);
         },
       }),
