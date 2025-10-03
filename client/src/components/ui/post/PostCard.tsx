@@ -9,13 +9,7 @@ import { IconButton } from '../IconButton';
 import { Spinner } from '../Spinner';
 import { PostCardProps } from '@/types/post';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import {
-  Navigation,
-  EffectFade,
-  Virtual,
-  Mousewheel,
-  Keyboard,
-} from 'swiper/modules';
+import { Navigation, EffectFade, Mousewheel, Keyboard } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
@@ -23,15 +17,20 @@ import 'swiper/css/mousewheel';
 import 'swiper/css/keyboard';
 import '@/styles/components/post/swiper.scss';
 
-export default function PostCard({
-  post,
-  isFirstItem,
-  isLastItem,
-}: PostCardProps) {
+/**
+ * PostCard component
+ * @param {object} props - Component props
+ * @param {import('@/types/post').Post} props.post - Post data (media, author, etc.)
+ * @param {boolean} props.isFirstItem - Whether this post is the first in the list
+ * @param {boolean} props.isLastItem - Whether this post is the last in the list
+ * @returns {JSX.Element}
+ */
+export default function PostCard({ post }: Pick<PostCardProps, 'post'>) {
   const postId = React.useId();
   const swiperRef = React.useRef<SwiperType | null>(null);
   const [currentMediaIndex, setCurrentMediaIndex] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [playingIndex, setPlayingIndex] = React.useState<number | null>(null);
 
   const demoMedia = [
     {
@@ -55,8 +54,18 @@ export default function PostCard({
   ];
 
   const media = demoMedia;
-  const currentMedia = media[currentMediaIndex];
+  // const currentMedia = media[currentMediaIndex];
   const hasMultipleMedia = media.length > 1;
+
+  // Demo fallback post to allow quick visual testing when no `post` prop is passed
+  const demoPost = {
+    id: 'demo-post',
+    author: { username: 'user_1', avatarUrl: undefined },
+    createdAt: new Date().toISOString(),
+    media: demoMedia,
+    location: 'San Francisco, CA',
+  };
+  const displayPost = (post ?? demoPost) as import('@/types/post').PostData;
 
   const handlePrevious = () => {
     if (swiperRef.current) {
@@ -70,11 +79,82 @@ export default function PostCard({
     }
   };
 
+  const playVideoAtIndex = (index: number) => {
+    const slideEl = swiperRef.current?.slides[index];
+    if (!slideEl) return;
+    const v = slideEl.querySelector('video') as HTMLVideoElement | null;
+    if (!v) return;
+
+    swiperRef.current?.slides.forEach((s, idx) => {
+      const other = s.querySelector('video') as HTMLVideoElement | null;
+      if (other && idx !== index) {
+        other.pause();
+        try {
+          other.currentTime = 0;
+        } catch (_e) {
+          /* ignore */
+        }
+      }
+    });
+
+    v.muted = false;
+    v.play()
+      .then(() => {
+        setPlayingIndex(index);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.warn('Video playback failed on user-initiated play:', err);
+        setPlayingIndex(null);
+      });
+  };
+
   return (
     <div className="post-container">
       <Card className="post-card">
         <CardHeader>
-          <div className="post-header" />
+          <div className="post-header">
+            <div className="author">
+              {displayPost?.author?.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className="author-avatar"
+                  src={displayPost.author.avatarUrl}
+                  alt={`${displayPost.author.username} avatar`}
+                />
+              ) : (
+                <div className="author-avatar author-avatar-fallback">
+                  {displayPost?.author?.username?.charAt(0)?.toUpperCase() ||
+                    'U'}
+                </div>
+              )}
+
+              <div className="author-meta">
+                <div className="author-username">
+                  {displayPost?.author?.username || 'Unknown'}
+                </div>
+              </div>
+            </div>
+
+            <div className="post-header-right">
+              <div className="author-location">
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  className="location-icon-btn"
+                  icon={
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src="/img/location.png"
+                      alt="location"
+                      width={16}
+                      height={16}
+                    />
+                  }
+                />
+              </div>
+            </div>
+          </div>
         </CardHeader>
         <CardBody className="post-card-body">
           <div className="post-body">
@@ -85,13 +165,7 @@ export default function PostCard({
                 </div>
               )}
               <Swiper
-                modules={[
-                  Navigation,
-                  EffectFade,
-                  Virtual,
-                  Mousewheel,
-                  Keyboard,
-                ]}
+                modules={[Navigation, EffectFade, Mousewheel, Keyboard]}
                 navigation={false}
                 effect="fade"
                 speed={300}
@@ -102,43 +176,95 @@ export default function PostCard({
                   forceToAxis: true,
                   sensitivity: 1,
                 }}
-                keyboard={{
-                  enabled: true,
-                }}
-                touchRatio={1.5}
-                followFinger={true}
-                resistance={false}
-                shortSwipes={true}
-                longSwipes={true}
-                longSwipesRatio={0.2}
-                threshold={5}
-                touchAngle={45}
-                touchMoveStopPropagation={true}
-                preventClicks={false}
+                keyboard={{ enabled: true }}
+                slidesPerView={1}
+                touchEventsTarget={'container'}
+                passiveListeners={false}
+                allowTouchMove={true}
+                touchRatio={1}
+                threshold={3}
+                touchAngle={30}
+                preventClicks={true}
                 preventClicksPropagation={false}
                 touchStartPreventDefault={false}
-                cssMode={true}
                 onSwiper={swiper => {
                   swiperRef.current = swiper;
+                  const activeSlide = swiper.slides[swiper.activeIndex];
+                  const videoElement = activeSlide?.querySelector('video');
+                  if (videoElement) {
+                    videoElement.muted = true;
+                    videoElement.play().catch(() => {
+                      console.warn('Autoplay prevented on initial slide.');
+                    });
+                  }
                 }}
                 onSlideChange={swiper =>
                   setCurrentMediaIndex(swiper.activeIndex)
                 }
+                onSlideChangeTransitionEnd={swiper => {
+                  swiper.slides.forEach((slideEl, idx) => {
+                    const v = slideEl.querySelector(
+                      'video'
+                    ) as HTMLVideoElement | null;
+                    if (v) {
+                      if (idx === swiper.activeIndex) {
+                        v.muted = true;
+                        v.play().catch(() => {});
+                      } else {
+                        v.pause();
+                        try {
+                          v.currentTime = 0;
+                        } catch (_e) {}
+                      }
+                    }
+                  });
+                }}
               >
-                {media.map(item => (
+                {media.map((item, idx) => (
                   <SwiperSlide key={item.id}>
                     {item.type === 'video' ? (
-                      <video
-                        className="post-video"
-                        src={item.url}
-                        autoPlay
-                        playsInline
-                        muted
-                        loop
-                        onLoadStart={() => setIsLoading(true)}
-                        onLoadedData={() => setIsLoading(false)}
-                        onError={() => setIsLoading(false)}
-                      />
+                      <div className="video-wrapper">
+                        <video
+                          className="post-video"
+                          src={item.url}
+                          playsInline
+                          loop
+                          muted={playingIndex === idx ? false : true}
+                          onLoadStart={() => setIsLoading(true)}
+                          onLoadedData={() => setIsLoading(false)}
+                          onError={() => setIsLoading(false)}
+                          poster={
+                            (item as typeof item & { poster?: string })
+                              .poster ||
+                            (media.find(m => m.type === 'image')?.url ??
+                              undefined)
+                          }
+                          draggable={false}
+                        />
+                        {playingIndex !== idx && (
+                          <button
+                            className="video-play-overlay"
+                            aria-label="Play video"
+                            onClick={() => playVideoAtIndex(idx)}
+                          >
+                            <svg
+                              width="48"
+                              height="48"
+                              viewBox="0 0 48 48"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <circle
+                                cx="24"
+                                cy="24"
+                                r="24"
+                                fill="rgba(0,0,0,0.6)"
+                              />
+                              <path d="M20 16L34 24L20 32V16Z" fill="#fff" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img

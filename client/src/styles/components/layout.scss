@@ -257,6 +257,44 @@
   scroll-behavior: smooth;
 }
 
+// Posts container (when showing posts)
+.posts-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+}
+
+// Page content in main area (when not showing posts)
+.page-content-in-main {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  height: 100%;
+  overflow-y: auto;
+
+  .blank-placeholder {
+    width: 100%;
+    height: calc(100vh - 12rem);
+    background-color: transparent;
+    border: 2px dashed $border;
+    border-radius: $radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &::after {
+      content: 'Main Content Area';
+      color: $text-secondary;
+      font-style: italic;
+      opacity: 0.5;
+      font-size: $text-sm;
+    }
+  }
+}
+
 .right-sidebar {
   width: 20rem;
   height: 100vh;
@@ -271,6 +309,23 @@
   transition:
     background-color 0.3s ease,
     border-color 0.3s ease;
+
+  // Placeholder for layout-only right sidebar
+  .sidebar-placeholder {
+    padding: $spacing-lg;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-secondary;
+    font-style: italic;
+
+    &::after {
+      content: 'Layout Area';
+      opacity: 0.5;
+      font-size: $text-sm;
+    }
+  }
 }
 @include very-small {
   .app-layout {
@@ -301,5 +356,53 @@
 
   .main-content {
     min-height: 20rem;
+  }
+
+  // Dynamic layout responsive styles
+  .layout-sidebar-only {
+    .page-content {
+      margin-left: 0;
+      padding: $spacing-md;
+    }
+  }
+}
+
+// Dynamic layout responsive styles for mobile
+@media (max-width: $breakpoint-mobile) {
+  .layout-sidebar-only {
+    .left-sidebar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: auto;
+      z-index: 1000;
+
+      .sidebar-nav {
+        flex-direction: row;
+        padding: $spacing-sm;
+        justify-content: space-around;
+      }
+
+      .nav-item {
+        flex-direction: column;
+        padding: $spacing-xs;
+        text-align: center;
+
+        .nav-text {
+          font-size: $text-xs;
+          margin-top: $spacing-xs;
+        }
+      }
+
+      .sidebar-bottom {
+        display: none;
+      }
+    }
+
+    .page-content {
+      padding-bottom: 6rem; // Account for fixed bottom sidebar
+    }
   }
 }

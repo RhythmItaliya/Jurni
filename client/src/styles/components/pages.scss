@@ -1,0 +1,193 @@
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// PAGE LAYOUTS
+// ========================================
+
+// Base page layout
+.page-layout {
+  min-height: 100vh;
+  background-color: $bg-primary;
+  color: $text-primary;
+  transition: all 0.3s ease;
+}
+
+// Dynamic layout configurations
+.layout-full {
+  // Full layout with left sidebar, main content, and right sidebar (home page)
+  .page-content {
+    display: none; // Hide page content when showing MainContent
+  }
+}
+
+.layout-sidebar-only {
+  // Layout with only left sidebar and page content
+  .page-content {
+    flex: 1;
+    padding: $spacing-lg;
+    margin-left: 0;
+
+    @media (min-width: $breakpoint-tablet) {
+      margin-left: 280px; // Account for left sidebar width
+    }
+
+    @media (max-width: $breakpoint-mobile) {
+      padding: $spacing-md;
+      margin-left: 0;
+    }
+  }
+}
+
+.layout-minimal {
+  // Minimal layout with no sidebars
+  .page-content {
+    flex: 1;
+    padding: $spacing-lg;
+
+    @media (max-width: $breakpoint-mobile) {
+      padding: $spacing-md;
+    }
+  }
+}
+
+// Profile Page
+.profile-page {
+  @extend .page-layout;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: $spacing-lg;
+
+    @media (max-width: $breakpoint-tablet) {
+      padding: $spacing-md;
+    }
+  }
+
+  h1 {
+    color: $text-primary;
+    margin-bottom: $spacing-xl;
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+  }
+
+  .profile-content {
+    background-color: $bg-surface;
+    border: 1px solid $border;
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    box-shadow: $shadow-sm;
+
+    @media (max-width: $breakpoint-mobile) {
+      padding: $spacing-lg;
+    }
+  }
+}
+
+// Trending Page
+.trending-page {
+  @extend .page-layout;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: $spacing-lg;
+
+    @media (max-width: $breakpoint-tablet) {
+      padding: $spacing-md;
+    }
+  }
+
+  h1 {
+    color: $text-primary;
+    margin-bottom: $spacing-xl;
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+  }
+
+  .trending-content {
+    background-color: $bg-surface;
+    border: 1px solid $border;
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    box-shadow: $shadow-sm;
+
+    @media (max-width: $breakpoint-mobile) {
+      padding: $spacing-lg;
+    }
+  }
+}
+
+// Upload Page
+.upload-page {
+  @extend .page-layout;
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: $spacing-lg;
+
+    @media (max-width: $breakpoint-tablet) {
+      padding: $spacing-md;
+    }
+  }
+
+  h1 {
+    color: $text-primary;
+    margin-bottom: $spacing-xl;
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+  }
+
+  .upload-content {
+    background-color: $bg-surface;
+    border: 1px solid $border;
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    box-shadow: $shadow-sm;
+
+    @media (max-width: $breakpoint-mobile) {
+      padding: $spacing-lg;
+    }
+  }
+}
+
+// Common page elements
+.page-description {
+  color: $text-secondary;
+  font-size: $text-base;
+  line-height: 1.6;
+}
+
+// Layout demo section
+.layout-demo {
+  background-color: $primary-light;
+  border: 1px solid $primary;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+
+  h3 {
+    color: $primary;
+    margin: 0 0 $spacing-md 0;
+    font-size: $text-lg;
+    font-weight: $font-semibold;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: $spacing-xs 0;
+      font-size: $text-sm;
+
+      &:before {
+        margin-right: $spacing-sm;
+        font-weight: $font-bold;
+      }
+    }
+  }
+}

@@ -42,6 +42,7 @@ export interface PostData {
   createdAt: string;
   text?: string;
   media?: PostMedia[];
+  location?: string;
   likeCount?: number;
   commentCount?: number;
   isLiked?: boolean;

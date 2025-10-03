@@ -145,3 +145,8 @@ $tablet: 768px; // iPad Mini, Surface, Tablets
 $medium: 1024px; // Medium desktops
 $large: 1440px; // Large desktops
 $very-large: 1920px; // Very large desktops
+
+// Additional breakpoint aliases for consistency
+$breakpoint-mobile: $small; // 480px
+$breakpoint-tablet: $tablet; // 768px
+$breakpoint-desktop: $medium; // 1024px

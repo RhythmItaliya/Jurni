@@ -1,0 +1,6 @@
+.git_corrupted_backup/
+node_modules/
+.env
+.next/
+dist/
+build/

@@ -5,6 +5,7 @@ import { QueryClientProviderWrapper } from '@/components/providers/QueryClientPr
 import ReduxProvider from '@/components/providers/ReduxProvider';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastContainer } from '@/components/ui/Toast';
+import { ClientLayout } from '@/components/layout';
 
 export const metadata: Metadata = {
   title: 'Jurni - Full Stack App',
@@ -23,7 +24,7 @@ export default function RootLayout({
           <ReduxProvider>
             <QueryClientProviderWrapper>
               <SessionProvider>
-                {children}
+                <ClientLayout>{children}</ClientLayout>
                 <ToastContainer />
               </SessionProvider>
             </QueryClientProviderWrapper>

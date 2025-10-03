@@ -95,6 +95,36 @@
     height: 100%;
   }
 
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    .post-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      /* Allow touch events to reach Swiper for horizontal swipes */
+      touch-action: pan-y;
+      -webkit-user-drag: none;
+    }
+
+    .video-play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 15;
+      /* Make the overlay handle pointer events but not block swipe gestures when fully transparent */
+      pointer-events: auto;
+    }
+  }
+
   .media-loading {
     position: absolute;
     top: 0;
@@ -131,4 +161,87 @@
   padding: $spacing-sm;
   border-top: 1px solid $border;
   background: $bg-surface;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  margin: 0;
+
+  .author {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin: 0;
+    padding: 0;
+
+    .author-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: $bg-secondary;
+      margin: 0;
+    }
+
+    .author-avatar-fallback {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: $text-primary;
+      background: $bg-secondary;
+      margin: 0;
+    }
+
+    .author-meta {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+      margin: 0;
+      padding: 0;
+
+      .author-username {
+        font-weight: 600;
+        color: $text-primary;
+        margin: 0;
+      }
+    }
+  }
+
+  .post-header-right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin: 0;
+    padding: 0;
+
+    .author-location {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: $text-primary;
+      margin: 0;
+
+      .location-icon-btn {
+        padding: 0;
+        margin: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          width: 16px;
+          height: 16px;
+          display: block;
+        }
+      }
+    }
+  }
 }
