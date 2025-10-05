@@ -115,7 +115,9 @@ function RegisterForm() {
           <CardBody>
             <div className="auth-container">
               <div className="auth-header">
-                <div className="auth-logo-placeholder"></div>
+                <Link href="/" className="auth-logo-placeholder">
+                  Jurni
+                </Link>
                 <h1 className="auth-title">Create Account</h1>
                 <p className="auth-subtitle">
                   Join us and start your journey today

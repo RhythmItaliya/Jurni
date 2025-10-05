@@ -85,7 +85,9 @@ function LoginForm() {
           <CardBody>
             <div className="auth-container">
               <div className="auth-header">
-                <div className="auth-logo-placeholder"></div>
+                <Link href="/" className="auth-logo-placeholder">
+                  Jurni
+                </Link>
                 <h1 className="auth-title">Welcome Back</h1>
                 <p className="auth-subtitle">
                   Enter your email and password to access your account

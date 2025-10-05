@@ -109,7 +109,9 @@ function ResetPasswordForm() {
             <CardBody>
               <div className="auth-container">
                 <div className="auth-header">
-                  <div className="auth-logo-placeholder"></div>
+                  <Link href="/" className="auth-logo-placeholder">
+                    Jurni
+                  </Link>
                   <h1 className="auth-title">Password Reset Complete</h1>
                   <p className="auth-subtitle">
                     Your password has been successfully updated
@@ -148,7 +150,9 @@ function ResetPasswordForm() {
             <CardBody>
               <div className="auth-container">
                 <div className="auth-header">
-                  <div className="auth-logo-placeholder"></div>
+                  <Link href="/" className="auth-logo-placeholder">
+                    Jurni
+                  </Link>
                   <h1 className="auth-title">Invalid Reset Link</h1>
                   <p className="auth-subtitle">
                     This password reset link is invalid or has expired

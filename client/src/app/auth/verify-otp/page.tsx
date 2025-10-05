@@ -168,7 +168,9 @@ function VerifyOTPForm() {
           <CardBody>
             <div className="auth-container">
               <div className="auth-header">
-                <div className="auth-logo-placeholder"></div>
+                <Link href="/" className="auth-logo-placeholder">
+                  Jurni
+                </Link>
                 <h1 className="auth-title">Verify Your Registration</h1>
                 <p className="auth-subtitle">
                   We sent a 6-character code to{' '}

@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { LoadingPage } from '@/components/ui';
 import { DynamicLayout } from '@/components/layout';
+import WebsiteLanding from '@/app/website/Website';
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -26,8 +27,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       return;
     }
 
-    // Redirect to login if not authenticated
-    if (status === 'unauthenticated') {
+    // Redirect to login if not authenticated and not on root
+    if (status === 'unauthenticated' && pathname !== '/') {
       router.push('/auth/login');
     }
   }, [status, router, pathname]);
@@ -38,8 +39,16 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   }
 
   // Don't render anything while redirecting unauthenticated users
-  if (status === 'unauthenticated' && !pathname.startsWith('/auth/')) {
-    return null;
+  if (status === 'unauthenticated') {
+    // If user is on root, show marketing/website landing page
+    if (pathname === '/') {
+      return <WebsiteLanding />;
+    }
+
+    // For other pages (except auth) we avoid rendering while redirecting
+    if (!pathname.startsWith('/auth/')) {
+      return null;
+    }
   }
 
   return <DynamicLayout>{children}</DynamicLayout>;

@@ -73,7 +73,9 @@ function ForgotPasswordForm() {
             <CardBody>
               <div className="auth-container">
                 <div className="auth-header">
-                  <div className="auth-logo-placeholder"></div>
+                  <Link href="/" className="auth-logo-placeholder">
+                    Jurni
+                  </Link>
                   <h1 className="auth-title">Check Your Email</h1>
                   <p className="auth-subtitle">
                     We&apos;ve sent a password reset link to {formData.email}
@@ -129,7 +131,9 @@ function ForgotPasswordForm() {
           <CardBody>
             <div className="auth-container">
               <div className="auth-header">
-                <div className="auth-logo-placeholder"></div>
+                <Link href="/" className="auth-logo-placeholder">
+                  Jurni
+                </Link>
                 <h1 className="auth-title">Forgot Password?</h1>
                 <p className="auth-subtitle">
                   Enter your email address and we&apos;ll send you a link to
