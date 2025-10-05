@@ -5,29 +5,29 @@
 
 export const ENV_VARS = {
   // Application
-  NODE_ENV: process.env.NODE_ENV || 'development',
-  PORT: process.env.PORT || 8081,
+  NODE_ENV: process.env.NODE_ENV!,
+  PORT: parseInt(process.env.PORT!, 10),
   
   // Database
-  MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/jurni',
+  MONGODB_URI: process.env.MONGODB_URI!,
   
-  // JWT (CHANGE THIS!)
-  JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key-change-this',
+  // JWT
+  JWT_SECRET: process.env.JWT_SECRET!,
   
   // CORS
-  CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  CORS_ORIGIN: process.env.CORS_ORIGIN!,
   
   // SMTP Configuration (for registration OTP)
-  SMTP_HOST: process.env.SMTP_HOST || 'smtp.gmail.com',
-  SMTP_PORT: parseInt(process.env.SMTP_PORT || '587', 10),
+  SMTP_HOST: process.env.SMTP_HOST!,
+  SMTP_PORT: parseInt(process.env.SMTP_PORT!, 10),
   SMTP_SECURE: process.env.SMTP_SECURE === 'true',
-  SMTP_USER: process.env.SMTP_USER || 'littlemovie00@gmail.com',
-  SMTP_PASS: process.env.SMTP_PASS || 'savynzlzsuajspnh',
-  SMTP_FROM: process.env.SMTP_FROM || 'littlemovie00@gmail.com',
+  SMTP_USER: process.env.SMTP_USER!,
+  SMTP_PASS: process.env.SMTP_PASS!,
+  SMTP_FROM: process.env.SMTP_FROM!,
   
   // Logging
-  LOG_LEVEL: process.env.LOG_LEVEL || 'info',
+  LOG_LEVEL: process.env.LOG_LEVEL!,
   
   // Swagger
-  SWAGGER_PATH: process.env.SWAGGER_PATH || 'api-docs',
+  SWAGGER_PATH: process.env.SWAGGER_PATH!,
 };

@@ -1,11 +1,18 @@
 NODE_ENV=development
-PORT=8081
+PORT=8080
 
-MONGODB_URI=mongodb://localhost:27017/jurni
+MONGODB_URI="mongodb+srv://Jurni:9098%40%23Millie@jurni.7pbncty.mongodb.net/?retryWrites=true&w=majority&appName=Jurni"
 
 JWT_SECRET=your-secret-key-change-this
 
 CORS_ORIGIN=http://localhost:3000
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=littlemovie00@gmail.com
+SMTP_PASS=savynzlzsuajspnh
+SMTP_FROM=littlemovie00@gmail.com
 
 LOG_LEVEL=info
 
