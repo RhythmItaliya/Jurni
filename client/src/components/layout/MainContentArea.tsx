@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { PostCard } from '@/components/ui';
+import CommentsPanel from './CommentsPanel';
 
 interface MainContentAreaProps {
   showPosts: boolean;
@@ -18,27 +19,53 @@ export default function MainContentArea({
   showPosts,
   children,
 }: MainContentAreaProps) {
+  const [openCommentsPostId, setOpenCommentsPostId] = React.useState<
+    string | null
+  >(null);
+
   return (
-    <div className="main-content">
+    <div
+      className={`main-content ${openCommentsPostId ? 'layout-with-comments' : ''}`}
+    >
       <div className="main-body">
         {showPosts ? (
-          // Show actual posts (only for home route)
-          <div className="posts-container">
-            {Array.from({ length: 10 }).map((_, idx) => (
-              <PostCard
-                key={`post-${idx + 1}`}
-                post={{
-                  id: `p${idx + 1}`,
-                  author: { username: `user_${idx + 1}` },
-                  createdAt: new Date().toISOString(),
-                  text: '',
-                  media: [],
-                  likeCount: 0,
-                  commentCount: 0,
-                  isLiked: false,
-                }}
-              />
-            ))}
+          // Show actual posts with comments panel side by side
+          <div
+            className={`posts-with-comments-container ${openCommentsPostId ? 'with-comments' : ''}`}
+          >
+            <div className="posts-container">
+              {Array.from({ length: 10 }).map((_, idx) => (
+                <PostCard
+                  key={`post-${idx + 1}`}
+                  post={{
+                    id: `p${idx + 1}`,
+                    author: { username: `user_${idx + 1}` },
+                    createdAt: new Date().toISOString(),
+                    text: '',
+                    media: [],
+                    likeCount: 0,
+                    commentCount: 0,
+                    isLiked: false,
+                  }}
+                  onComment={postId => {
+                    // Toggle logic: if same post is clicked, close it; otherwise open the new post
+                    if (openCommentsPostId === postId) {
+                      setOpenCommentsPostId(null);
+                    } else {
+                      setOpenCommentsPostId(postId);
+                    }
+                  }}
+                />
+              ))}
+            </div>
+            {openCommentsPostId && (
+              <div className="comments-container">
+                <CommentsPanel
+                  postId={openCommentsPostId}
+                  onClose={() => setOpenCommentsPostId(null)}
+                />
+              </div>
+            )}
           </div>
         ) : (
           // Show page content in the main area (same size as posts area)

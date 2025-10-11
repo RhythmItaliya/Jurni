@@ -4,6 +4,7 @@ export interface LayoutConfig {
   showRightSidebar: boolean; // Show right layout sidebar (just layout, no content)
   showMainContent: boolean; // Show main content area (always same size)
   showPosts: boolean; // Show actual posts in main content (only for home)
+  showCommentsPanel?: boolean; // Whether to enable comments side panel in this layout
   layoutType: 'full' | 'sidebar-only' | 'minimal';
 }
 
@@ -14,18 +15,19 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
     showRightSidebar: true, // Layout sidebar (empty, just for layout)
     showMainContent: true, // Main content area (same size always)
     showPosts: true, // Show actual posts in main content
+    showCommentsPanel: true, // Enable comments side panel
     layoutType: 'full',
   },
   '/profile': {
     showLeftSidebar: true, // Navigation sidebar
-    showRightSidebar: false, // No right sidebar
+    showRightSidebar: true, // No right sidebar
     showMainContent: true, // Main content area (same size, but empty)
     showPosts: false, // No posts, just blank area
     layoutType: 'sidebar-only',
   },
   '/trending': {
     showLeftSidebar: true, // Navigation sidebar
-    showRightSidebar: true, // Layout sidebar (empty, just for layout)
+    showRightSidebar: false, // Layout sidebar (empty, just for layout)
     showMainContent: true, // Main content area (same size, but empty)
     showPosts: false, // No posts, just blank area
     layoutType: 'sidebar-only',

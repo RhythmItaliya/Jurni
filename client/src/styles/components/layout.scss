@@ -239,9 +239,7 @@
 .main-body {
   flex: 1;
   background-color: $bg-surface;
-  padding: 2rem 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   position: relative;
   transition: background-color 0.3s ease;
   min-height: 0;
@@ -249,15 +247,93 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 
   &:first-child {
-    padding-top: 2rem;
+    padding-top: 1rem;
   }
 
   scroll-behavior: smooth;
 }
 
-// Posts container (when showing posts)
+.posts-with-comments-container {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  overflow: hidden;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px;
+  margin: 0 20px;
+
+  .posts-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+
+  .comments-container {
+    width: 0;
+    overflow: hidden;
+    height: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    padding: 0;
+    margin: 0;
+  }
+
+  // When comments are open (via CSS class), create two-column layout
+  &.with-comments {
+    gap: 8px; // Minimal gap between posts and comments
+    justify-content: flex-start;
+
+    .posts-container {
+      flex: 1;
+      max-width: calc(100% - 368px); // Account for comments width + gap
+      min-width: 300px;
+      margin: 0;
+      padding: 0 30px 0 40px; // Increase left padding for left arrow visibility
+    }
+
+    .comments-container {
+      width: 360px;
+      min-width: 360px;
+      max-width: 360px;
+      flex-shrink: 0;
+      padding: 0;
+      margin: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: 100%;
+    }
+  }
+}
+
+// Specific navigation arrows adjustment when comments are open
+.layout-with-comments .posts-with-comments-container.with-comments {
+  .post-container .navigation-arrows {
+    .prev {
+      left: 15px !important; // Ensure left arrow is fully visible
+      z-index: 25 !important;
+    }
+
+    .next {
+      right: 8px !important;
+      z-index: 25 !important;
+    }
+  }
+}
+
+// Posts container (when showing posts only, fallback)
 .posts-container {
   width: 100%;
   max-width: 600px;
@@ -402,7 +478,7 @@
     }
 
     .page-content {
-      padding-bottom: 6rem; // Account for fixed bottom sidebar
+      padding-bottom: 6rem;
     }
   }
 }

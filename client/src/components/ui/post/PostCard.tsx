@@ -25,7 +25,10 @@ import '@/styles/components/post/swiper.scss';
  * @param {boolean} props.isLastItem - Whether this post is the last in the list
  * @returns {JSX.Element}
  */
-export default function PostCard({ post }: Pick<PostCardProps, 'post'>) {
+export default function PostCard({
+  post,
+  onComment,
+}: Pick<PostCardProps, 'post' | 'onComment'>) {
   const postId = React.useId();
   const swiperRef = React.useRef<SwiperType | null>(null);
   const [currentMediaIndex, setCurrentMediaIndex] = React.useState(0);
@@ -284,7 +287,42 @@ export default function PostCard({ post }: Pick<PostCardProps, 'post'>) {
           </div>
         </CardBody>
         <CardFooter>
-          <div className="post-footer" />
+          <div className="post-footer">
+            <div className="post-footer-left">
+              <IconButton
+                variant="ghost"
+                size="md"
+                className="comment-button"
+                aria-label="Open comments"
+                onClick={() => {
+                  try {
+                    console.debug(
+                      '[PostCard] comment-button clicked',
+                      displayPost.id
+                    );
+                  } catch {}
+                  onComment?.(displayPost.id);
+                }}
+                icon={
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                }
+              />
+            </div>
+          </div>
         </CardFooter>
       </Card>
 
