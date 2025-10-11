@@ -1,3 +1,11 @@
+'use client';
+
+import PostCreationForm from '@/components/ui/PostCreationForm';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { CreatePostData } from '@/types/post';
+import { createPost } from '@/lib/postsApi';
+
 /**
  * Upload page component - allows users to create and upload new posts
  * Layout: Left Sidebar (navigation) + This page content (NO right sidebar)
@@ -5,26 +13,31 @@
  * @returns {JSX.Element} Upload page content
  */
 export default function UploadPage() {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (postData: CreatePostData) => {
+    try {
+      setIsSubmitting(true);
+      console.log('Creating post:', postData);
+      
+      const newPost = await createPost(postData);
+      console.log('Post created successfully:', newPost);
+      
+      // Redirect to the user's profile or home page
+      router.push('/');
+    } catch (error) {
+      console.error('Failed to create post:', error);
+      // Error handling is done within the PostCreationForm component
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="upload-page">
       <div className="container">
-        <h1>Create New Post</h1>
-        <div className="upload-content">
-          <div className="layout-demo">
-            <h3>Layout Configuration for /upload:</h3>
-            <ul>
-              <li>✅ Left Sidebar: Navigation menu</li>
-              <li>❌ Right Sidebar: No right sidebar</li>
-              <li>❌ Main Content: No posts area</li>
-              <li>✅ Page Content: This upload form content</li>
-            </ul>
-          </div>
-          <p className="page-description">
-            This is the upload page content. It takes the full width since
-            there&apos;s no right sidebar. Only the left navigation sidebar is
-            shown.
-          </p>
-        </div>
+        <PostCreationForm onSubmit={handleSubmit} />
       </div>
     </div>
   );

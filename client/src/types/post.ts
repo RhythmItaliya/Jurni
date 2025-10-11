@@ -1,51 +1,127 @@
 /**
  * Post author information
  * @interface PostAuthor
- * @property {string} username - Author's username
- * @property {string} [avatarUrl] - Optional URL to author's avatar
  */
 export interface PostAuthor {
+  _id: string;
   username: string;
-  avatarUrl?: string;
+  fullName?: string;
+  avatar?: string;
 }
 
 /**
  * Post media item
  * @interface PostMedia
- * @property {string} id - Unique identifier for the media
- * @property {'image' | 'video'} type - Type of media (image or video)
- * @property {string} url - URL to the media content
- * @property {string} [alt] - Optional alt text for accessibility
  */
 export interface PostMedia {
-  id: string;
-  type: 'image' | 'video';
   url: string;
+  type: 'image' | 'video' | 'audio';
   alt?: string;
+  caption?: string;
 }
 
 /**
- * Post data structure
+ * Post location information
+ * @interface PostLocation
+ */
+export interface PostLocation {
+  name: string;
+  latitude?: number;
+  longitude?: number;
+  address?: string;
+}
+
+/**
+ * Post metrics
+ * @interface PostMetrics
+ */
+export interface PostMetrics {
+  likes: number;
+  comments: number;
+  shares: number;
+  saves: number;
+  views: number;
+  engagement: number;
+}
+
+/**
+ * Post data structure (matches server schema)
  * @interface PostData
- * @property {string} id - Unique identifier for the post
- * @property {PostAuthor} author - Author information
- * @property {string} createdAt - Post creation timestamp
- * @property {string} [text] - Optional post text content
- * @property {PostMedia[]} [media] - Optional array of media items
- * @property {number} [likeCount] - Optional number of likes
- * @property {number} [commentCount] - Optional number of comments
- * @property {boolean} [isLiked] - Optional flag indicating if the current user liked the post
  */
 export interface PostData {
-  id: string;
-  author: PostAuthor;
-  createdAt: string;
-  text?: string;
+  _id: string;
+  userId: PostAuthor;
+  title?: string;
+  description?: string;
   media?: PostMedia[];
-  location?: string;
-  likeCount?: number;
-  commentCount?: number;
-  isLiked?: boolean;
+  location?: PostLocation;
+  hashtags?: string[];
+  mentions?: string[];
+  visibility: 'public' | 'friends' | 'followers' | 'private';
+  allowComments: boolean;
+  allowLikes: boolean;
+  allowShares: boolean;
+  status: 'draft' | 'active' | 'archived' | 'deleted';
+  scheduledAt?: string;
+  originalPostId?: string;
+  metrics: PostMetrics;
+  likedBy: string[];
+  savedBy: string[];
+  sharedBy: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Create post DTO
+ * @interface CreatePostData
+ */
+export interface CreatePostData {
+  title?: string;
+  description?: string;
+  media?: PostMedia[];
+  location?: PostLocation;
+  hashtags?: string[];
+  mentions?: string[];
+  visibility?: 'public' | 'friends' | 'followers' | 'private';
+  allowComments?: boolean;
+  allowLikes?: boolean;
+  allowShares?: boolean;
+  scheduledAt?: string;
+}
+
+/**
+ * Upload response
+ * @interface UploadResponse
+ */
+export interface UploadResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    key: string;
+    url: string;
+    publicUrl: string;
+    mediaType: 'image' | 'video' | 'audio';
+    size?: number;
+    contentType?: string;
+  };
+  error?: string;
+}
+
+/**
+ * Post API response
+ * @interface PostApiResponse
+ */
+export interface PostApiResponse {
+  success: boolean;
+  message: string;
+  data?: PostData | PostData[] | {
+    posts: PostData[];
+    total: number;
+    page: number;
+    totalPages: number;
+  };
+  error?: string;
 }
 
 /**

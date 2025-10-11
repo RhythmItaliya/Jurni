@@ -1,0 +1,21 @@
+.upload-page {
+  min-height: 100vh;
+  padding: 24px 0;
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .upload-page {
+    padding: 16px 0;
+
+    .container {
+      padding: 0 8px;
+    }
+  }
+}
