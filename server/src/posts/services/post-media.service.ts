@@ -24,12 +24,18 @@ export class PostMediaService {
     files?: Express.Multer.File[],
   ): Promise<PostDocument> {
     let uploadKeys: string[] = [];
+    let post: PostDocument | undefined;
 
     try {
+      // Create post first
+      post = await this.postService.createPost(userId, postData);
+
       if (files && files.length > 0) {
+        const postId = (post as any)._id.toString();
         const uploadResult = await this.uploadService.uploadPostMedia(
           files,
           userId,
+          postId,
         );
 
         if (uploadResult.failed.length > 0) {
@@ -39,17 +45,41 @@ export class PostMediaService {
         }
 
         uploadKeys = uploadResult.successful.map((m) => m.key);
+
+        // Update post with media references
+        const mediaIds = uploadResult.successful.map((m) => (m as any).mediaId);
+        if (mediaIds.length > 0) {
+          await this.postService.updatePost(postId, userId, {
+            media: mediaIds,
+          });
+
+          // Fetch updated post with populated media
+          return await this.postService.getPostById(postId, userId);
+        }
       }
 
-      const post = await this.postService.createPost(userId, postData);
       return post;
     } catch (error) {
+      // If post was created but media upload failed, delete the post
+      if (post && uploadKeys.length === 0) {
+        try {
+          const postId = (post as any)._id.toString();
+          await this.postService.deletePost(postId, userId);
+        } catch (cleanupError) {
+          this.logger.error(
+            'Failed to cleanup post after media upload failure',
+            cleanupError,
+          );
+        }
+      }
+
+      // Cleanup uploaded media
       if (uploadKeys.length > 0) {
         for (const key of uploadKeys) {
           try {
             await this.uploadService.deleteFile(key);
           } catch (cleanupError) {
-            // Silent cleanup failure
+            this.logger.error('Failed to cleanup media file', cleanupError);
           }
         }
       }

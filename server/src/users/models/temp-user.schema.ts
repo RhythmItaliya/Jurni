@@ -56,6 +56,4 @@ export class TempUser {
 export const TempUserSchema = SchemaFactory.createForClass(TempUser);
 
 // Index for faster queries
-TempUserSchema.index({ email: 1 });
-TempUserSchema.index({ username: 1 });
 TempUserSchema.index({ createdAt: 1 }, { expireAfterSeconds: 3600 }); // TTL index - auto delete after 1 hour

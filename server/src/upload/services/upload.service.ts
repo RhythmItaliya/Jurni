@@ -11,6 +11,7 @@ export interface MediaUploadResult extends UploadResult {
   mediaType: 'image' | 'video' | 'audio' | 'other';
   isProcessed: boolean;
   thumbnailUrl?: string;
+  mediaId?: string;
 }
 
 export interface BulkUploadResult {
@@ -95,8 +96,9 @@ export class UploadService {
     );
 
     // Only persist media record if R2 upload succeeded
+    let mediaDoc;
     try {
-      await this.mediaService.create({
+      mediaDoc = await this.mediaService.create({
         userId,
         postId: postId,
         key: result.key,
@@ -135,6 +137,7 @@ export class UploadService {
       ...result,
       mediaType,
       isProcessed: true,
+      mediaId: (mediaDoc as any)._id.toString(),
     };
   }
 

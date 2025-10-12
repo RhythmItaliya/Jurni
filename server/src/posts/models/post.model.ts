@@ -31,6 +31,9 @@ export class Post {
 
   @Prop({ default: true })
   allowShares: boolean;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Media' }], default: [] })
+  media: Types.ObjectId[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

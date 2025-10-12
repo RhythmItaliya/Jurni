@@ -14,6 +14,13 @@ export class PostService {
   constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {}
 
   /**
+   * Get total posts count for debugging
+   */
+  async getPostsCount(): Promise<number> {
+    return await this.postModel.countDocuments();
+  }
+
+  /**
    * Create a new post
    */
   async createPost(
@@ -109,6 +116,9 @@ export class PostService {
 
       const skip = (page - 1) * limit;
 
+      console.log('Posts filter:', filter);
+      console.log('Posts query params:', { page, limit, sortBy });
+
       const [posts, total] = await Promise.all([
         this.postModel
           .find(filter)
@@ -116,20 +126,30 @@ export class PostService {
           .skip(skip)
           .limit(limit)
           .populate('userId', 'username fullName avatar')
+          .populate('media', 'url publicUrl mediaType thumbnailUrl size')
           .exec(),
         this.postModel.countDocuments(filter),
       ]);
 
-      const totalPages = Math.ceil(total / limit);
+      console.log('Found posts:', posts.length, 'Total:', total);
+
+      const totalPages = Math.ceil(total / limit) || 0;
 
       return {
-        posts,
-        total,
-        page,
+        posts: posts || [],
+        total: total || 0,
+        page: page || 1,
         totalPages,
       };
     } catch (error) {
-      throw new BadRequestException('Failed to retrieve posts');
+      console.error('getPosts service error:', error);
+      // Return empty results instead of throwing error for better UX
+      return {
+        posts: [],
+        total: 0,
+        page: query.page || 1,
+        totalPages: 0,
+      };
     }
   }
 
@@ -148,6 +168,7 @@ export class PostService {
       const post = await this.postModel
         .findOne({ _id: postId, status: 'active' })
         .populate('userId', 'username fullName avatar')
+        .populate('media', 'url publicUrl mediaType thumbnailUrl size')
         .exec();
 
       if (!post) {
@@ -204,6 +225,7 @@ export class PostService {
       const updatedPost = await this.postModel
         .findByIdAndUpdate(postId, updatePostDto, { new: true })
         .populate('userId', 'username fullName avatar')
+        .populate('media', 'url publicUrl mediaType thumbnailUrl size')
         .exec();
 
       return updatedPost!;

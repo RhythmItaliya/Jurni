@@ -7,7 +7,6 @@ import {
   IsNumber,
   MaxLength,
   MinLength,
-  ValidateNested,
   ArrayMaxSize,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
@@ -20,7 +19,7 @@ const TransformToBoolean = () =>
       const lowerValue = value.toLowerCase();
       if (lowerValue === 'true' || lowerValue === '1') return true;
       if (lowerValue === 'false' || lowerValue === '0') return false;
-      return true; 
+      return true;
     }
     return Boolean(value);
   });
@@ -214,6 +213,17 @@ export class UpdatePostDto {
     return Boolean(value);
   })
   allowShares?: boolean;
+
+  @ApiProperty({
+    description: 'Media IDs associated with this post',
+    example: ['60f7b3b3b3b3b3b3b3b3b3b3', '60f7b3b3b3b3b3b3b3b3b3b4'],
+    type: [String],
+    required: false,
+  })
+  @IsOptional()
+  @IsArray({ message: 'Media must be an array' })
+  @IsString({ each: true, message: 'Each media ID must be a string' })
+  media?: string[];
 }
 
 export class PostQueryDto {
@@ -288,6 +298,11 @@ export class PostQueryDto {
     required: false,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return undefined;
+    const parsed = parseInt(value);
+    return isNaN(parsed) ? undefined : parsed;
+  })
   @IsNumber({}, { message: 'Page must be a number' })
   page?: number;
 
@@ -298,6 +313,11 @@ export class PostQueryDto {
     required: false,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return undefined;
+    const parsed = parseInt(value);
+    return isNaN(parsed) ? undefined : parsed;
+  })
   @IsNumber({}, { message: 'Limit must be a number' })
   limit?: number;
 

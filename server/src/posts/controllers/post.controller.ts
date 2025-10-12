@@ -17,6 +17,8 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { PostService } from '../services/post.service';
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from '../../users/services/user.service';
 import { PostMediaService } from '../services/post-media.service';
 import {
   CreatePostDto,
@@ -30,6 +32,8 @@ export class PostController {
   constructor(
     private readonly postService: PostService,
     private readonly postMediaService: PostMediaService,
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -107,7 +111,7 @@ export class PostController {
     @Request() req: any,
   ): Promise<PostResponseDto> {
     try {
-      const requestingUserId = req.user?.id; // Optional authentication
+      const requestingUserId = req.user?.id;
       const result = await this.postService.getPosts(query, requestingUserId);
 
       return {
@@ -122,11 +126,12 @@ export class PostController {
         },
       };
     } catch (error) {
+      console.error('getPosts error:', error);
       throw new HttpException(
         {
           success: false,
           message: 'Failed to retrieve posts',
-          error: error.message,
+          error: error.message || 'Unknown error',
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -159,6 +164,79 @@ export class PostController {
           error: error.message,
         },
         status,
+      );
+    }
+  }
+
+  /**
+   * Get posts by providing a JWT token (decodes token to find user)
+   * Body: { token: string }
+   */
+  @Post('user-posts')
+  async getPostsByToken(
+    @Body('token') token: string,
+  ): Promise<PostResponseDto> {
+    try {
+      if (!token) {
+        throw new HttpException(
+          { success: false, message: 'Token is required' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      let payload: any;
+      try {
+        payload = this.jwtService.verify(token);
+      } catch (err) {
+        throw new HttpException(
+          { success: false, message: 'Invalid token' },
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const userUuid = payload?.sub;
+      if (!userUuid) {
+        throw new HttpException(
+          { success: false, message: 'Invalid token payload' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const user = await this.userService.findByUuid(userUuid);
+      if (!user) {
+        throw new HttpException(
+          { success: false, message: 'User not found' },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      // Use postService.getPosts with userId filter
+      const userIdStr = (user as any)._id?.toString
+        ? (user as any)._id.toString()
+        : (user as any)._id;
+      const result = await this.postService.getPosts(
+        { userId: userIdStr as any },
+        userIdStr,
+      );
+
+      return {
+        success: true,
+        message: 'Posts retrieved successfully',
+        data: result.posts,
+        meta: {
+          page: result.page,
+          limit: 10,
+          total: result.total,
+          totalPages: result.totalPages,
+        },
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          success: false,
+          message: error.message || 'Failed to retrieve posts by token',
+        },
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
