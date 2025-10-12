@@ -4,14 +4,14 @@
  * @returns {JSX.Element} Profile page content
  */
 export default function ProfilePage() {
+  // This will be rendered in MainContent via layout configuration
+  // The posts will be handled by MainContent when showPosts: true
   return (
     <div className="profile-page">
       <div className="container">
-        <h1>Profile</h1>
-        <div className="profile-content">
-          <p className="page-description">
-            Profile page content will go here...
-          </p>
+        <div className="profile-header">
+          <h1>My Profile</h1>
+          <p>Your posts and profile information</p>
         </div>
       </div>
     </div>

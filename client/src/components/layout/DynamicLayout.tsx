@@ -33,6 +33,37 @@ export default function DynamicLayout({ children }: DynamicLayoutProps) {
 
   const layoutConfig = layoutManager.getConfig(pathname);
 
+  // Extract user information for profile routes
+  const getUserDataFromPath = () => {
+    // For /[username] routes, extract username
+    const profileMatch = pathname.match(/^\/([^/]+)(?:\/.*)?$/);
+    if (
+      profileMatch &&
+      !['profile', 'trending', 'upload', 'auth', 'api'].includes(
+        profileMatch[1]
+      )
+    ) {
+      return {
+        username: profileMatch[1],
+        // For now, we'll use the username as userId - in a real app, you'd fetch the actual user ID
+        userId: profileMatch[1], // This should be replaced with actual user ID lookup
+      };
+    }
+
+    // For /profile route, we'd get the current user's data from session
+    if (pathname === '/profile') {
+      // TODO: Get current user's data from session
+      return {
+        username: 'currentUser', // Placeholder
+        userId: 'currentUserId', // Placeholder
+      };
+    }
+
+    return null;
+  };
+
+  const userData = getUserDataFromPath();
+
   return (
     <div className={`app-layout layout-${layoutConfig.layoutType}`}>
       {/* LEFT SIDEBAR - Navigation (when true, shows navigation menu) */}

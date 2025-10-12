@@ -30,6 +30,8 @@ export const ENDPOINTS = {
     UPDATE: (id: string) => `/posts/${id}`,
     DELETE: (id: string) => `/posts/${id}`,
     CREATE_WITH_MEDIA: '/posts/with-media',
+    USER_POSTS: '/posts/user-posts',
+    BY_TOKEN: '/posts/user-posts',
   },
 } as const;
 

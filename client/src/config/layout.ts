@@ -20,10 +20,11 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
   },
   '/profile': {
     showLeftSidebar: true, // Navigation sidebar
-    showRightSidebar: true, // No right sidebar
-    showMainContent: true, // Main content area (same size, but empty)
-    showPosts: false, // No posts, just blank area
-    layoutType: 'sidebar-only',
+    showRightSidebar: true, // Right sidebar for layout
+    showMainContent: true, // Main content area
+    showPosts: true, // Show user's posts
+    showCommentsPanel: true, // Enable comments side panel
+    layoutType: 'full',
   },
   '/trending': {
     showLeftSidebar: true, // Navigation sidebar
@@ -44,8 +45,9 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
     showLeftSidebar: true, // Navigation sidebar
     showRightSidebar: true, // Layout sidebar (empty, just for layout)
     showMainContent: true, // Main content area (same size, but empty)
-    showPosts: false, // No posts, just blank area
-    layoutType: 'sidebar-only',
+    showPosts: true, // Show user's posts
+    showCommentsPanel: true, // Enable comments side panel
+    layoutType: 'full',
   },
   'profile-edit': {
     showLeftSidebar: true, // Navigation sidebar
