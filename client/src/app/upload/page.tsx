@@ -1,10 +1,9 @@
 'use client';
 
-import PostCreationForm from '@/components/ui/PostCreationForm';
-import { useState } from 'react';
+import PostCreationForm from '@/components/post/PostCreationForm';
 import { useRouter } from 'next/navigation';
 import { CreatePostData } from '@/types/post';
-import { createPost } from '@/lib/postsApi';
+import { useCreatePostWithMedia } from '@/hooks/usePosts';
 
 /**
  * Upload page component - allows users to create and upload new posts
@@ -14,30 +13,34 @@ import { createPost } from '@/lib/postsApi';
  */
 export default function UploadPage() {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const createPostWithMedia = useCreatePostWithMedia();
 
-  const handleSubmit = async (postData: CreatePostData) => {
+  const handleSubmit = async (
+    postData: CreatePostData,
+    mediaFiles?: File[]
+  ) => {
     try {
-      setIsSubmitting(true);
-      console.log('Creating post:', postData);
-      
-      const newPost = await createPost(postData);
-      console.log('Post created successfully:', newPost);
-      
-      // Redirect to the user's profile or home page
+      await createPostWithMedia.mutateAsync({
+        postData,
+        files: mediaFiles,
+      });
+
+      // Success is handled by the hook's onSuccess callback
       router.push('/');
     } catch (error) {
+      // Error is handled by the hook's onError callback
       console.error('Failed to create post:', error);
-      // Error handling is done within the PostCreationForm component
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="upload-page">
       <div className="container">
-        <PostCreationForm onSubmit={handleSubmit} />
+        <PostCreationForm
+          onSubmit={handleSubmit}
+          loading={createPostWithMedia.isPending}
+          error={createPostWithMedia.error?.message || null}
+        />
       </div>
     </div>
   );

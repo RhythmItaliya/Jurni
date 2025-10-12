@@ -1,183 +1,204 @@
-import { useState, useCallback } from 'react';
-import { CreatePostData, PostData, UploadResponse } from '@/types/post';
-import { createPost, getPosts, getPostById, updatePost, deletePost } from '@/lib/postsApi';
-import { uploadPostMedia } from '@/lib/uploadApi';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useReduxToast } from '@/hooks/useReduxToast';
+import { CreatePostData, PostData } from '@/types/post';
+import {
+  createPost,
+  createPostWithMedia,
+  getPosts,
+  getPostById,
+  updatePost,
+  deletePost,
+} from '@/lib/postsApi';
+
+// Query keys for posts cache
+export const postsKeys = {
+  all: ['posts'] as const,
+  list: () => [...postsKeys.all, 'list'] as const,
+  detail: (id: string) => [...postsKeys.all, 'detail', id] as const,
+};
 
 /**
- * Custom hook for managing posts
+ * Hook to create a post
  */
-export const usePosts = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export function useCreatePost() {
+  const queryClient = useQueryClient();
+  const { showError, showSuccess } = useReduxToast();
 
-  /**
-   * Create a new post with optional media upload
-   */
-  const handleCreatePost = useCallback(async (
-    postData: CreatePostData,
-    mediaFiles?: File[]
-  ): Promise<PostData | null> => {
-    setLoading(true);
-    setError(null);
+  return useMutation({
+    mutationFn: async (data: CreatePostData) => {
+      const response = await createPost(data);
+      return response;
+    },
+    onSuccess: data => {
+      queryClient.invalidateQueries({ queryKey: postsKeys.list() });
+      showSuccess('Post Created', 'Your post was created successfully');
+    },
+    onError: error => {
+      const serverMessage =
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError('Create Failed', serverMessage || 'An error occurred');
+    },
+  });
+}
 
-    try {
-      let mediaUrls: any[] = [];
+/**
+ * Hook to create a post with media files
+ */
+export function useCreatePostWithMedia() {
+  const queryClient = useQueryClient();
+  const { showError, showSuccess } = useReduxToast();
 
-      // Upload media files if provided
-      if (mediaFiles && mediaFiles.length > 0) {
-        const uploadResult = await uploadPostMedia(mediaFiles);
-        
-        if (uploadResult.success && uploadResult.data) {
-          // Handle single file response
-          if ('url' in uploadResult.data) {
-            mediaUrls = [{
-              url: uploadResult.data.url,
-              type: uploadResult.data.mediaType,
-            }];
-          }
-          // Handle multiple files response (bulk upload)
-          else if ('successful' in (uploadResult.data as any)) {
-            const bulkData = uploadResult.data as any;
-            mediaUrls = bulkData.successful.map((item: any) => ({
-              url: item.url,
-              type: item.mediaType,
-            }));
-          }
-        }
-      }
+  return useMutation({
+    mutationFn: async (data: { postData: CreatePostData; files?: File[] }) => {
+      const response = await createPostWithMedia(data.postData, data.files);
+      return response;
+    },
+    onSuccess: data => {
+      queryClient.invalidateQueries({ queryKey: postsKeys.list() });
+      showSuccess(
+        'Post Created',
+        'Your post with media was created successfully'
+      );
+    },
+    onError: error => {
+      const serverMessage =
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError('Create Failed', serverMessage || 'An error occurred');
+    },
+  });
+}
 
-      // Create post with media URLs
-      const finalPostData = {
-        ...postData,
-        media: mediaUrls.length > 0 ? mediaUrls : postData.media,
-      };
-
-      const response = await createPost(finalPostData);
-      
-      if (response.success && response.data) {
-        return response.data as PostData;
-      }
-
-      throw new Error(response.error || 'Failed to create post');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create post';
-      setError(errorMessage);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  /**
-   * Fetch posts with optional filtering
-   */
-  const handleGetPosts = useCallback(async (query?: any): Promise<PostData[] | null> => {
-    setLoading(true);
-    setError(null);
-
-    try {
+/**
+ * Hook to fetch posts list
+ */
+export function useGetPosts(query?: Record<string, unknown>) {
+  return useQuery({
+    queryKey: [...postsKeys.list(), JSON.stringify(query || {})],
+    queryFn: async () => {
       const response = await getPosts(query);
-      
       if (response.success && response.data) {
-        if (Array.isArray(response.data)) {
-          return response.data;
-        } else if ('posts' in response.data) {
-          return response.data.posts;
-        }
+        if (Array.isArray(response.data)) return response.data as PostData[];
+        if ('posts' in response.data) return response.data.posts as PostData[];
       }
+      return [] as PostData[];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+}
 
-      throw new Error(response.error || 'Failed to fetch posts');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch posts';
-      setError(errorMessage);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  /**
-   * Fetch a single post by ID
-   */
-  const handleGetPostById = useCallback(async (postId: string): Promise<PostData | null> => {
-    setLoading(true);
-    setError(null);
-
-    try {
+/**
+ * Hook to fetch a single post by ID
+ */
+export function useGetPostById(postId: string) {
+  return useQuery({
+    queryKey: postsKeys.detail(postId),
+    queryFn: async () => {
       const response = await getPostById(postId);
-      
-      if (response.success && response.data) {
-        return response.data as PostData;
-      }
-
+      if (response.success && response.data) return response.data as PostData;
       throw new Error(response.error || 'Post not found');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch post';
-      setError(errorMessage);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    enabled: !!postId,
+  });
+}
 
-  /**
-   * Update a post
-   */
-  const handleUpdatePost = useCallback(async (
-    postId: string,
-    updateData: Partial<CreatePostData>
-  ): Promise<PostData | null> => {
-    setLoading(true);
-    setError(null);
+/**
+ * Hook to update a post
+ */
+export function useUpdatePost() {
+  const queryClient = useQueryClient();
+  const { showError, showSuccess } = useReduxToast();
 
-    try {
-      const response = await updatePost(postId, updateData);
-      
-      if (response.success && response.data) {
-        return response.data as PostData;
-      }
+  return useMutation({
+    mutationFn: async ({
+      postId,
+      data,
+    }: {
+      postId: string;
+      data: Partial<CreatePostData>;
+    }) => {
+      const response = await updatePost(postId, data);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: postsKeys.list() });
+      showSuccess('Post Updated', 'The post was updated successfully');
+    },
+    onError: error => {
+      const serverMessage =
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError('Update Failed', serverMessage || 'An error occurred');
+    },
+  });
+}
 
-      throw new Error(response.error || 'Failed to update post');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update post';
-      setError(errorMessage);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+/**
+ * Hook to delete a post
+ */
+export function useDeletePost() {
+  const queryClient = useQueryClient();
+  const { showError, showSuccess } = useReduxToast();
 
-  /**
-   * Delete a post
-   */
-  const handleDeletePost = useCallback(async (postId: string): Promise<boolean> => {
-    setLoading(true);
-    setError(null);
-
-    try {
+  return useMutation({
+    mutationFn: async (postId: string) => {
       const response = await deletePost(postId);
-      
-      if (response.success) {
-        return true;
-      }
-
-      throw new Error(response.error || 'Failed to delete post');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete post';
-      setError(errorMessage);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  return {
-    loading,
-    error,
-    createPost: handleCreatePost,
-    getPosts: handleGetPosts,
-    getPostById: handleGetPostById,
-    updatePost: handleUpdatePost,
-    deletePost: handleDeletePost,
-  };
-};
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: postsKeys.list() });
+      showSuccess('Post Deleted', 'The post was deleted successfully');
+    },
+    onError: error => {
+      const serverMessage =
+        error && typeof error === 'object' && 'response' in error
+          ? (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.message ||
+            (
+              error as {
+                response: { data?: { message?: string; error?: string } };
+              }
+            ).response.data?.error ||
+            String((error as { response: { data?: unknown } }).response.data)
+          : (error as { message?: string })?.message;
+      showError('Delete Failed', serverMessage || 'An error occurred');
+    },
+  });
+}

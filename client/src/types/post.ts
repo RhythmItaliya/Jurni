@@ -10,14 +10,18 @@ export interface PostAuthor {
 }
 
 /**
- * Post media item
+ * Post media item (matches server MediaItemDto)
  * @interface PostMedia
  */
 export interface PostMedia {
   url: string;
   type: 'image' | 'video' | 'audio';
+  thumbnailUrl?: string;
+  size?: number;
+  duration?: number;
+  width?: number;
+  height?: number;
   alt?: string;
-  caption?: string;
 }
 
 /**
@@ -32,62 +36,38 @@ export interface PostLocation {
 }
 
 /**
- * Post metrics
- * @interface PostMetrics
- */
-export interface PostMetrics {
-  likes: number;
-  comments: number;
-  shares: number;
-  saves: number;
-  views: number;
-  engagement: number;
-}
-
-/**
- * Post data structure (matches server schema)
+ * Post data structure (matches simplified server schema)
  * @interface PostData
  */
 export interface PostData {
   _id: string;
+  id?: string;
+  author?: PostAuthor;
   userId: PostAuthor;
-  title?: string;
+  title: string;
   description?: string;
-  media?: PostMedia[];
-  location?: PostLocation;
   hashtags?: string[];
-  mentions?: string[];
   visibility: 'public' | 'friends' | 'followers' | 'private';
   allowComments: boolean;
   allowLikes: boolean;
   allowShares: boolean;
-  status: 'draft' | 'active' | 'archived' | 'deleted';
-  scheduledAt?: string;
-  originalPostId?: string;
-  metrics: PostMetrics;
-  likedBy: string[];
-  savedBy: string[];
-  sharedBy: string[];
+  status: 'active' | 'deleted' | 'archived' | 'draft';
   createdAt: string;
   updatedAt: string;
 }
 
 /**
- * Create post DTO
+ * Create post DTO (matches simplified server CreatePostDto)
  * @interface CreatePostData
  */
 export interface CreatePostData {
-  title?: string;
+  title: string; // Required by server
   description?: string;
-  media?: PostMedia[];
-  location?: PostLocation;
   hashtags?: string[];
-  mentions?: string[];
   visibility?: 'public' | 'friends' | 'followers' | 'private';
   allowComments?: boolean;
   allowLikes?: boolean;
   allowShares?: boolean;
-  scheduledAt?: string;
 }
 
 /**
@@ -115,12 +95,15 @@ export interface UploadResponse {
 export interface PostApiResponse {
   success: boolean;
   message: string;
-  data?: PostData | PostData[] | {
-    posts: PostData[];
-    total: number;
-    page: number;
-    totalPages: number;
-  };
+  data?:
+    | PostData
+    | PostData[]
+    | {
+        posts: PostData[];
+        total: number;
+        page: number;
+        totalPages: number;
+      };
   error?: string;
 }
 

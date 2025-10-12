@@ -16,7 +16,7 @@ export const uploadSingle = async (
 ): Promise<UploadResponse> => {
   const formData = new FormData();
   formData.append('file', file);
-  
+
   if (folder) formData.append('folder', folder);
   if (description) formData.append('description', description);
 
@@ -39,11 +39,11 @@ export const uploadMultiple = async (
   description?: string
 ): Promise<UploadResponse> => {
   const formData = new FormData();
-  
-  files.forEach((file) => {
+
+  files.forEach(file => {
     formData.append('files', file);
   });
-  
+
   if (folder) formData.append('folder', folder);
   if (postId) formData.append('postId', postId);
   if (description) formData.append('description', description);
@@ -65,11 +65,11 @@ export const uploadPostMedia = async (
   postId?: string
 ): Promise<UploadResponse> => {
   const formData = new FormData();
-  
-  files.forEach((file) => {
+
+  files.forEach(file => {
     formData.append('files', file);
   });
-  
+
   if (postId) formData.append('postId', postId);
 
   const response = await api.post(ENDPOINTS.UPLOAD.POST, formData, {
@@ -82,48 +82,11 @@ export const uploadPostMedia = async (
 };
 
 /**
- * Upload profile image
- */
-export const uploadProfileImage = async (file: File): Promise<UploadResponse> => {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const response = await api.post(ENDPOINTS.UPLOAD.PROFILE, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-
-  return response.data;
-};
-
-/**
- * Upload audio file
- */
-export const uploadAudio = async (
-  file: File,
-  folder?: string,
-  description?: string
-): Promise<UploadResponse> => {
-  const formData = new FormData();
-  formData.append('file', file);
-  
-  if (folder) formData.append('folder', folder);
-  if (description) formData.append('description', description);
-
-  const response = await api.post(ENDPOINTS.UPLOAD.AUDIO, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-
-  return response.data;
-};
-
-/**
  * Delete uploaded file
  */
-export const deleteFile = async (key: string): Promise<{ success: boolean; message: string }> => {
+export const deleteFile = async (
+  key: string
+): Promise<{ success: boolean; message: string }> => {
   const response = await api.delete(ENDPOINTS.UPLOAD.DELETE, {
     data: { key },
   });
@@ -157,23 +120,7 @@ export const generateUploadUrl = async (
 /**
  * Get upload service health status
  */
-export const getUploadHealth = async (): Promise<any> => {
-  const response = await api.get(ENDPOINTS.UPLOAD.HEALTH);
-  return response.data;
-};
-
-/**
- * Get upload connection info
- */
-export const getUploadConnectionInfo = async (): Promise<any> => {
-  const response = await api.get(ENDPOINTS.UPLOAD.CONNECTION_INFO);
-  return response.data;
-};
-
-/**
- * Get upload statistics
- */
-export const getUploadStats = async (): Promise<any> => {
-  const response = await api.get(ENDPOINTS.UPLOAD.STATS);
-  return response.data;
+export const getUploadHealth = async (): Promise<unknown> => {
+  // health / connection / stats endpoints removed - not used in client
+  return {} as unknown;
 };

@@ -38,14 +38,26 @@ export default function MainContentArea({
                 <PostCard
                   key={`post-${idx + 1}`}
                   post={{
+                    _id: `p_internal_${idx + 1}`,
                     id: `p${idx + 1}`,
-                    author: { username: `user_${idx + 1}` },
+                    author: {
+                      _id: `u${idx + 1}`,
+                      username: `user_${idx + 1}`,
+                    },
+                    userId: {
+                      _id: `u${idx + 1}`,
+                      username: `user_${idx + 1}`,
+                    },
+                    title: `Demo Post ${idx + 1}`,
+                    description: `This is demo content for post ${idx + 1}`,
+                    hashtags: ['demo', 'test'],
+                    visibility: 'public' as const,
+                    allowComments: true,
+                    allowLikes: true,
+                    allowShares: true,
+                    status: 'active' as const,
                     createdAt: new Date().toISOString(),
-                    text: '',
-                    media: [],
-                    likeCount: 0,
-                    commentCount: 0,
-                    isLiked: false,
+                    updatedAt: new Date().toISOString(),
                   }}
                   onComment={postId => {
                     // Toggle logic: if same post is clicked, close it; otherwise open the new post

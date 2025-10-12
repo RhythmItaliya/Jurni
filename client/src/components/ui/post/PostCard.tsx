@@ -26,7 +26,6 @@ import '@/styles/components/post/swiper.scss';
  * @returns {JSX.Element}
  */
 export default function PostCard({
-  post,
   onComment,
 }: Pick<PostCardProps, 'post' | 'onComment'>) {
   const postId = React.useId();
@@ -60,15 +59,40 @@ export default function PostCard({
   // const currentMedia = media[currentMediaIndex];
   const hasMultipleMedia = media.length > 1;
 
-  // Demo fallback post to allow quick visual testing when no `post` prop is passed
-  const demoPost = {
+  // Demo post used intentionally for testing/upload flow.
+  // Construct a fully-typed PostData object (no casts) so TypeScript is happy
+  // and the demo avatar URL renders correctly.
+  const demoPost: import('@/types/post').PostData = {
+    _id: 'demo-_id-1',
     id: 'demo-post',
-    author: { username: 'user_1', avatarUrl: undefined },
+    author: {
+      _id: 'demo-user-1',
+      username: 'user_1',
+      fullName: 'Demo User',
+      avatar:
+        'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop',
+    },
+    userId: {
+      _id: 'demo-user-1',
+      username: 'user_1',
+      fullName: 'Demo User',
+      avatar:
+        'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop',
+    },
+    title: 'Demo post',
+    description: 'This is a demo post used for testing the upload flow.',
+    hashtags: ['demo'],
+    visibility: 'public',
+    allowComments: true,
+    allowLikes: true,
+    allowShares: true,
+    status: 'active',
     createdAt: new Date().toISOString(),
-    media: demoMedia,
-    location: 'San Francisco, CA',
+    updatedAt: new Date().toISOString(),
   };
-  const displayPost = (post ?? demoPost) as import('@/types/post').PostData;
+
+  // Use the demo post for rendering while testing uploads
+  const displayPost = demoPost;
 
   const handlePrevious = () => {
     if (swiperRef.current) {
@@ -118,11 +142,11 @@ export default function PostCard({
         <CardHeader>
           <div className="post-header">
             <div className="author">
-              {displayPost?.author?.avatarUrl ? (
+              {displayPost?.author?.avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   className="author-avatar"
-                  src={displayPost.author.avatarUrl}
+                  src={displayPost.author.avatar}
                   alt={`${displayPost.author.username} avatar`}
                 />
               ) : (
@@ -301,7 +325,8 @@ export default function PostCard({
                       displayPost.id
                     );
                   } catch {}
-                  onComment?.(displayPost.id);
+                  // ensure we pass a string id to the handler
+                  onComment?.(displayPost.id ?? '');
                 }}
                 icon={
                   <svg
