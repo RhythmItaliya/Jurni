@@ -5,6 +5,7 @@ export type { ToastType, ToastProps } from './Toast';
 export { default as Input } from './Input';
 export { Button } from './Button';
 export { Link } from './Link';
+export { default as Avatar } from './Avatar';
 export { Card, CardHeader, CardBody, CardFooter } from './Card';
 export { default as IconButton } from './IconButton';
 export { default as PostCard } from './post/PostCard';

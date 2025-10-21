@@ -1,0 +1,36 @@
+@use '../../variables' as *;
+
+/* Centralized avatar styles used across UI and layout components */
+.author-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  background: $bg-secondary;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.author-avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-primary;
+  font-weight: $font-semibold;
+  background: $bg-secondary;
+}
+
+.avatar-sm {
+  width: 24px;
+  height: 24px;
+}
+
+.avatar-md {
+  width: 40px;
+  height: 40px;
+}
+
+.avatar-lg {
+  width: 56px;
+  height: 56px;
+}

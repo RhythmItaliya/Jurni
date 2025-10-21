@@ -43,9 +43,8 @@ api.interceptors.request.use(
           config.headers = config.headers || {};
           config.headers.Authorization = `Bearer ${token}`;
         }
-      } catch (_) {
-        // If anything fails, continue without token
-        // (server-side login flows will still work using server axios instance)
+      } catch (e) {
+        console.log('Error during signOut:', e);
       }
     }
 
@@ -63,8 +62,8 @@ api.interceptors.response.use(
         try {
           // Trigger NextAuth sign out to clear cookies and session
           await signOut({ redirect: false });
-        } catch (_) {
-          // ignore
+        } catch (e) {
+          console.log('Error during signOut:', e);
         }
 
         // Clear any legacy storage tokens and redirect to login
@@ -72,8 +71,8 @@ api.interceptors.response.use(
           localStorage.removeItem('next-auth.session-token');
           localStorage.removeItem('__Secure-next-auth.session-token');
           sessionStorage.removeItem('next-auth.session-token');
-        } catch (_) {
-          // ignore
+        } catch (e) {
+          console.log('Error during signOut:', e);
         }
 
         window.location.href = '/auth/login';

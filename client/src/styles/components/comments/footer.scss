@@ -1,0 +1,18 @@
+@use '../../variables' as *;
+
+/* Footer: input + button side-by-side, sticky to bottom */
+.comments-panel-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 40;
+  border-top: 1px solid $border;
+  padding: $spacing-sm $spacing-md;
+  background: $bg-surface;
+
+  .comment-form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: $spacing-sm;
+  }
+}

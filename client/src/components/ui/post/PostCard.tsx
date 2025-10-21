@@ -7,6 +7,7 @@ import { CardHeader } from '../Card';
 import { CardFooter } from '../Card';
 import { IconButton } from '../IconButton';
 import { Spinner } from '../Spinner';
+import Avatar from '@/components/ui/Avatar';
 import { PostCardProps } from '@/types/post';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, EffectFade, Mousewheel, Keyboard } from 'swiper/modules';
@@ -142,19 +143,12 @@ export default function PostCard({
         <CardHeader>
           <div className="post-header">
             <div className="author">
-              {displayPost?.author?.avatar ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  className="author-avatar"
-                  src={displayPost.author.avatar}
-                  alt={`${displayPost.author.username} avatar`}
-                />
-              ) : (
-                <div className="author-avatar author-avatar-fallback">
-                  {displayPost?.author?.username?.charAt(0)?.toUpperCase() ||
-                    'U'}
-                </div>
-              )}
+              <Avatar
+                src={displayPost?.author?.avatar}
+                alt={displayPost?.author?.username}
+                size="md"
+                className="author-avatar"
+              />
 
               <div className="author-meta">
                 <div className="author-username">

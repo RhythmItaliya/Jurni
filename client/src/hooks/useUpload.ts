@@ -2,6 +2,26 @@ import { useMutation } from '@tanstack/react-query';
 import { useReduxToast } from '@/hooks/useReduxToast';
 import api from '../lib/axios';
 import { ENDPOINTS } from '../lib/endpoints';
+import type { AxiosError } from 'axios';
+
+// Helper to extract a server-friendly message from axios errors or generic errors
+function getServerMessage(error: unknown): string | undefined {
+  if (error && typeof error === 'object') {
+    const maybeAxios = error as AxiosError<Record<string, unknown>>;
+    const resp = maybeAxios.response;
+    if (resp && resp.data && typeof resp.data === 'object') {
+      const d = resp.data as Record<string, unknown>;
+      if ('message' in d && typeof d.message === 'string') return d.message;
+      if ('error' in d && typeof d.error === 'string') return d.error;
+      try {
+        return JSON.stringify(d);
+      } catch {
+        return String(d);
+      }
+    }
+  }
+  return (error as { message?: string })?.message;
+}
 
 /**
  * Hook to upload a single file
@@ -29,12 +49,7 @@ export function useUploadSingle() {
       showSuccess('Upload Complete', 'File uploaded successfully');
     },
     onError: error => {
-      const serverMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? (error as any).response?.data?.message ||
-            (error as any).response?.data?.error ||
-            String((error as any).response?.data)
-          : (error as { message?: string })?.message;
+      const serverMessage = getServerMessage(error);
       showError('Upload Failed', serverMessage || 'An error occurred');
     },
   });
@@ -68,12 +83,7 @@ export function useUploadMultiple() {
       showSuccess('Upload Complete', 'Files uploaded successfully');
     },
     onError: error => {
-      const serverMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? (error as any).response?.data?.message ||
-            (error as any).response?.data?.error ||
-            String((error as any).response?.data)
-          : (error as { message?: string })?.message;
+      const serverMessage = getServerMessage(error);
       showError('Upload Failed', serverMessage || 'An error occurred');
     },
   });
@@ -100,12 +110,7 @@ export function useUploadPostMedia() {
       showSuccess('Upload Complete', 'Post media uploaded successfully');
     },
     onError: error => {
-      const serverMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? (error as any).response?.data?.message ||
-            (error as any).response?.data?.error ||
-            String((error as any).response?.data)
-          : (error as { message?: string })?.message;
+      const serverMessage = getServerMessage(error);
       showError('Upload Failed', serverMessage || 'An error occurred');
     },
   });

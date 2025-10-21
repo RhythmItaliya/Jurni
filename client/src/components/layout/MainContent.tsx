@@ -52,7 +52,12 @@ export default function MainContent() {
                 key={`post-${idx + 1}`}
                 post={demoPost}
                 onComment={postId => {
-                  setOpenCommentsPostId(postId);
+                  // Toggle: if same post clicked -> close, otherwise open/switch
+                  if (openCommentsPostId === postId) {
+                    setOpenCommentsPostId(null);
+                  } else {
+                    setOpenCommentsPostId(postId);
+                  }
                 }}
               />
             );

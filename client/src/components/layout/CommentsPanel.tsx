@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Button, IconButton } from '@/components/ui';
+import { Button, IconButton, Avatar } from '@/components/ui';
+import Input from '@/components/ui/Input';
 
 const dummyComments = [
   {
@@ -35,12 +36,20 @@ interface Comment {
   author: string;
   text: string;
   timestamp: string;
+  avatar?: string;
 }
 
 function CommentItem({ comment }: { comment: Comment }) {
   return (
     <div className="comment-item">
       <div className="comment-header">
+        {/* Use project's author-avatar style and fallback */}
+        <Avatar
+          src={comment.avatar}
+          alt={comment.author}
+          size="sm"
+          className="comment-profile-pic"
+        />
         <span className="comment-author">@{comment.author}</span>
         <span className="comment-time">{comment.timestamp}</span>
       </div>
@@ -66,8 +75,21 @@ export default function CommentsPanel({
 
   return (
     <div className="comments-panel comments-panel--open">
+      {/* Header Section */}
       <div className="comments-panel-header">
-        <h3 className="comments-panel-title">Comments for Post {postId}</h3>
+        <div className="comments-header-user">
+          <Avatar
+            src="/assets/img/default-profile.png"
+            alt="username"
+            size="md"
+          />
+          <div className="comments-header-meta">
+            <span className="comments-header-username">@username</span>
+            <span className="comments-header-count">
+              {dummyComments.length} comments
+            </span>
+          </div>
+        </div>
         <IconButton
           variant="ghost"
           size="sm"
@@ -94,22 +116,28 @@ export default function CommentsPanel({
         />
       </div>
 
-      <div className="comments-panel-body">
+      {/* Middle Section: Scrollable Comments */}
+      <div className="comments-panel-middle">
         <div className="comments-list">
           {dummyComments.map(comment => (
             <CommentItem key={comment.id} comment={comment} />
           ))}
         </div>
+      </div>
 
-        <div className="comment-form">
-          <textarea
-            className="form-textarea"
+      {/* Footer Section: Input and Button */}
+      <div className="comments-panel-footer">
+        <form className="comment-form">
+          <Input
+            className="comment-input"
+            type="text"
             placeholder="Write a comment..."
+            aria-label="Write a comment"
           />
-          <Button variant="primary" size="sm">
-            Post Comment
+          <Button className="comment-post-btn" variant="outline" size="sm">
+            Post
           </Button>
-        </div>
+        </form>
       </div>
     </div>
   );

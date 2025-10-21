@@ -3,6 +3,7 @@ import { useReduxToast } from '@/hooks/useReduxToast';
 import { CreatePostData, PostData } from '@/types/post';
 import api from '../lib/axios';
 import { ENDPOINTS } from '../lib/endpoints';
+import type { AxiosError } from 'axios';
 
 // Query keys for posts cache
 export const postsKeys = {
@@ -16,13 +17,19 @@ export const postsKeys = {
  * Extract a server-friendly error message from axios or generic errors
  */
 function extractServerMessage(error: unknown): string | undefined {
-  if (error && typeof error === 'object' && 'response' in error) {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const resp = (error as any).response;
-      return resp?.data?.message || resp?.data?.error || String(resp?.data);
-    } catch (e) {
-      return undefined;
+  if (error && typeof error === 'object') {
+    const maybeAxios = error as AxiosError<Record<string, unknown>>;
+    const resp = maybeAxios.response;
+    if (resp && resp.data && typeof resp.data === 'object') {
+      const d = resp.data as Record<string, unknown>;
+      if ('message' in d && typeof d.message === 'string') return d.message;
+      if ('error' in d && typeof d.error === 'string') return d.error;
+      // fallback to stringifying the object
+      try {
+        return JSON.stringify(d);
+      } catch {
+        return String(d);
+      }
     }
   }
 
@@ -118,7 +125,11 @@ export function useGetPosts(query?: Record<string, unknown>) {
       if (response.data && response.data.success) {
         const d = response.data.data;
         if (Array.isArray(d)) return d as PostData[];
-        if (d && 'posts' in d) return (d as any).posts as PostData[];
+        if (d && typeof d === 'object' && 'posts' in d) {
+          const postsCandidate = (d as Record<string, unknown>)['posts'];
+          if (Array.isArray(postsCandidate))
+            return postsCandidate as PostData[];
+        }
       }
       return [] as PostData[];
     },
@@ -142,7 +153,11 @@ export function useGetUserPosts(
       if (response.data && response.data.success) {
         const d = response.data.data;
         if (Array.isArray(d)) return d as PostData[];
-        if (d && 'posts' in d) return (d as any).posts as PostData[];
+        if (d && typeof d === 'object' && 'posts' in d) {
+          const postsCandidate = (d as Record<string, unknown>)['posts'];
+          if (Array.isArray(postsCandidate))
+            return postsCandidate as PostData[];
+        }
       }
       return [] as PostData[];
     },
@@ -180,7 +195,11 @@ export function useGetPostsByToken(token?: string) {
       if (data && data.success) {
         const d = data.data;
         if (Array.isArray(d)) return d as PostData[];
-        if (d && 'posts' in d) return (d as any).posts as PostData[];
+        if (d && typeof d === 'object' && 'posts' in d) {
+          const postsCandidate = (d as Record<string, unknown>)['posts'];
+          if (Array.isArray(postsCandidate))
+            return postsCandidate as PostData[];
+        }
       }
       return [] as PostData[];
     },
