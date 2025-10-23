@@ -1,0 +1,115 @@
+@use 'sass:color';
+@use 'variables' as *;
+
+.website-hero {
+  min-height: calc(100vh - var(--website-header-height, 72px));
+  display: flex;
+  align-items: center;
+  background: transparent;
+  padding: 2rem 0;
+
+  .container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    width: 100%;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+    margin: 0 0 0.5rem 0;
+    color: $text-primary;
+  }
+
+  .hero-sub {
+    color: $text-secondary;
+    margin: 0;
+    font-size: 1.0625rem;
+  }
+
+  .hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .hero-content {
+    flex: 1 1 55%;
+    text-align: left;
+
+    .hero-ctas {
+      margin-top: 1.25rem;
+      display: flex;
+      gap: 0.75rem;
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: $primary;
+        color: $text-on-green;
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: $text-primary;
+        border: 1px solid $border;
+      }
+    }
+  }
+
+  .hero-visual {
+    flex: 1 1 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .visual-placeholder {
+      width: 320px;
+      height: 220px;
+      background: linear-gradient(
+        135deg,
+        color.adjust($primary, $lightness: 10%),
+        $secondary
+      );
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $text-on-green;
+      font-weight: 700;
+    }
+  }
+
+  @media (max-width: 720px) {
+    padding: 1.5rem 0;
+
+    .hero-inner {
+      flex-direction: column-reverse;
+      text-align: center;
+      gap: 1.25rem;
+    }
+
+    .hero-content {
+      width: 100%;
+      text-align: center;
+
+      .hero-ctas {
+        justify-content: center;
+      }
+    }
+
+    .hero-visual .visual-placeholder {
+      width: 260px;
+      height: 180px;
+    }
+  }
+}

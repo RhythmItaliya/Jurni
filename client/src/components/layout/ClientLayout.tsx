@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { LoadingPage } from '@/components/ui';
 import { DynamicLayout } from '@/components/layout';
-import WebsiteLanding from '@/app/website/Website';
+import Home from '@/app/website/components';
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -42,7 +42,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   if (status === 'unauthenticated') {
     // If user is on root, show marketing/website landing page
     if (pathname === '/') {
-      return <WebsiteLanding />;
+      return <Home />;
     }
 
     // For other pages (except auth) we avoid rendering while redirecting

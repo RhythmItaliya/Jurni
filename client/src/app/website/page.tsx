@@ -1,5 +1,5 @@
-import Website from './Website';
+import Home from './components/index';
 
 export default function WebsitePage() {
-  return <Website />;
+  return <Home />;
 }
