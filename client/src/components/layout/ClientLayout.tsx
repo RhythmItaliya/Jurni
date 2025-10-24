@@ -51,5 +51,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     }
   }
 
-  return <DynamicLayout>{children}</DynamicLayout>;
+  return (
+    <>
+      <DynamicLayout>{children}</DynamicLayout>
+    </>
+  );
 }

@@ -3,8 +3,16 @@ import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function Header() {
   return (
-    <header className="website-header">
-      <div className="container header-inner">
+    <header
+      className="website-header"
+      data-aos="fade-down"
+      data-aos-duration="700"
+    >
+      <div
+        className="container header-inner"
+        data-aos="fade-down"
+        data-aos-duration="900"
+      >
         <div className="header-left">
           <Link href="/" className="auth-logo-placeholder">
             Jurni

@@ -2,16 +2,24 @@ import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className="website-hero">
+    <section
+      className="website-hero"
+      data-aos="fade-up"
+      data-aos-duration="900"
+    >
       <div className="container hero-inner">
-        <div className="hero-content">
-          <h1 className="hero-title">
+        <div
+          className="hero-content"
+          data-aos="fade-right"
+          data-aos-duration="1000"
+        >
+          <h1 className="hero-title" data-aos="zoom-in" data-aos-duration="800">
             Create, share and discover meaningful posts
           </h1>
           <p className="hero-sub">
             Jurni helps writers, creators and thinkers publish short-form
             stories and connect with like-minded people. Start your journey —
-            it's free and easy.
+            it&apos;s free and easy.
           </p>
 
           <div className="hero-ctas">
