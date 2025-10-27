@@ -27,6 +27,7 @@ import '@/styles/components/post/swiper.scss';
  * @returns {JSX.Element}
  */
 export default function PostCard({
+  post,
   onComment,
 }: Pick<PostCardProps, 'post' | 'onComment'>) {
   const postId = React.useId();
@@ -35,65 +36,9 @@ export default function PostCard({
   const [isLoading, setIsLoading] = React.useState(true);
   const [playingIndex, setPlayingIndex] = React.useState<number | null>(null);
 
-  const demoMedia = [
-    {
-      id: '1',
-      type: 'image' as const,
-      url: 'https://dummyimage.com/500x500/000/fff',
-      alt: 'Nature landscape',
-    },
-    {
-      id: '2',
-      type: 'video' as const,
-      url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-      alt: 'Flower video',
-    },
-    {
-      id: '3',
-      type: 'image' as const,
-      url: 'https://dummyimage.com/800x800/000/fff',
-      alt: 'Urban scene',
-    },
-  ];
-
-  const media = demoMedia;
-  // const currentMedia = media[currentMediaIndex];
+  // Use actual post media or fallback to empty array
+  const media = post.media || [];
   const hasMultipleMedia = media.length > 1;
-
-  // Demo post used intentionally for testing/upload flow.
-  // Construct a fully-typed PostData object (no casts) so TypeScript is happy
-  // and the demo avatar URL renders correctly.
-  const demoPost: import('@/types/post').PostData = {
-    _id: 'demo-_id-1',
-    id: 'demo-post',
-    author: {
-      _id: 'demo-user-1',
-      username: 'user_1',
-      fullName: 'Demo User',
-      avatar:
-        'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop',
-    },
-    userId: {
-      _id: 'demo-user-1',
-      username: 'user_1',
-      fullName: 'Demo User',
-      avatar:
-        'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop',
-    },
-    title: 'Demo post',
-    description: 'This is a demo post used for testing the upload flow.',
-    hashtags: ['demo'],
-    visibility: 'public',
-    allowComments: true,
-    allowLikes: true,
-    allowShares: true,
-    status: 'active',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  // Use the demo post for rendering while testing uploads
-  const displayPost = demoPost;
 
   const handlePrevious = () => {
     if (swiperRef.current) {
@@ -144,15 +89,15 @@ export default function PostCard({
           <div className="post-header">
             <div className="author">
               <Avatar
-                src={displayPost?.author?.avatar}
-                alt={displayPost?.author?.username}
+                src={undefined} // TODO: Add user avatar URL when available
+                alt={post?.userId?.username}
                 size="md"
                 className="author-avatar"
               />
 
               <div className="author-meta">
                 <div className="author-username">
-                  {displayPost?.author?.username || 'Unknown'}
+                  {post?.userId?.username || 'Unknown'}
                 </div>
               </div>
             </div>
@@ -242,12 +187,12 @@ export default function PostCard({
                 }}
               >
                 {media.map((item, idx) => (
-                  <SwiperSlide key={item.id}>
-                    {item.type === 'video' ? (
+                  <SwiperSlide key={item._id}>
+                    {item.mediaType === 'video' ? (
                       <div className="video-wrapper">
                         <video
                           className="post-video"
-                          src={item.url}
+                          src={item.publicUrl}
                           playsInline
                           loop
                           muted={playingIndex === idx ? false : true}
@@ -255,10 +200,11 @@ export default function PostCard({
                           onLoadedData={() => setIsLoading(false)}
                           onError={() => setIsLoading(false)}
                           poster={
-                            (item as typeof item & { poster?: string })
+                            ((item as typeof item & { poster?: string })
                               .poster ||
-                            (media.find(m => m.type === 'image')?.url ??
-                              undefined)
+                              media.find(m => m.mediaType === 'image')
+                                ?.publicUrl) ??
+                            undefined
                           }
                           draggable={false}
                         />
@@ -290,8 +236,8 @@ export default function PostCard({
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         className="post-image"
-                        src={item.url}
-                        alt={item.alt || 'Post image'}
+                        src={item.publicUrl}
+                        alt={`Post media ${idx + 1}`}
                         loading="lazy"
                         onLoadStart={() => setIsLoading(true)}
                         onLoad={() => setIsLoading(false)}
@@ -301,6 +247,21 @@ export default function PostCard({
                   </SwiperSlide>
                 ))}
               </Swiper>
+            </div>
+
+            <div className="post-content">
+              {post.description && (
+                <p className="post-description">{post.description}</p>
+              )}
+              {post.hashtags && post.hashtags.length > 0 && (
+                <div className="post-hashtags">
+                  {post.hashtags.map((hashtag, idx) => (
+                    <span key={idx} className="hashtag">
+                      #{hashtag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </CardBody>
@@ -316,11 +277,11 @@ export default function PostCard({
                   try {
                     console.debug(
                       '[PostCard] comment-button clicked',
-                      displayPost.id
+                      post._id
                     );
                   } catch {}
                   // ensure we pass a string id to the handler
-                  onComment?.(displayPost.id ?? '');
+                  onComment?.(post._id ?? '');
                 }}
                 icon={
                   <svg

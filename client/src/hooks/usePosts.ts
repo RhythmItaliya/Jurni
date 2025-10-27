@@ -89,16 +89,16 @@ export function useGetPosts(query?: Record<string, unknown>) {
         params: query,
       });
       const data = response.data;
-      if (response.data && response.data.success) {
-        const d = response.data.data;
-        if (Array.isArray(d)) return d as PostData[];
-        if (d && typeof d === 'object' && 'posts' in d) {
-          const postsCandidate = (d as Record<string, unknown>)['posts'];
-          if (Array.isArray(postsCandidate))
-            return postsCandidate as PostData[];
-        }
+      if (data && data.success && data.data) {
+        return {
+          posts: Array.isArray(data.data) ? data.data : [],
+          meta: data.meta || { page: 1, limit: 10, total: 0, totalPages: 0 },
+        };
       }
-      return [] as PostData[];
+      return {
+        posts: [] as PostData[],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      };
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -117,16 +117,21 @@ export function useGetUserPosts(
       const response = await api.get(ENDPOINTS.POSTS.LIST, {
         params: { ...(query || {}), userId },
       });
-      if (response.data && response.data.success) {
-        const d = response.data.data;
-        if (Array.isArray(d)) return d as PostData[];
-        if (d && typeof d === 'object' && 'posts' in d) {
-          const postsCandidate = (d as Record<string, unknown>)['posts'];
-          if (Array.isArray(postsCandidate))
-            return postsCandidate as PostData[];
-        }
+      if (response.data && response.data.success && response.data.data) {
+        return {
+          posts: Array.isArray(response.data.data) ? response.data.data : [],
+          meta: response.data.meta || {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 0,
+          },
+        };
       }
-      return [] as PostData[];
+      return {
+        posts: [] as PostData[],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      };
     },
     enabled: !!userId,
     staleTime: 5 * 60 * 1000,

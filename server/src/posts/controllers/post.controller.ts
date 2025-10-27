@@ -28,6 +28,7 @@ import {
   PostResponseDto,
 } from '@/posts/dto';
 import { ENDPOINTS } from '@/lib/endpoints';
+import { BaseResponseDto } from '@/lib/response.dto';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -54,13 +55,14 @@ export class PostController {
   @ApiResponse({
     status: 201,
     description: 'Post created with media successfully',
+    type: BaseResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Failed to create post with media' })
   async createPostWithMedia(
     @Body() createPostDto: CreatePostDto,
     @UploadedFiles() files: Express.Multer.File[],
     @Request() req: any,
-  ): Promise<PostResponseDto> {
+  ): Promise<BaseResponseDto> {
     try {
       const userId = req.user.id;
       const post = await this.postMediaService.createPostWithMedia(
@@ -95,12 +97,16 @@ export class PostController {
    */
   @Get(ENDPOINTS.POSTS.LIST)
   @ApiOperation({ summary: 'Get posts with filtering and pagination' })
-  @ApiResponse({ status: 200, description: 'Posts retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Posts retrieved successfully',
+    type: BaseResponseDto,
+  })
   @ApiResponse({ status: 400, description: 'Failed to retrieve posts' })
   async getPosts(
     @Query() query: PostQueryDto,
     @Request() req: any,
-  ): Promise<PostResponseDto> {
+  ): Promise<BaseResponseDto> {
     try {
       const requestingUserId = req.user?.id;
       const result = await this.postService.getPosts(query, requestingUserId);
@@ -138,13 +144,17 @@ export class PostController {
    */
   @Get(ENDPOINTS.POSTS.DETAIL('').replace('/', '') + '/:id')
   @ApiOperation({ summary: 'Get a single post by ID' })
-  @ApiResponse({ status: 200, description: 'Post retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Post retrieved successfully',
+    type: BaseResponseDto,
+  })
   @ApiResponse({ status: 404, description: 'Post not found' })
   @ApiResponse({ status: 400, description: 'Failed to retrieve post' })
   async getPostById(
     @Param('id') postId: string,
     @Request() req: any,
-  ): Promise<PostResponseDto> {
+  ): Promise<BaseResponseDto> {
     try {
       const requestingUserId = req.user?.id;
       const post = await this.postService.getPostById(postId, requestingUserId);
@@ -178,7 +188,11 @@ export class PostController {
   @Put(ENDPOINTS.POSTS.UPDATE('').replace('/', '') + '/:id')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update a post' })
-  @ApiResponse({ status: 200, description: 'Post updated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Post updated successfully',
+    type: BaseResponseDto,
+  })
   @ApiResponse({ status: 403, description: 'Unauthorized to update post' })
   @ApiResponse({ status: 404, description: 'Post not found' })
   @ApiResponse({ status: 400, description: 'Failed to update post' })
@@ -186,7 +200,7 @@ export class PostController {
     @Param('id') postId: string,
     @Body() updatePostDto: UpdatePostDto,
     @Request() req: any,
-  ): Promise<PostResponseDto> {
+  ): Promise<BaseResponseDto> {
     try {
       const userId = req.user.id;
       const post = await this.postService.updatePost(
@@ -223,14 +237,18 @@ export class PostController {
   @Delete(ENDPOINTS.POSTS.DELETE('').replace('/', '') + '/:id')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete a post' })
-  @ApiResponse({ status: 200, description: 'Post deleted successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Post deleted successfully',
+    type: BaseResponseDto,
+  })
   @ApiResponse({ status: 403, description: 'Unauthorized to delete post' })
   @ApiResponse({ status: 404, description: 'Post not found' })
   @ApiResponse({ status: 400, description: 'Failed to delete post' })
   async deletePost(
     @Param('id') postId: string,
     @Request() req: any,
-  ): Promise<PostResponseDto> {
+  ): Promise<BaseResponseDto> {
     try {
       const userId = req.user.id;
       await this.postService.deletePost(postId, userId);

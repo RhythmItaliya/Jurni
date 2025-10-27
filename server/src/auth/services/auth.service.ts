@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@users/services';
 import { LoginDto, RegisterDto, RegistrationOTPDto } from '@/auth/dto/auth.dto';
 import { EmailService, OTPService } from '@/email/services';
+import { createSuccessResponse, createErrorResponse } from '@/lib/response.dto';
 
 @Injectable()
 export class AuthService {
@@ -60,7 +61,7 @@ export class AuthService {
     }
 
     const payload = { email: user.email, sub: user.uuid };
-    return {
+    return createSuccessResponse('Login successful', {
       accessToken: this.jwtService.sign(payload),
       user: {
         uuid: user.uuid,
@@ -71,7 +72,7 @@ export class AuthService {
         createdAt: user.createdAt.toISOString(),
         updatedAt: user.updatedAt.toISOString(),
       },
-    };
+    });
   }
 
   /**
@@ -92,23 +93,24 @@ export class AuthService {
     // Store OTP in database with 2-minute expiry
     await this.otpService.storeOTP(tempUser.uuid, otp, 2, 'registration');
 
-    return {
-      message:
-        'Registration successful! Please check your email for verification OTP.',
-      user: {
-        uuid: tempUser.uuid,
-        username: tempUser.username,
-        email: tempUser.email,
-        isActive: false,
-        otpVerifiedAt: null,
-        createdAt: tempUser.createdAt.toISOString(),
-        updatedAt: tempUser.updatedAt.toISOString(),
+    return createSuccessResponse(
+      'Registration successful! Please check your email for verification OTP.',
+      {
+        user: {
+          uuid: tempUser.uuid,
+          username: tempUser.username,
+          email: tempUser.email,
+          isActive: false,
+          otpVerifiedAt: null,
+          createdAt: tempUser.createdAt.toISOString(),
+          updatedAt: tempUser.updatedAt.toISOString(),
+        },
+        otpInfo: {
+          expiresIn: '2 minutes',
+          type: 'registration',
+        },
       },
-      otpInfo: {
-        expiresIn: '2 minutes',
-        type: 'registration',
-      },
-    };
+    );
   }
 
   /**
@@ -146,21 +148,22 @@ export class AuthService {
         verifyOtpDto.email,
       );
 
-      return {
-        message:
-          'Registration verified successfully! Your account has been created. You can now login.',
-        email: verifyOtpDto.email,
-        otpVerifiedAt: user.otpVerifiedAt?.toISOString(),
-        user: {
-          uuid: user.uuid,
-          username: user.username,
-          email: user.email,
-          isActive: user.isActive,
+      return createSuccessResponse(
+        'Registration verified successfully! Your account has been created. You can now login.',
+        {
+          email: verifyOtpDto.email,
           otpVerifiedAt: user.otpVerifiedAt?.toISOString(),
-          createdAt: user.createdAt.toISOString(),
-          updatedAt: user.updatedAt.toISOString(),
+          user: {
+            uuid: user.uuid,
+            username: user.username,
+            email: user.email,
+            isActive: user.isActive,
+            otpVerifiedAt: user.otpVerifiedAt?.toISOString(),
+            createdAt: user.createdAt.toISOString(),
+            updatedAt: user.updatedAt.toISOString(),
+          },
         },
-      };
+      );
     } catch (error) {
       if (error instanceof ConflictException) {
         throw new ConflictException(
@@ -196,15 +199,17 @@ export class AuthService {
     // Store new OTP in database with 2-minute expiry
     await this.otpService.storeOTP(tempUser.uuid, otp, 2, 'registration');
 
-    return {
-      message: 'New OTP sent successfully! Please check your email.',
-      email: tempUser.email,
-      username: tempUser.username,
-      otpInfo: {
-        expiresIn: '2 minutes',
-        type: 'registration',
+    return createSuccessResponse(
+      'New OTP sent successfully! Please check your email.',
+      {
+        email: tempUser.email,
+        username: tempUser.username,
+        otpInfo: {
+          expiresIn: '2 minutes',
+          type: 'registration',
+        },
       },
-    };
+    );
   }
 
   /**
@@ -219,19 +224,20 @@ export class AuthService {
       { email: newEmail },
     );
 
-    return {
-      message:
-        'Email updated successfully! Please check your new email for verification OTP.',
-      user: {
-        uuid: updatedTempUser.uuid,
-        username: updatedTempUser.username,
-        email: updatedTempUser.email,
-        isActive: false,
-        otpVerifiedAt: null,
-        createdAt: updatedTempUser.createdAt.toISOString(),
-        updatedAt: updatedTempUser.updatedAt.toISOString(),
+    return createSuccessResponse(
+      'Email updated successfully! Please check your new email for verification OTP.',
+      {
+        user: {
+          uuid: updatedTempUser.uuid,
+          username: updatedTempUser.username,
+          email: updatedTempUser.email,
+          isActive: false,
+          otpVerifiedAt: null,
+          createdAt: updatedTempUser.createdAt.toISOString(),
+          updatedAt: updatedTempUser.updatedAt.toISOString(),
+        },
       },
-    };
+    );
   }
 
   /**
@@ -245,8 +251,7 @@ export class AuthService {
       username: newUsername,
     });
 
-    return {
-      message: 'Username updated successfully!',
+    return createSuccessResponse('Username updated successfully!', {
       user: {
         uuid: updatedTempUser.uuid,
         username: updatedTempUser.username,
@@ -256,7 +261,7 @@ export class AuthService {
         createdAt: updatedTempUser.createdAt.toISOString(),
         updatedAt: updatedTempUser.updatedAt.toISOString(),
       },
-    };
+    });
   }
 
   /**
@@ -293,10 +298,9 @@ export class AuthService {
         resetToken,
       );
 
-      return {
-        message: 'Password reset link sent to your email',
-        email: email,
-      };
+      return createSuccessResponse('Password reset link sent to your email', {
+        email,
+      });
     } catch (error) {
       throw error instanceof BadRequestException ||
         error instanceof NotFoundException
@@ -325,8 +329,7 @@ export class AuthService {
       password,
     );
 
-    return {
-      message: 'Password has been reset successfully',
+    return createSuccessResponse('Password has been reset successfully', {
       user: {
         uuid: updatedUser.uuid,
         username: updatedUser.username,
@@ -334,7 +337,7 @@ export class AuthService {
         isActive: updatedUser.isActive,
         updatedAt: updatedUser.updatedAt.toISOString(),
       },
-    };
+    });
   }
 
   /**
@@ -350,9 +353,6 @@ export class AuthService {
       throw new NotFoundException('Invalid or expired reset token');
     }
 
-    return {
-      message: 'Token is valid',
-      valid: true,
-    };
+    return createSuccessResponse('Token is valid', { valid: true });
   }
 }

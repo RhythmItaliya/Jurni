@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Post, PostDocument } from '@/posts/models/post.model';
 import { CreatePostDto, UpdatePostDto, PostQueryDto } from '@/posts/dto';
+import { PostUtils } from '@/posts/utils/post.utils';
 
 @Injectable()
 export class PostService {
@@ -37,7 +38,18 @@ export class PostService {
     };
 
     const post = new this.postModel(postData);
-    return await post.save();
+    const savedPost = await post.save();
+
+    // Populate userId for consistent response
+    const populatedPost = await PostUtils.getFormattedPost(this.postModel, {
+      _id: savedPost._id,
+    });
+
+    if (!populatedPost) {
+      throw new Error('Failed to retrieve created post');
+    }
+
+    return populatedPost;
   }
 
   /**
@@ -119,14 +131,11 @@ export class PostService {
       console.log('Posts query params:', { page, limit, sortBy });
 
       const [posts, total] = await Promise.all([
-        this.postModel
-          .find(filter)
-          .sort(sort)
-          .skip(skip)
-          .limit(limit)
-          .populate('userId', 'username fullName avatar')
-          .populate('media', 'url publicUrl mediaType thumbnailUrl size')
-          .exec(),
+        PostUtils.getFormattedPosts(this.postModel, filter, {
+          sort,
+          skip,
+          limit,
+        }),
         this.postModel.countDocuments(filter),
       ]);
 
@@ -164,11 +173,10 @@ export class PostService {
         throw new BadRequestException('Invalid post ID');
       }
 
-      const post = await this.postModel
-        .findOne({ _id: postId, status: 'active' })
-        .populate('userId', 'username fullName avatar')
-        .populate('media', 'url publicUrl mediaType thumbnailUrl size')
-        .exec();
+      const post = await PostUtils.getFormattedPost(this.postModel, {
+        _id: postId,
+        status: 'active',
+      });
 
       if (!post) {
         throw new NotFoundException('Post not found');
@@ -221,11 +229,11 @@ export class PostService {
         throw new ForbiddenException('You can only edit your own posts');
       }
 
-      const updatedPost = await this.postModel
-        .findByIdAndUpdate(postId, updatePostDto, { new: true })
-        .populate('userId', 'username fullName avatar')
-        .populate('media', 'url publicUrl mediaType thumbnailUrl size')
-        .exec();
+      const updatedPost = await PostUtils.updateAndFormatPost(
+        this.postModel,
+        postId,
+        updatePostDto,
+      );
 
       return updatedPost!;
     } catch (error) {

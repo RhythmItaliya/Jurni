@@ -49,6 +49,13 @@ export class Post {
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Media' }], default: [] })
   media: Types.ObjectId[];
+
+  // Timestamps (automatically managed by @Schema({ timestamps: true }))
+  createdAt: Date;
+  updatedAt: Date;
+
+  // Version key (automatically managed by Mongoose)
+  __v: number;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

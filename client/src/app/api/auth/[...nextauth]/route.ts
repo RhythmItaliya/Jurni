@@ -29,7 +29,7 @@ const handler = NextAuth({
             password: credentials.password,
           });
 
-          const { accessToken, user } = response.data;
+          const { accessToken, user } = response.data.data;
 
           if (!user?.uuid) {
             console.error('User UUID is missing from API response');

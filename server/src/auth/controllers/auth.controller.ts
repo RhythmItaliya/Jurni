@@ -15,6 +15,7 @@ import {
   ResetPasswordResponseDto,
 } from '@/auth/dto/auth.dto';
 import { ENDPOINTS } from '@/lib/endpoints';
+import { BaseResponseDto } from '@/lib/response.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -33,9 +34,10 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Registration initiated, OTP sent to email',
+    type: BaseResponseDto,
   })
   @ApiResponse({ status: 409, description: 'User already exists' })
-  async register(@Body() registerDto: RegisterDto) {
+  async register(@Body() registerDto: RegisterDto): Promise<BaseResponseDto> {
     return this.authService.register(registerDto);
   }
 
@@ -47,12 +49,16 @@ export class AuthController {
    */
   @Post(ENDPOINTS.AUTH.LOGIN)
   @ApiOperation({ summary: 'Login user (verified accounts only)' })
-  @ApiResponse({ status: 201, description: 'Login successful' })
+  @ApiResponse({
+    status: 201,
+    description: 'Login successful',
+    type: BaseResponseDto,
+  })
   @ApiResponse({
     status: 401,
     description: 'Invalid credentials or unverified account',
   })
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto): Promise<BaseResponseDto> {
     return this.authService.login(loginDto);
   }
 
@@ -68,10 +74,13 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     description: 'OTP verified successfully, user account created',
+    type: BaseResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid OTP' })
   @ApiResponse({ status: 404, description: 'Registration data not found' })
-  async verifyRegistrationOTP(@Body() verifyOtpDto: RegistrationOTPDto) {
+  async verifyRegistrationOTP(
+    @Body() verifyOtpDto: RegistrationOTPDto,
+  ): Promise<BaseResponseDto> {
     return this.authService.verifyRegistrationOTP(verifyOtpDto);
   }
 
@@ -83,10 +92,16 @@ export class AuthController {
    */
   @Post(ENDPOINTS.AUTH.RESEND_REGISTRATION_OTP)
   @ApiOperation({ summary: 'Resend registration OTP' })
-  @ApiResponse({ status: 200, description: 'OTP resent successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'OTP resent successfully',
+    type: BaseResponseDto,
+  })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 429, description: 'Too many requests, please wait' })
-  async resendRegistrationOTP(@Body() resendOtpDto: ResendOTPDto) {
+  async resendRegistrationOTP(
+    @Body() resendOtpDto: ResendOTPDto,
+  ): Promise<BaseResponseDto> {
     return this.authService.resendRegistrationOTP(resendOtpDto.email);
   }
 
@@ -99,13 +114,19 @@ export class AuthController {
   @Post(ENDPOINTS.AUTH.UPDATE_TEMP_USER_EMAIL)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update temporary user email' })
-  @ApiResponse({ status: 200, description: 'Email updated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Email updated successfully',
+    type: BaseResponseDto,
+  })
   @ApiResponse({ status: 404, description: 'Temporary user not found' })
   @ApiResponse({ status: 409, description: 'Email already exists' })
-  async updateTempUserEmail(@Body() updateEmailDto: UpdateTempUserEmailDto) {
+  async updateTempUserEmail(
+    @Body() body: UpdateTempUserEmailDto,
+  ): Promise<BaseResponseDto> {
     return this.authService.updateTempUserEmail(
-      updateEmailDto.currentEmail,
-      updateEmailDto.newEmail,
+      body.currentEmail,
+      body.newEmail,
     );
   }
 
@@ -118,12 +139,16 @@ export class AuthController {
   @Post(ENDPOINTS.AUTH.UPDATE_TEMP_USER_USERNAME)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update temporary user username' })
-  @ApiResponse({ status: 200, description: 'Username updated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Username updated successfully',
+    type: BaseResponseDto,
+  })
   @ApiResponse({ status: 404, description: 'Temporary user not found' })
   @ApiResponse({ status: 409, description: 'Username already exists' })
   async updateTempUserUsername(
     @Body() updateUsernameDto: UpdateTempUserUsernameDto,
-  ) {
+  ): Promise<BaseResponseDto> {
     return this.authService.updateTempUserUsername(
       updateUsernameDto.email,
       updateUsernameDto.newUsername,
@@ -142,10 +167,12 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Password reset link sent if account exists',
-    type: ForgotPasswordResponseDto,
+    type: BaseResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid email format' })
-  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+  async forgotPassword(
+    @Body() forgotPasswordDto: ForgotPasswordDto,
+  ): Promise<BaseResponseDto> {
     return this.authService.forgotPassword(forgotPasswordDto.email);
   }
 
@@ -161,14 +188,16 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Password reset successfully',
-    type: ResetPasswordResponseDto,
+    type: BaseResponseDto,
   })
   @ApiResponse({
     status: 400,
     description: 'Invalid token or password requirements',
   })
   @ApiResponse({ status: 404, description: 'Invalid or expired token' })
-  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ): Promise<BaseResponseDto> {
     return this.authService.resetPassword(
       resetPasswordDto.token,
       resetPasswordDto.password,
@@ -184,9 +213,15 @@ export class AuthController {
   @Post(ENDPOINTS.AUTH.VERIFY_RESET_TOKEN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verify password reset token' })
-  @ApiResponse({ status: 200, description: 'Token is valid' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token is valid',
+    type: BaseResponseDto,
+  })
   @ApiResponse({ status: 404, description: 'Invalid or expired token' })
-  async verifyResetToken(@Body() { token }: { token: string }) {
+  async verifyResetToken(
+    @Body() { token }: { token: string },
+  ): Promise<BaseResponseDto> {
     return this.authService.verifyResetToken(token);
   }
 }

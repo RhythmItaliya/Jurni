@@ -86,10 +86,11 @@ function ForgotPasswordForm() {
                   <div className="form-actions">
                     <Button
                       onClick={() => {
+                        setIsSubmitted(false); // Reset to show form again
                         // Send another reset link with the same email
                         forgotPasswordMutation.mutate(formData, {
                           onSuccess: () => {
-                            // Keep the success state
+                            setIsSubmitted(true); // Show success state again
                           },
                         });
                       }}

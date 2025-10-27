@@ -1,3 +1,5 @@
+import { ApiResponse } from './auth';
+
 /**
  * Post author information
  * @interface PostAuthor
@@ -10,18 +12,23 @@ export interface PostAuthor {
 }
 
 /**
- * Post media item (matches server MediaItemDto)
+ * Post media item (matches server Media model)
  * @interface PostMedia
  */
 export interface PostMedia {
+  _id: string;
+  userId: string;
+  postId?: string;
+  key: string;
   url: string;
-  type: 'image' | 'video' | 'audio';
+  publicUrl: string;
+  bucket: string;
+  mediaType: 'image' | 'video' | 'audio' | 'other';
   thumbnailUrl?: string;
   size?: number;
-  duration?: number;
-  width?: number;
-  height?: number;
-  alt?: string;
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
 }
 
 /**
@@ -36,14 +43,16 @@ export interface PostLocation {
 }
 
 /**
- * Post data structure (matches simplified server schema)
+ * Post data structure (matches server schema with populated media)
  * @interface PostData
  */
 export interface PostData {
   _id: string;
   id?: string;
-  author?: PostAuthor;
-  userId: PostAuthor;
+  userId: {
+    _id: string;
+    username: string;
+  };
   title: string;
   description?: string;
   hashtags?: string[];
@@ -53,8 +62,10 @@ export interface PostData {
   allowLikes: boolean;
   allowShares: boolean;
   status: 'active' | 'deleted' | 'archived' | 'draft';
+  media?: PostMedia[];
   createdAt: string;
   updatedAt: string;
+  __v?: number;
 }
 
 /**
@@ -91,23 +102,26 @@ export interface UploadResponse {
 }
 
 /**
- * Post API response
- * @interface PostApiResponse
+ * Posts list response data (matches actual API response)
  */
-export interface PostApiResponse {
-  success: boolean;
-  message: string;
-  data?:
-    | PostData
-    | PostData[]
-    | {
-        posts: PostData[];
-        total: number;
-        page: number;
-        totalPages: number;
-      };
-  error?: string;
+export interface PostsListResponseData {
+  data: PostData[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }
+
+/**
+ * Post API response types
+ */
+export type PostsListResponse = ApiResponse<PostsListResponseData>;
+export type PostDetailResponse = ApiResponse<PostData>;
+export type PostCreateResponse = ApiResponse<PostData>;
+export type PostUpdateResponse = ApiResponse<PostData>;
+export type PostDeleteResponse = ApiResponse<void>;
 
 /**
  * Props for the PostCard component

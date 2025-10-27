@@ -18,6 +18,7 @@ import { UserService } from '@/users/services/user.service';
 import { UserDocument } from '@/users/models/user.schema';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
 import { UpdateUserDto, UserResponseDto } from '@/users/dto/user.dto';
+import { BaseResponseDto } from '@/lib/response.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')
@@ -31,28 +32,18 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Returns list of all users',
-    schema: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          uuid: {
-            type: 'string',
-            example: '123e4567-e89b-12d3-a456-426614174000',
-          },
-          username: { type: 'string', example: 'johndoe' },
-          email: { type: 'string', example: 'john@example.com' },
-          isActive: { type: 'boolean', example: true },
-        },
-      },
-    },
+    type: BaseResponseDto,
   })
   @ApiResponse({
     status: 401,
     description: 'Unauthorized - JWT token required',
   })
-  findAll(): Promise<UserDocument[]> {
-    return this.userService.findAll();
+  findAll(): Promise<BaseResponseDto> {
+    return this.userService.findAll().then((users) => ({
+      success: true,
+      message: 'Users retrieved successfully',
+      data: users,
+    }));
   }
 
   @UseGuards(JwtAuthGuard)
@@ -66,18 +57,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Returns user details',
-    schema: {
-      type: 'object',
-      properties: {
-        uuid: {
-          type: 'string',
-          example: '123e4567-e89b-12d3-a456-426614174000',
-        },
-        username: { type: 'string', example: 'johndoe' },
-        email: { type: 'string', example: 'john@example.com' },
-        isActive: { type: 'boolean', example: true },
-      },
-    },
+    type: BaseResponseDto,
   })
   @ApiResponse({
     status: 401,
@@ -87,8 +67,19 @@ export class UserController {
     status: 404,
     description: 'User not found',
   })
-  findOne(@Param('uuid') uuid: string): Promise<UserDocument> {
-    return this.userService.findByUuid(uuid);
+  findOne(@Param('uuid') uuid: string): Promise<BaseResponseDto> {
+    return this.userService
+      .findByUuid(uuid)
+      .then((user) => ({
+        success: true,
+        message: 'User retrieved successfully',
+        data: user,
+      }))
+      .catch((error) => ({
+        success: false,
+        message: 'User not found',
+        error: error.message,
+      }));
   }
 
   @UseGuards(JwtAuthGuard)
@@ -102,18 +93,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'User updated successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        uuid: {
-          type: 'string',
-          example: '123e4567-e89b-12d3-a456-426614174000',
-        },
-        username: { type: 'string', example: 'johndoe' },
-        email: { type: 'string', example: 'john@example.com' },
-        isActive: { type: 'boolean', example: true },
-      },
-    },
+    type: BaseResponseDto,
   })
   @ApiResponse({
     status: 401,
@@ -126,8 +106,19 @@ export class UserController {
   update(
     @Param('uuid') uuid: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UserDocument> {
-    return this.userService.update(uuid, updateUserDto);
+  ): Promise<BaseResponseDto> {
+    return this.userService
+      .update(uuid, updateUserDto)
+      .then((user) => ({
+        success: true,
+        message: 'User updated successfully',
+        data: user,
+      }))
+      .catch((error) => ({
+        success: false,
+        message: 'Failed to update user',
+        error: error.message,
+      }));
   }
 
   @UseGuards(JwtAuthGuard)
@@ -141,18 +132,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'User deleted successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        uuid: {
-          type: 'string',
-          example: '123e4567-e89b-12d3-a456-426614174000',
-        },
-        username: { type: 'string', example: 'johndoe' },
-        email: { type: 'string', example: 'john@example.com' },
-        isActive: { type: 'boolean', example: true },
-      },
-    },
+    type: BaseResponseDto,
   })
   @ApiResponse({
     status: 401,
@@ -162,7 +142,18 @@ export class UserController {
     status: 404,
     description: 'User not found',
   })
-  remove(@Param('uuid') uuid: string): Promise<UserDocument> {
-    return this.userService.remove(uuid);
+  remove(@Param('uuid') uuid: string): Promise<BaseResponseDto> {
+    return this.userService
+      .remove(uuid)
+      .then((user) => ({
+        success: true,
+        message: 'User deleted successfully',
+        data: user,
+      }))
+      .catch((error) => ({
+        success: false,
+        message: 'Failed to delete user',
+        error: error.message,
+      }));
   }
 }

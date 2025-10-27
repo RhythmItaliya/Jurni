@@ -44,7 +44,7 @@ export function useRegister() {
         email: data.email,
         password: data.password,
       });
-      return response.data;
+      return response.data.data;
     },
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: authKeys.all });
@@ -86,7 +86,7 @@ export function useVerifyOTP() {
         email: data.email,
         otp: data.otp,
       });
-      return response.data;
+      return response.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: authKeys.all });
@@ -127,7 +127,7 @@ export function useResendOTP() {
       const response = await api.post(ENDPOINTS.AUTH.RESEND_REGISTRATION_OTP, {
         email,
       });
-      return response.data;
+      return response.data.data;
     },
     onSuccess: () => {
       showSuccess('OTP Sent', 'A new OTP has been sent to your email');
@@ -267,7 +267,7 @@ export function useForgotPassword() {
       const response = await api.post(ENDPOINTS.AUTH.FORGOT_PASSWORD, {
         email: data.email,
       });
-      return response.data;
+      return response.data.data;
     },
     onSuccess: () => {
       showSuccess(
@@ -307,7 +307,7 @@ export function useResetPassword() {
         token: data.token,
         password: data.password,
       });
-      return response.data;
+      return response.data.data;
     },
     onSuccess: () => {
       showSuccess(
@@ -346,7 +346,7 @@ export function useVerifyResetToken() {
       const response = await api.post(ENDPOINTS.AUTH.VERIFY_RESET_TOKEN, {
         token,
       });
-      return response.data;
+      return response.data.data;
     },
     onError: error => {
       const serverMessage = extractServerMessage(error);

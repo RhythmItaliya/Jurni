@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 import { layoutManager } from '@/lib/layoutManager';
 import LeftSidebar from './LeftSidebar';
 import RightSidebar from './RightSidebar';
@@ -26,15 +27,13 @@ interface DynamicLayoutProps {
 export default function DynamicLayout({ children }: DynamicLayoutProps) {
   const pathname = usePathname();
 
-  // Skip layout for auth pages
-  if (pathname.startsWith('/auth/')) {
-    return <>{children}</>;
-  }
-
-  const layoutConfig = layoutManager.getConfig(pathname);
+  const layoutConfig = useMemo(
+    () => layoutManager.getConfig(pathname),
+    [pathname]
+  );
 
   // Extract user information for profile routes
-  const getUserDataFromPath = () => {
+  const userData = useMemo(() => {
     // For /[username] routes, extract username
     const profileMatch = pathname.match(/^\/([^/]+)(?:\/.*)?$/);
     if (
@@ -60,9 +59,12 @@ export default function DynamicLayout({ children }: DynamicLayoutProps) {
     }
 
     return null;
-  };
+  }, [pathname]);
 
-  const userData = getUserDataFromPath();
+  // Skip layout for auth pages
+  if (pathname.startsWith('/auth/')) {
+    return <>{children}</>;
+  }
 
   return (
     <div className={`app-layout layout-${layoutConfig.layoutType}`}>
