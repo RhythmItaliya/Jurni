@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { UploadService } from './services/upload.service';
 import { R2StorageService } from './services/r2-storage.service';
-import { MediaModule } from '../media/media.module';
+import { MediaModule } from '@/media/media.module';
 
 @Module({
   imports: [

@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useReduxToast } from '@/hooks/useReduxToast';
 import { CreatePostData, PostData } from '@/types/post';
-import api from '../lib/axios';
-import { ENDPOINTS } from '../lib/endpoints';
-import type { AxiosError } from 'axios';
+import api from '@/lib/axios';
+import { ENDPOINTS } from '@/lib/endpoints';
+import { extractServerMessage } from '@/lib/errorUtils';
 
 // Query keys for posts cache
 export const postsKeys = {
@@ -12,52 +12,6 @@ export const postsKeys = {
   userPosts: (userId: string) => [...postsKeys.all, 'user', userId] as const,
   detail: (id: string) => [...postsKeys.all, 'detail', id] as const,
 };
-
-/**
- * Extract a server-friendly error message from axios or generic errors
- */
-function extractServerMessage(error: unknown): string | undefined {
-  if (error && typeof error === 'object') {
-    const maybeAxios = error as AxiosError<Record<string, unknown>>;
-    const resp = maybeAxios.response;
-    if (resp && resp.data && typeof resp.data === 'object') {
-      const d = resp.data as Record<string, unknown>;
-      if ('message' in d && typeof d.message === 'string') return d.message;
-      if ('error' in d && typeof d.error === 'string') return d.error;
-      // fallback to stringifying the object
-      try {
-        return JSON.stringify(d);
-      } catch {
-        return String(d);
-      }
-    }
-  }
-
-  return (error as { message?: string })?.message;
-}
-
-/**
- * Hook to create a post
- */
-export function useCreatePost() {
-  const queryClient = useQueryClient();
-  const { showError, showSuccess } = useReduxToast();
-
-  return useMutation({
-    mutationFn: async (data: CreatePostData) => {
-      const response = await api.post(ENDPOINTS.POSTS.CREATE, data);
-      return response.data;
-    },
-    onSuccess: data => {
-      queryClient.invalidateQueries({ queryKey: postsKeys.list() });
-      showSuccess('Post Created', 'Your post was created successfully');
-    },
-    onError: error => {
-      const serverMessage = extractServerMessage(error);
-      showError('Create Failed', serverMessage || 'An error occurred');
-    },
-  });
-}
 
 /**
  * Hook to create a post with media files
@@ -88,13 +42,26 @@ export function useCreatePostWithMedia() {
         'allowShares',
         (data.postData.allowShares ?? true).toString()
       );
+      if (data.postData.location) {
+        formData.append('location[name]', data.postData.location.name);
+        if (data.postData.location.latitude !== undefined)
+          formData.append(
+            'location[latitude]',
+            data.postData.location.latitude.toString()
+          );
+        if (data.postData.location.longitude !== undefined)
+          formData.append(
+            'location[longitude]',
+            data.postData.location.longitude.toString()
+          );
+        if (data.postData.location.address)
+          formData.append('location[address]', data.postData.location.address);
+      }
       if (data.files) data.files.forEach(f => formData.append('files', f));
 
-      const response = await api.post(
-        ENDPOINTS.POSTS.CREATE_WITH_MEDIA,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
+      const response = await api.post(ENDPOINTS.POSTS.CREATE, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       return response.data;
     },
     onSuccess: data => {
@@ -118,7 +85,7 @@ export function useGetPosts(query?: Record<string, unknown>) {
   return useQuery({
     queryKey: [...postsKeys.list(), JSON.stringify(query || {})],
     queryFn: async () => {
-      const response = await api.get(ENDPOINTS.POSTS.GET_ALL, {
+      const response = await api.get(ENDPOINTS.POSTS.LIST, {
         params: query,
       });
       const data = response.data;
@@ -147,7 +114,7 @@ export function useGetUserPosts(
   return useQuery({
     queryKey: [...postsKeys.userPosts(userId), JSON.stringify(query || {})],
     queryFn: async () => {
-      const response = await api.get(ENDPOINTS.POSTS.GET_ALL, {
+      const response = await api.get(ENDPOINTS.POSTS.LIST, {
         params: { ...(query || {}), userId },
       });
       if (response.data && response.data.success) {
@@ -173,38 +140,12 @@ export function useGetPostById(postId: string) {
   return useQuery({
     queryKey: postsKeys.detail(postId),
     queryFn: async () => {
-      const response = await api.get(ENDPOINTS.POSTS.GET_BY_ID(postId));
+      const response = await api.get(ENDPOINTS.POSTS.DETAIL(postId));
       const data = response.data;
       if (data.success && data.data) return data.data as PostData;
       throw new Error(data.error || 'Post not found');
     },
     enabled: !!postId,
-  });
-}
-
-/**
- * Hook to fetch posts by providing a JWT token (decodes token server-side)
- * Calls POST /posts/user-posts with body { token }
- */
-export function useGetPostsByToken(token?: string) {
-  return useQuery({
-    queryKey: ['posts', 'by-token', token || ''],
-    queryFn: async () => {
-      const response = await api.post(ENDPOINTS.POSTS.USER_POSTS, { token });
-      const data = response.data;
-      if (data && data.success) {
-        const d = data.data;
-        if (Array.isArray(d)) return d as PostData[];
-        if (d && typeof d === 'object' && 'posts' in d) {
-          const postsCandidate = (d as Record<string, unknown>)['posts'];
-          if (Array.isArray(postsCandidate))
-            return postsCandidate as PostData[];
-        }
-      }
-      return [] as PostData[];
-    },
-    enabled: !!token,
-    staleTime: 5 * 60 * 1000,
   });
 }
 

@@ -14,10 +14,10 @@ import {
   ApiParam,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { UserService } from '../services/user.service';
-import { UserDocument } from '../models/user.schema';
+import { UserService } from '@/users/services/user.service';
+import { UserDocument } from '@/users/models/user.schema';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
-import { UpdateUserDto, UserResponseDto } from '../dto/user.dto';
+import { UpdateUserDto, UserResponseDto } from '@/users/dto/user.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')

@@ -8,6 +8,7 @@ import { VerifyOTPData } from '@/app/auth/verify-otp/verify-otp';
 import { ForgotPasswordData } from '@/app/auth/forgot-password/forgot-password';
 import { ResetPasswordData } from '@/app/auth/reset-password/reset-password';
 import { useReduxToast } from '@/hooks/useReduxToast';
+import { extractServerMessage } from '@/lib/errorUtils';
 
 // Query keys for consistent caching
 export const authKeys = {
@@ -53,20 +54,7 @@ export function useRegister() {
       );
     },
     onError: error => {
-      const serverMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.message ||
-            (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.error ||
-            String((error as { response: { data?: unknown } }).response.data)
-          : (error as { message?: string })?.message;
+      const serverMessage = extractServerMessage(error);
       showError('Registration Failed', serverMessage || 'An error occurred');
     },
   });
@@ -110,20 +98,7 @@ export function useVerifyOTP() {
       router.push('/auth/login');
     },
     onError: error => {
-      const serverMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.message ||
-            (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.error ||
-            String((error as { response: { data?: unknown } }).response.data)
-          : (error as { message?: string })?.message;
+      const serverMessage = extractServerMessage(error);
       showError('Verification Failed', serverMessage || 'An error occurred');
     },
   });
@@ -158,20 +133,7 @@ export function useResendOTP() {
       showSuccess('OTP Sent', 'A new OTP has been sent to your email');
     },
     onError: error => {
-      const serverMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.message ||
-            (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.error ||
-            String((error as { response: { data?: unknown } }).response.data)
-          : (error as { message?: string })?.message;
+      const serverMessage = extractServerMessage(error);
       showError('Resend Failed', serverMessage || 'An error occurred');
     },
   });
@@ -250,20 +212,7 @@ export function useLogout() {
       router.push('/auth/login');
     },
     onError: error => {
-      const serverMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.message ||
-            (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.error ||
-            String((error as { response: { data?: unknown } }).response.data)
-          : (error as { message?: string })?.message;
+      const serverMessage = extractServerMessage(error);
       showError('Logout Failed', serverMessage || 'An error occurred');
     },
   });
@@ -327,20 +276,7 @@ export function useForgotPassword() {
       );
     },
     onError: error => {
-      const serverMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.message ||
-            (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.error ||
-            String((error as { response: { data?: unknown } }).response.data)
-          : (error as { message?: string })?.message;
+      const serverMessage = extractServerMessage(error);
       showError('Request Failed', serverMessage || 'An error occurred');
     },
   });
@@ -381,20 +317,7 @@ export function useResetPassword() {
       router.push('/auth/login');
     },
     onError: error => {
-      const serverMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.message ||
-            (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.error ||
-            String((error as { response: { data?: unknown } }).response.data)
-          : (error as { message?: string })?.message;
+      const serverMessage = extractServerMessage(error);
       showError('Reset Failed', serverMessage || 'An error occurred');
     },
   });
@@ -426,20 +349,7 @@ export function useVerifyResetToken() {
       return response.data;
     },
     onError: error => {
-      const serverMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.message ||
-            (
-              error as {
-                response: { data?: { message?: string; error?: string } };
-              }
-            ).response.data?.error ||
-            String((error as { response: { data?: unknown } }).response.data)
-          : (error as { message?: string })?.message;
+      const serverMessage = extractServerMessage(error);
       showError(
         'Invalid Link',
         serverMessage || 'This reset link is invalid or has expired'

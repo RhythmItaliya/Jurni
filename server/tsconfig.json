@@ -21,7 +21,12 @@
       "@test/*": ["test/*"],
       "@auth/*": ["src/auth/*"],
       "@users/*": ["src/users/*"],
-      "@app/*": ["src/app/*"]
+      "@app/*": ["src/app/*"],
+      "@posts/*": ["src/posts/*"],
+      "@upload/*": ["src/upload/*"],
+      "@media/*": ["src/media/*"],
+      "@email/*": ["src/email/*"],
+      "@lib/*": ["src/lib/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

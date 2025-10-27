@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PostService } from './post.service';
-import { UploadService } from '../../upload/services/upload.service';
-import { CreatePostDto } from '../dto';
-import { PostDocument } from '../models/post.model';
+import { UploadService } from '@/upload/services/upload.service';
+import { CreatePostDto } from '@/posts/dto';
+import { PostDocument } from '@/posts/models/post.model';
 
 @Injectable()
 export class PostMediaService {

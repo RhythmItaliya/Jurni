@@ -4,8 +4,8 @@ import {
   UploadResult,
   UploadOptions,
 } from './r2-storage.service';
-import { MediaService } from '../../media/services/media.service';
-import { MediaType } from '../../media/models/media.model';
+import { MediaService } from '@/media/services/media.service';
+import { MediaType } from '@/media/models/media.model';
 
 export interface MediaUploadResult extends UploadResult {
   mediaType: 'image' | 'video' | 'audio' | 'other';

@@ -7,7 +7,7 @@ import {
   ListBucketsCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { ENV_VARS } from '../../../config/env';
+import { ENV_VARS } from '@config/env';
 
 export interface UploadResult {
   key: string;
@@ -100,10 +100,6 @@ export class R2StorageService implements OnModuleInit {
       // Full key with dynamic folder structure
       const key = `${dynamicFolder}/${finalFileName}`;
 
-      this.logger.log(
-        `📤 Uploading file: ${key} (${this.formatFileSize(buffer.length)})`,
-      );
-
       const startTime = Date.now();
 
       const command = new PutObjectCommand({
@@ -124,15 +120,7 @@ export class R2StorageService implements OnModuleInit {
       const uploadTime = Date.now() - startTime;
       const publicUrl = `${this.publicUrl}/${key}`;
 
-      this.logger.log(
-        `✅ File uploaded successfully: ${key} (${uploadTime}ms)`,
-      );
-
       if (ENV_VARS.NODE_ENV === 'development') {
-        this.logger.debug(`🔗 Public URL: ${publicUrl}`);
-        this.logger.debug(
-          `📊 Upload metrics: ${this.formatFileSize(buffer.length)}, ${contentType}`,
-        );
       }
 
       return {
@@ -369,10 +357,6 @@ export class R2StorageService implements OnModuleInit {
         this.logger.error('❌ R2 connection failed:', error?.message || error);
       }
 
-      if (ENV_VARS.NODE_ENV === 'development') {
-        this.logger.debug('🔧 Connection error details:', error);
-      }
-
       return false;
     }
   }
@@ -459,10 +443,6 @@ export class R2StorageService implements OnModuleInit {
     if (options.contentType && !this.isValidContentType(options.contentType)) {
       throw new Error(`Invalid content type: ${options.contentType}`);
     }
-
-    this.logger.debug(
-      `✅ Upload validation passed: ${this.formatFileSize(buffer.length)}, ${options.contentType || 'unknown type'}`,
-    );
   }
 
   /**

@@ -14,19 +14,22 @@ import {
   UseInterceptors,
   UploadedFiles,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { PostService } from '../services/post.service';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
+import { PostService } from '@/posts/services/post.service';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../../users/services/user.service';
-import { PostMediaService } from '../services/post-media.service';
+import { UserService } from '@users/services/user.service';
+import { PostMediaService } from '@/posts/services/post-media.service';
 import {
   CreatePostDto,
   UpdatePostDto,
   PostQueryDto,
   PostResponseDto,
-} from '../dto';
+} from '@/posts/dto';
+import { ENDPOINTS } from '@/lib/endpoints';
 
+@ApiTags('Posts')
 @Controller('posts')
 export class PostController {
   constructor(
@@ -37,41 +40,22 @@ export class PostController {
   ) {}
 
   /**
-   * Create a new post
-   */
-  @Post()
-  @UseGuards(JwtAuthGuard)
-  async createPost(
-    @Body() createPostDto: CreatePostDto,
-    @Request() req: any,
-  ): Promise<PostResponseDto> {
-    try {
-      const userId = req.user.id;
-      const post = await this.postService.createPost(userId, createPostDto);
-
-      return {
-        success: true,
-        message: 'Post created successfully',
-        data: post,
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          success: false,
-          message: 'Failed to create post',
-          error: error.message,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-
-  /**
    * Create post with media files atomically
+   * Endpoint: POST /posts/create
+   * @param createPostDto - Post creation data
+   * @param files - Uploaded media files
+   * @param req - Request object with user info
+   * @returns Post creation result
    */
-  @Post('with-media')
+  @Post(ENDPOINTS.POSTS.CREATE)
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('files', 5))
+  @ApiOperation({ summary: 'Create post with media files' })
+  @ApiResponse({
+    status: 201,
+    description: 'Post created with media successfully',
+  })
+  @ApiResponse({ status: 400, description: 'Failed to create post with media' })
   async createPostWithMedia(
     @Body() createPostDto: CreatePostDto,
     @UploadedFiles() files: Express.Multer.File[],
@@ -104,8 +88,15 @@ export class PostController {
 
   /**
    * Get posts with filtering and pagination
+   * Endpoint: GET /posts/list
+   * @param query - Query parameters for filtering and pagination
+   * @param req - Request object with user info
+   * @returns Posts list with pagination metadata
    */
-  @Get()
+  @Get(ENDPOINTS.POSTS.LIST)
+  @ApiOperation({ summary: 'Get posts with filtering and pagination' })
+  @ApiResponse({ status: 200, description: 'Posts retrieved successfully' })
+  @ApiResponse({ status: 400, description: 'Failed to retrieve posts' })
   async getPosts(
     @Query() query: PostQueryDto,
     @Request() req: any,
@@ -140,8 +131,16 @@ export class PostController {
 
   /**
    * Get a single post by ID
+   * Endpoint: GET /posts/detail/:id
+   * @param postId - Post ID to retrieve
+   * @param req - Request object with user info
+   * @returns Single post data
    */
-  @Get(':id')
+  @Get(ENDPOINTS.POSTS.DETAIL('').replace('/', '') + '/:id')
+  @ApiOperation({ summary: 'Get a single post by ID' })
+  @ApiResponse({ status: 200, description: 'Post retrieved successfully' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
+  @ApiResponse({ status: 400, description: 'Failed to retrieve post' })
   async getPostById(
     @Param('id') postId: string,
     @Request() req: any,
@@ -169,83 +168,20 @@ export class PostController {
   }
 
   /**
-   * Get posts by providing a JWT token (decodes token to find user)
-   * Body: { token: string }
-   */
-  @Post('user-posts')
-  async getPostsByToken(
-    @Body('token') token: string,
-  ): Promise<PostResponseDto> {
-    try {
-      if (!token) {
-        throw new HttpException(
-          { success: false, message: 'Token is required' },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      let payload: any;
-      try {
-        payload = this.jwtService.verify(token);
-      } catch (err) {
-        throw new HttpException(
-          { success: false, message: 'Invalid token' },
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-
-      const userUuid = payload?.sub;
-      if (!userUuid) {
-        throw new HttpException(
-          { success: false, message: 'Invalid token payload' },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      const user = await this.userService.findByUuid(userUuid);
-      if (!user) {
-        throw new HttpException(
-          { success: false, message: 'User not found' },
-          HttpStatus.NOT_FOUND,
-        );
-      }
-
-      // Use postService.getPosts with userId filter
-      const userIdStr = (user as any)._id?.toString
-        ? (user as any)._id.toString()
-        : (user as any)._id;
-      const result = await this.postService.getPosts(
-        { userId: userIdStr as any },
-        userIdStr,
-      );
-
-      return {
-        success: true,
-        message: 'Posts retrieved successfully',
-        data: result.posts,
-        meta: {
-          page: result.page,
-          limit: 10,
-          total: result.total,
-          totalPages: result.totalPages,
-        },
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          success: false,
-          message: error.message || 'Failed to retrieve posts by token',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-
-  /**
    * Update a post
+   * Endpoint: PUT /posts/update/:id
+   * @param postId - Post ID to update
+   * @param updatePostDto - Post update data
+   * @param req - Request object with user info
+   * @returns Post update result
    */
-  @Put(':id')
+  @Put(ENDPOINTS.POSTS.UPDATE('').replace('/', '') + '/:id')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Update a post' })
+  @ApiResponse({ status: 200, description: 'Post updated successfully' })
+  @ApiResponse({ status: 403, description: 'Unauthorized to update post' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
+  @ApiResponse({ status: 400, description: 'Failed to update post' })
   async updatePost(
     @Param('id') postId: string,
     @Body() updatePostDto: UpdatePostDto,
@@ -279,9 +215,18 @@ export class PostController {
 
   /**
    * Delete a post
+   * Endpoint: DELETE /posts/delete/:id
+   * @param postId - Post ID to delete
+   * @param req - Request object with user info
+   * @returns Post deletion result
    */
-  @Delete(':id')
+  @Delete(ENDPOINTS.POSTS.DELETE('').replace('/', '') + '/:id')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Delete a post' })
+  @ApiResponse({ status: 200, description: 'Post deleted successfully' })
+  @ApiResponse({ status: 403, description: 'Unauthorized to delete post' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
+  @ApiResponse({ status: 400, description: 'Failed to delete post' })
   async deletePost(
     @Param('id') postId: string,
     @Request() req: any,

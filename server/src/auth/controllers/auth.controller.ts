@@ -1,6 +1,6 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '@/auth/services/auth.service';
 import {
   LoginDto,
   RegisterDto,
@@ -13,7 +13,8 @@ import {
   ResetPasswordDto,
   ForgotPasswordResponseDto,
   ResetPasswordResponseDto,
-} from '../dto/auth.dto';
+} from '@/auth/dto/auth.dto';
+import { ENDPOINTS } from '@/lib/endpoints';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -22,10 +23,11 @@ export class AuthController {
 
   /**
    * Register new user (temporary registration - user not created until OTP verification)
+   * Endpoint: POST /auth/register
    * @param registerDto - Registration data
    * @returns Registration result with OTP sent
    */
-  @Post('register')
+  @Post(ENDPOINTS.AUTH.REGISTER)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Initiate user registration (temporary)' })
   @ApiResponse({
@@ -39,10 +41,11 @@ export class AuthController {
 
   /**
    * Login user (only active/verified users can login)
+   * Endpoint: POST /auth/login
    * @param loginDto - Login credentials
    * @returns Access token and user data
    */
-  @Post('login')
+  @Post(ENDPOINTS.AUTH.LOGIN)
   @ApiOperation({ summary: 'Login user (verified accounts only)' })
   @ApiResponse({ status: 201, description: 'Login successful' })
   @ApiResponse({
@@ -55,10 +58,11 @@ export class AuthController {
 
   /**
    * Verify registration OTP and create user account
+   * Endpoint: POST /auth/verify-registration-otp
    * @param verifyOtpDto - OTP verification data
    * @returns Verification result with created user
    */
-  @Post('verify-registration-otp')
+  @Post(ENDPOINTS.AUTH.VERIFY_REGISTRATION_OTP)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Verify registration OTP and create user account' })
   @ApiResponse({
@@ -73,10 +77,11 @@ export class AuthController {
 
   /**
    * Resend registration OTP
+   * Endpoint: POST /auth/resend-registration-otp
    * @param email - User email address
    * @returns Resend result
    */
-  @Post('resend-registration-otp')
+  @Post(ENDPOINTS.AUTH.RESEND_REGISTRATION_OTP)
   @ApiOperation({ summary: 'Resend registration OTP' })
   @ApiResponse({ status: 200, description: 'OTP resent successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
@@ -87,10 +92,11 @@ export class AuthController {
 
   /**
    * Update temporary user email
+   * Endpoint: POST /auth/update-temp-user-email
    * @param body - Current email and new email
    * @returns Update result
    */
-  @Post('update-temp-user-email')
+  @Post(ENDPOINTS.AUTH.UPDATE_TEMP_USER_EMAIL)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update temporary user email' })
   @ApiResponse({ status: 200, description: 'Email updated successfully' })
@@ -105,10 +111,11 @@ export class AuthController {
 
   /**
    * Update temporary user username
+   * Endpoint: POST /auth/update-temp-user-username
    * @param body - Email and new username
    * @returns Update result
    */
-  @Post('update-temp-user-username')
+  @Post(ENDPOINTS.AUTH.UPDATE_TEMP_USER_USERNAME)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update temporary user username' })
   @ApiResponse({ status: 200, description: 'Username updated successfully' })
@@ -125,10 +132,11 @@ export class AuthController {
 
   /**
    * Request password reset
+   * Endpoint: POST /auth/forgot-password
    * @param forgotPasswordDto - Email address for password reset
    * @returns Password reset result
    */
-  @Post('forgot-password')
+  @Post(ENDPOINTS.AUTH.FORGOT_PASSWORD)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request password reset' })
   @ApiResponse({
@@ -143,10 +151,11 @@ export class AuthController {
 
   /**
    * Reset password with token
+   * Endpoint: POST /auth/reset-password
    * @param resetPasswordDto - Reset token and new password
    * @returns Password reset result
    */
-  @Post('reset-password')
+  @Post(ENDPOINTS.AUTH.RESET_PASSWORD)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password with token' })
   @ApiResponse({
@@ -168,10 +177,11 @@ export class AuthController {
 
   /**
    * Verify reset token
+   * Endpoint: POST /auth/verify-reset-token
    * @param token - Reset token to verify
    * @returns Token verification result
    */
-  @Post('verify-reset-token')
+  @Post(ENDPOINTS.AUTH.VERIFY_RESET_TOKEN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verify password reset token' })
   @ApiResponse({ status: 200, description: 'Token is valid' })

@@ -6,8 +6,8 @@ import { AppService } from './app.service';
 import { UserModule } from '@users/user.module';
 import { AuthModule } from '@auth/auth.module';
 import { EmailModule } from '@/email/email.module';
-import { UploadModule } from '../upload/upload.module';
-import { PostsModule } from '../posts/posts.module';
+import { UploadModule } from '@/upload/upload.module';
+import { PostsModule } from '@/posts/posts.module';
 import { ENV_VARS } from '@config/env';
 
 /**

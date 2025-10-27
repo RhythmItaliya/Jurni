@@ -8,6 +8,8 @@ import {
   MaxLength,
   MinLength,
   ArrayMaxSize,
+  IsObject,
+  ValidateNested,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -23,6 +25,46 @@ const TransformToBoolean = () =>
     }
     return Boolean(value);
   });
+
+export class LocationDto {
+  @ApiProperty({
+    description: 'Location name',
+    example: 'New York',
+    type: String,
+  })
+  @IsString({ message: 'Location name must be a string' })
+  name: string;
+
+  @ApiProperty({
+    description: 'Latitude coordinate',
+    example: 40.7128,
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'Latitude must be a number' })
+  latitude?: number;
+
+  @ApiProperty({
+    description: 'Longitude coordinate',
+    example: -74.006,
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'Longitude must be a number' })
+  longitude?: number;
+
+  @ApiProperty({
+    description: 'Full address',
+    example: 'New York, NY, USA',
+    type: String,
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'Address must be a string' })
+  address?: string;
+}
 
 export class CreatePostDto {
   @ApiProperty({
@@ -106,6 +148,16 @@ export class CreatePostDto {
   @IsOptional()
   @TransformToBoolean()
   allowShares?: boolean;
+
+  @ApiProperty({
+    description: 'Location information for the post',
+    type: LocationDto,
+    required: false,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LocationDto)
+  location?: LocationDto;
 }
 
 export class UpdatePostDto {
@@ -213,6 +265,16 @@ export class UpdatePostDto {
     return Boolean(value);
   })
   allowShares?: boolean;
+
+  @ApiProperty({
+    description: 'Location information for the post',
+    type: LocationDto,
+    required: false,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LocationDto)
+  location?: LocationDto;
 
   @ApiProperty({
     description: 'Media IDs associated with this post',

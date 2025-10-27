@@ -17,6 +17,21 @@ export class Post {
   @Prop({ type: [String], default: [] })
   hashtags: string[];
 
+  @Prop({
+    type: {
+      name: { type: String, required: true },
+      latitude: Number,
+      longitude: Number,
+      address: String,
+    },
+  })
+  location?: {
+    name: string;
+    latitude?: number;
+    longitude?: number;
+    address?: string;
+  };
+
   @Prop({ default: 'active' })
   status: 'active' | 'deleted' | 'archived' | 'draft';
 

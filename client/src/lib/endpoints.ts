@@ -16,22 +16,12 @@ export const ENDPOINTS = {
     RESET_PASSWORD: '/auth/reset-password',
     VERIFY_RESET_TOKEN: '/auth/verify-reset-token',
   },
-  UPLOAD: {
-    SINGLE: '/upload/single',
-    MULTIPLE: '/upload/multiple',
-    POST: '/upload/post',
-    GENERATE_URL: '/upload/generate-url',
-    DELETE: '/upload/file',
-  },
   POSTS: {
-    CREATE: '/posts',
-    GET_ALL: '/posts',
-    GET_BY_ID: (id: string) => `/posts/${id}`,
-    UPDATE: (id: string) => `/posts/${id}`,
-    DELETE: (id: string) => `/posts/${id}`,
-    CREATE_WITH_MEDIA: '/posts/with-media',
-    USER_POSTS: '/posts/user-posts',
-    BY_TOKEN: '/posts/user-posts',
+    CREATE: '/posts/create',
+    LIST: '/posts/list',
+    DETAIL: (id: string) => `/posts/detail/${id}`,
+    UPDATE: (id: string) => `/posts/update/${id}`,
+    DELETE: (id: string) => `/posts/delete/${id}`,
   },
 } as const;
 
@@ -43,5 +33,4 @@ export const buildUrl = (endpoint: string, baseUrl?: string) => {
 // Type for endpoint keys
 export type EndpointKey = keyof typeof ENDPOINTS;
 export type AuthEndpointKey = keyof typeof ENDPOINTS.AUTH;
-export type UploadEndpointKey = keyof typeof ENDPOINTS.UPLOAD;
 export type PostsEndpointKey = keyof typeof ENDPOINTS.POSTS;

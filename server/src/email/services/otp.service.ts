@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { OTP, OTPDocument } from '../models';
+import { OTP, OTPDocument } from '@/email/models';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()

@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Post, PostDocument } from '../models/post.model';
-import { CreatePostDto, UpdatePostDto, PostQueryDto } from '../dto';
+import { Post, PostDocument } from '@/posts/models/post.model';
+import { CreatePostDto, UpdatePostDto, PostQueryDto } from '@/posts/dto';
 
 @Injectable()
 export class PostService {
@@ -31,7 +31,6 @@ export class PostService {
       ...createPostDto,
       userId: new Types.ObjectId(userId),
       status: 'active',
-      // Set default values for boolean fields if not provided
       allowComments: createPostDto.allowComments ?? true,
       allowLikes: createPostDto.allowLikes ?? true,
       allowShares: createPostDto.allowShares ?? true,

@@ -47,6 +47,7 @@ export interface PostData {
   title: string;
   description?: string;
   hashtags?: string[];
+  location?: PostLocation;
   visibility: 'public' | 'friends' | 'followers' | 'private';
   allowComments: boolean;
   allowLikes: boolean;
@@ -68,6 +69,7 @@ export interface CreatePostData {
   allowComments?: boolean;
   allowLikes?: boolean;
   allowShares?: boolean;
+  location?: PostLocation;
 }
 
 /**
