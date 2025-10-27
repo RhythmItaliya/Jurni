@@ -24,6 +24,13 @@ export const ENDPOINTS = {
     UPDATE: (id: string) => `update/${id}`,
     DELETE: (id: string) => `delete/${id}`,
   },
+  COMMENTS: {
+    CREATE: 'create',
+    GET_BY_POST: 'list',
+    UPDATE: (commentId: string) => `update/${commentId}`,
+    DELETE: (commentId: string) => `delete/${commentId}`,
+    LIKE: (commentId: string) => `like/${commentId}`,
+  },
 } as const;
 
 // Helper function to build full URL

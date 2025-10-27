@@ -3,16 +3,23 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Post, PostDocument } from '@/posts/models/post.model';
 import { CreatePostDto, UpdatePostDto, PostQueryDto } from '@/posts/dto';
 import { PostUtils } from '@/posts/utils/post.utils';
+import { CommentService } from '@/comments/services/comment.service';
 
 @Injectable()
 export class PostService {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {}
+  constructor(
+    @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    @Inject(forwardRef(() => CommentService))
+    private commentService: CommentService,
+  ) {}
 
   /**
    * Get total posts count for debugging
@@ -269,6 +276,9 @@ export class PostService {
       if (post.userId.toString() !== userId) {
         throw new ForbiddenException('You can only delete your own posts');
       }
+
+      // Delete all comments for this post
+      await this.commentService.deleteCommentsForPost(postId);
 
       await this.postModel.findByIdAndUpdate(postId, { status: 'deleted' });
     } catch (error) {
