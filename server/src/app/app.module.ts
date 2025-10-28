@@ -9,6 +9,7 @@ import { EmailModule } from '@/email/email.module';
 import { UploadModule } from '@/upload/upload.module';
 import { PostsModule } from '@/posts/posts.module';
 import { CommentsModule } from '@/comments/comments.module';
+import { LikesModule } from '@/likes/likes.module';
 import { ENV_VARS } from '@config/env';
 
 /**
@@ -32,6 +33,7 @@ import { ENV_VARS } from '@config/env';
     UploadModule,
     PostsModule,
     CommentsModule,
+    LikesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

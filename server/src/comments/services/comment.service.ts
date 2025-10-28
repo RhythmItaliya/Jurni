@@ -289,4 +289,17 @@ export class CommentService {
       { status: 'deleted' },
     );
   }
+
+  /**
+   * Update the like count for a comment
+   */
+  async updateCommentLikeCount(
+    commentId: string,
+    increment: number,
+  ): Promise<void> {
+    await this.commentModel.updateOne(
+      { _id: new Types.ObjectId(commentId) },
+      { $inc: { likesCount: increment } },
+    );
+  }
 }

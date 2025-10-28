@@ -7,6 +7,7 @@ import { Post, PostSchema } from './models/post.model';
 import { UploadModule } from '@/upload/upload.module';
 import { AuthModule } from '@/auth/auth.module';
 import { CommentsModule } from '@/comments/comments.module';
+import { LikesModule } from '@/likes/likes.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CommentsModule } from '@/comments/comments.module';
     UploadModule,
     AuthModule,
     forwardRef(() => CommentsModule),
+    LikesModule,
   ],
   controllers: [PostController],
   providers: [PostService, PostMediaService],

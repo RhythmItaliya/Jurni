@@ -31,6 +31,15 @@ export const ENDPOINTS = {
     DELETE: (commentId: string) => `delete/${commentId}`,
     LIKE: (commentId: string) => `like/${commentId}`,
   },
+  LIKES: {
+    LIKE: 'like',
+    UNLIKE: (targetType: string, targetId: string) =>
+      `unlike/${targetType}/${targetId}`,
+    STATS: (targetType: string, targetId: string) =>
+      `stats/${targetType}/${targetId}`,
+    GET_LIKES: (targetType: string, targetId: string) =>
+      `${targetType}/${targetId}`,
+  },
 } as const;
 
 // Helper function to build full URL
@@ -42,3 +51,5 @@ export const buildUrl = (endpoint: string, baseUrl?: string) => {
 export type EndpointKey = keyof typeof ENDPOINTS;
 export type AuthEndpointKey = keyof typeof ENDPOINTS.AUTH;
 export type PostsEndpointKey = keyof typeof ENDPOINTS.POSTS;
+export type CommentsEndpointKey = keyof typeof ENDPOINTS.COMMENTS;
+export type LikesEndpointKey = keyof typeof ENDPOINTS.LIKES;
