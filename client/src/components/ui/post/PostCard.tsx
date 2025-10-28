@@ -339,6 +339,7 @@ export default function PostCard({
               <PostActions
                 isLiked={likeStats?.isLikedByUser}
                 likeCount={likeStats?.totalLikes}
+                commentCount={post.commentsCount}
                 onLike={handleLike}
                 onComment={() => {
                   try {

@@ -23,6 +23,7 @@ import {
 } from '@/comments/dto';
 import { ENDPOINTS } from '@/lib/endpoints';
 import { BaseResponseDto, createSuccessResponse } from '@/lib/response.dto';
+import { CommentUtils } from '@/comments/utils/comment.utils';
 
 @ApiTags('Comments')
 @Controller('posts/:postId/comments')
@@ -111,18 +112,7 @@ export class CommentController {
     const result = await this.commentService.getCommentsForPost(postId, query);
 
     return createSuccessResponse('Comments retrieved successfully', {
-      comments: result.comments.map((comment) => ({
-        _id: comment._id,
-        content: comment.content,
-        postId: comment.postId,
-        userId: comment.userId,
-        parentId: comment.parentId,
-        status: comment.status,
-        likesCount: comment.likesCount,
-        repliesCount: comment.repliesCount,
-        createdAt: (comment as any).createdAt,
-        updatedAt: (comment as any).updatedAt,
-      })),
+      comments: result.comments,
       meta: {
         page: result.page,
         limit: result.limit,

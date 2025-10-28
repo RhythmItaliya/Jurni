@@ -4,6 +4,7 @@
  * @property {string} uuid - Unique identifier for the user
  * @property {string} username - User's username
  * @property {string} email - User's email address
+ * @property {string} [avatarUrl] - User's avatar URL
  * @property {boolean} isActive - Whether the user account is active
  * @property {string} [otpVerifiedAt] - OTP verification timestamp
  * @property {string} createdAt - Account creation timestamp
@@ -13,6 +14,7 @@ export interface AuthUser {
   uuid: string;
   username: string;
   email: string;
+  avatarUrl?: string;
   isActive: boolean;
   otpVerifiedAt?: string;
   createdAt: string;

@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CommentDocument } from '@/comments/models/comment.model';
 
 /**
@@ -17,9 +17,55 @@ export class CommentUtils {
   ) {
     return commentModel
       .find(query)
-      .populate('userId', 'username')
+      .populate('userId', 'username avatarUrl')
       .populate('parentId', '_id content userId')
       .sort({ createdAt: -1 });
+  }
+
+  /**
+   * Get comments for a post with full population and pagination
+   * @param commentModel - Mongoose comment model
+   * @param postId - Post ID to get comments for
+   * @param query - Query parameters (page, limit, parentId)
+   * @returns Object with comments array and pagination metadata
+   */
+  static async getCommentsForPost(
+    commentModel: Model<CommentDocument>,
+    postId: string,
+    query: { page?: number; limit?: number; parentId?: string } = {},
+  ) {
+    const { page = 1, limit = 10, parentId } = query;
+    const skip = (page - 1) * limit;
+
+    // Build query
+    const queryFilter: any = {
+      postId: new Types.ObjectId(postId),
+      status: 'active',
+    };
+
+    // If parentId is provided, get replies to that comment
+    // If not, get top-level comments (no parentId)
+    if (parentId) {
+      queryFilter.parentId = new Types.ObjectId(parentId);
+    } else {
+      queryFilter.parentId = { $exists: false };
+    }
+
+    const [comments, total] = await Promise.all([
+      this.getPopulatedCommentQuery(commentModel, queryFilter)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      commentModel.countDocuments(queryFilter),
+    ]);
+
+    return {
+      comments: this.getFormattedComments(comments as CommentDocument[]),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   /**

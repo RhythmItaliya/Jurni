@@ -27,6 +27,15 @@ export class User {
   username: string;
 
   @ApiProperty({
+    description: 'User avatar URL',
+    example: 'https://example.com/avatar.jpg',
+    type: String,
+    required: false,
+  })
+  @Prop({ required: false })
+  avatarUrl?: string;
+
+  @ApiProperty({
     description: 'User email address',
     example: 'john@example.com',
     type: String,

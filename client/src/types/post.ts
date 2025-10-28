@@ -52,6 +52,7 @@ export interface PostData {
   userId: {
     _id: string;
     username: string;
+    avatarUrl?: string;
   };
   title: string;
   description?: string;
@@ -63,6 +64,7 @@ export interface PostData {
   allowShares: boolean;
   status: 'active' | 'deleted' | 'archived' | 'draft';
   media?: PostMedia[];
+  commentsCount?: number;
   createdAt: string;
   updatedAt: string;
   __v?: number;

@@ -148,10 +148,24 @@ export class PostService {
 
       console.log('Found posts:', posts.length, 'Total:', total);
 
+      // Add comments count to each post
+      const postsWithCommentsCount = await Promise.all(
+        posts.map(async (post) => {
+          const commentsCount =
+            await this.commentService.getCommentsCountForPost(
+              (post as any)._id.toString(),
+            );
+          return {
+            ...post.toObject(),
+            commentsCount,
+          };
+        }),
+      );
+
       const totalPages = Math.ceil(total / limit) || 0;
 
       return {
-        posts: posts || [],
+        posts: postsWithCommentsCount,
         total: total || 0,
         page: page || 1,
         totalPages,

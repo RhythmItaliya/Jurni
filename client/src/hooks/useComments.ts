@@ -60,11 +60,11 @@ export function useCreateComment(postId: string) {
 
 /**
  * Hook to get comments for a post
- * Fetches all comments for a specific post
+ * Fetches comments for a specific post with pagination
  *
  * @description
- * - Fetches comments from API for a post
- * - Returns comments array
+ * - Fetches comments from API for a post with pagination
+ * - Returns comments array with pagination metadata
  * - Handles loading and error states
  * - Automatically enabled when postId is provided
  *
@@ -73,13 +73,21 @@ export function useCreateComment(postId: string) {
  * - Comment sections in post views
  *
  * @param postId - ID of the post to fetch comments for
- * @returns {UseQueryResult} Query object with comments list
+ * @param page - Page number (default: 1)
+ * @param limit - Number of comments per page (default: 10)
+ * @returns {UseQueryResult} Query object with comments list and pagination
  */
-export function useGetComments(postId: string) {
+export function useGetComments(postId: string, page = 1, limit = 10) {
   return useQuery({
-    queryKey: commentsKeys.list(postId),
+    queryKey: [...commentsKeys.list(postId), page, limit],
     queryFn: async (): Promise<CommentsListResponseData> => {
-      const response = await api.get(ENDPOINTS.COMMENTS.GET_BY_POST(postId));
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      });
+      const response = await api.get(
+        `${ENDPOINTS.COMMENTS.GET_BY_POST(postId)}?${params}`
+      );
       const data = response.data;
       if (data && data.success && data.data) {
         return data.data;

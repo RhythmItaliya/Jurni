@@ -74,7 +74,10 @@ export default function MainContentArea({
             {openCommentsPostId && (
               <div className="comments-container">
                 <CommentsPanel
-                  postId={openCommentsPostId}
+                  post={
+                    posts.find((p: PostData) => p._id === openCommentsPostId) ||
+                    null
+                  }
                   onClose={() => setOpenCommentsPostId(null)}
                 />
               </div>

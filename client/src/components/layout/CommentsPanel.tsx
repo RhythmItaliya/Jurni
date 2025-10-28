@@ -3,75 +3,91 @@
 import React from 'react';
 import { Button, IconButton, Avatar } from '@/components/ui';
 import Input from '@/components/ui/Input';
+import { useGetComments, useCreateComment } from '@/hooks/useComments';
+import { CommentData } from '@/types/comment';
+import { PostData } from '@/types/post';
 
-const dummyComments = [
-  {
-    id: '1',
-    author: 'john_doe',
-    text: 'Great post! Love this content.',
-    timestamp: '2 hours ago',
-  },
-  {
-    id: '2',
-    author: 'jane_smith',
-    text: 'Thanks for sharing this!',
-    timestamp: '1 hour ago',
-  },
-  {
-    id: '3',
-    author: 'mike_wilson',
-    text: 'Awesome work, keep it up! This is really inspiring.',
-    timestamp: '30 minutes ago',
-  },
-  {
-    id: '4',
-    author: 'sarah_jones',
-    text: 'Beautiful shot! What camera did you use?',
-    timestamp: '15 minutes ago',
-  },
-];
+function CommentItem({ comment }: { comment: CommentData }) {
+  // Format timestamp to relative time
+  const formatTimestamp = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-interface Comment {
-  id: string;
-  author: string;
-  text: string;
-  timestamp: string;
-  avatar?: string;
-}
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    if (diffInDays < 7) return `${diffInDays}d ago`;
+    return date.toLocaleDateString();
+  };
 
-function CommentItem({ comment }: { comment: Comment }) {
   return (
     <div className="comment-item">
       <div className="comment-header">
-        {/* Use project's author-avatar style and fallback */}
         <Avatar
-          src={comment.avatar}
-          alt={comment.author}
+          src={comment.userId?.avatarUrl || undefined}
+          alt={comment.userId?.username || 'User'}
           size="sm"
           className="comment-profile-pic"
         />
-        <span className="comment-author">@{comment.author}</span>
-        <span className="comment-time">{comment.timestamp}</span>
+        <span className="comment-author">
+          @{comment.userId?.username || 'Unknown'}
+        </span>
+        <span className="comment-time">
+          {formatTimestamp(comment.createdAt)}
+        </span>
       </div>
-      <p className="comment-text">{comment.text}</p>
+      <p className="comment-text">{comment.content}</p>
     </div>
   );
 }
 
 export default function CommentsPanel({
-  postId,
+  post,
   onClose,
 }: {
-  postId: string | null;
+  post: PostData | null;
   onClose: () => void;
 }) {
+  const [commentText, setCommentText] = React.useState('');
+
+  // Fetch comments for this post
+  const {
+    data: commentsData,
+    isLoading: commentsLoading,
+    error: commentsError,
+  } = useGetComments(post?._id || '');
+
+  // Create comment mutation
+  const createCommentMutation = useCreateComment(post?._id || '');
+
   const handleClose = () => {
     onClose();
   };
 
-  if (!postId) {
+  const handleSubmitComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim() || !post) return;
+
+    createCommentMutation.mutate(
+      { content: commentText.trim() },
+      {
+        onSuccess: () => {
+          setCommentText('');
+        },
+      }
+    );
+  };
+
+  if (!post) {
     return null;
   }
+
+  const comments = commentsData?.comments || [];
+  const isLoading = commentsLoading || createCommentMutation.isPending;
 
   return (
     <div className="comments-panel comments-panel--open">
@@ -79,14 +95,16 @@ export default function CommentsPanel({
       <div className="comments-panel-header">
         <div className="comments-header-user">
           <Avatar
-            src="/assets/img/default-profile.png"
-            alt="username"
+            src={post.userId.avatarUrl || undefined}
+            alt={post.userId.username}
             size="md"
           />
           <div className="comments-header-meta">
-            <span className="comments-header-username">@username</span>
+            <span className="comments-header-username">
+              @{post.userId.username}
+            </span>
             <span className="comments-header-count">
-              {dummyComments.length} comments
+              {comments.length} comments
             </span>
           </div>
         </div>
@@ -118,24 +136,47 @@ export default function CommentsPanel({
 
       {/* Middle Section: Scrollable Comments */}
       <div className="comments-panel-middle">
-        <div className="comments-list">
-          {dummyComments.map(comment => (
-            <CommentItem key={comment.id} comment={comment} />
-          ))}
-        </div>
+        {commentsError ? (
+          <div className="comments-error">
+            <p>Failed to load comments. Please try again.</p>
+          </div>
+        ) : commentsLoading ? (
+          <div className="comments-loading">
+            <p>Loading comments...</p>
+          </div>
+        ) : comments.length === 0 ? (
+          <div className="comments-empty">
+            <p>No comments yet. Be the first to comment!</p>
+          </div>
+        ) : (
+          <div className="comments-list">
+            {comments.map(comment => (
+              <CommentItem key={comment._id} comment={comment} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Footer Section: Input and Button */}
       <div className="comments-panel-footer">
-        <form className="comment-form">
+        <form className="comment-form" onSubmit={handleSubmitComment}>
           <Input
             className="comment-input"
             type="text"
             placeholder="Write a comment..."
             aria-label="Write a comment"
+            value={commentText}
+            onChange={e => setCommentText(e.target.value)}
+            disabled={isLoading}
           />
-          <Button className="comment-post-btn" variant="outline" size="sm">
-            Post
+          <Button
+            className="comment-post-btn"
+            variant="outline"
+            size="sm"
+            type="submit"
+            disabled={isLoading || !commentText.trim()}
+          >
+            {createCommentMutation.isPending ? 'Posting...' : 'Post'}
           </Button>
         </form>
       </div>

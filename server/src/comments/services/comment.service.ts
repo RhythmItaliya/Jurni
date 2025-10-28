@@ -16,6 +16,7 @@ import {
   CommentResponseDto,
 } from '@/comments/dto';
 import { PostService } from '@/posts/services/post.service';
+import { CommentUtils } from '@/comments/utils/comment.utils';
 
 @Injectable()
 export class CommentService {
@@ -95,13 +96,12 @@ export class CommentService {
     postId: string,
     query: CommentQueryDto = {},
   ): Promise<{
-    comments: CommentDocument[];
+    comments: any[];
     total: number;
     page: number;
     limit: number;
+    totalPages: number;
   }> {
-    const { page = 1, limit = 10, parentId } = query;
-
     // Verify post exists
     try {
       await this.postService.getPostById(postId);
@@ -112,39 +112,7 @@ export class CommentService {
       throw error;
     }
 
-    const skip = (page - 1) * limit;
-
-    // Build query
-    const queryFilter: any = {
-      postId: new Types.ObjectId(postId),
-      status: 'active',
-    };
-
-    // If parentId is provided, get replies to that comment
-    // If not, get top-level comments (no parentId)
-    if (parentId) {
-      queryFilter.parentId = new Types.ObjectId(parentId);
-    } else {
-      queryFilter.parentId = { $exists: false };
-    }
-
-    const [comments, total] = await Promise.all([
-      this.commentModel
-        .find(queryFilter)
-        .populate('userId', 'username')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      this.commentModel.countDocuments(queryFilter),
-    ]);
-
-    return {
-      comments: comments as CommentDocument[],
-      total,
-      page,
-      limit,
-    };
+    return CommentUtils.getCommentsForPost(this.commentModel, postId, query);
   }
 
   /**
@@ -301,5 +269,19 @@ export class CommentService {
       { _id: new Types.ObjectId(commentId) },
       { $inc: { likesCount: increment } },
     );
+  }
+
+  /**
+   * Get comments count for a post
+   */
+  async getCommentsCountForPost(postId: string): Promise<number> {
+    if (!Types.ObjectId.isValid(postId)) {
+      throw new BadRequestException('Invalid post ID');
+    }
+
+    return await this.commentModel.countDocuments({
+      postId: new Types.ObjectId(postId),
+      status: 'active',
+    });
   }
 }
