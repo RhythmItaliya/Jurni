@@ -33,7 +33,8 @@ export default function DynamicLayout({ children }: DynamicLayoutProps) {
   );
 
   // Extract user information for profile routes
-  const userData = useMemo(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _userData = useMemo(() => {
     // For /[username] routes, extract username
     const profileMatch = pathname.match(/^\/([^/]+)(?:\/.*)?$/);
     if (

@@ -4,7 +4,6 @@ import React from 'react';
 import { PostCard } from '@/components/ui';
 import CommentsPanel from './CommentsPanel';
 import { useGetPosts } from '@/hooks/usePosts';
-import { Spinner } from '@/components/ui';
 import SkeletonPost from '@/components/ui/post/SkeletonPost';
 import { PostData } from '@/types/post';
 
@@ -27,10 +26,9 @@ export default function MainContentArea({
     string | null
   >(null);
 
-  // Only call useGetPosts when we actually need to show posts
-  const postsQuery = showPosts ? useGetPosts() : null;
-  const { data: postsData, isLoading, error } = postsQuery || {};
-  const posts = postsData?.posts || [];
+  const postsQuery = useGetPosts();
+  const { data: postsData, isLoading, error } = postsQuery;
+  const posts = showPosts ? postsData?.posts || [] : [];
 
   return (
     <div

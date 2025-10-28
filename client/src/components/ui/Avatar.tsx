@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 type AvatarProps = {
   src?: string | null;
@@ -18,12 +19,14 @@ export default function Avatar({
   const sizeClass = `avatar-${size}`;
 
   if (src) {
-    // eslint-disable-next-line @next/next/no-img-element
     return (
-      <img
+      <Image
         className={`author-avatar ${sizeClass} ${className}`}
         src={src}
         alt={alt || 'avatar'}
+        width={size === 'sm' ? 32 : size === 'lg' ? 64 : 48}
+        height={size === 'sm' ? 32 : size === 'lg' ? 64 : 48}
+        style={{ borderRadius: '50%', objectFit: 'cover' }}
       />
     );
   }

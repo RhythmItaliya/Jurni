@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 import { CreatePostData } from '@/types/post';
 import { Button } from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -199,7 +200,14 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
               {mediaPreviews.map((preview, index) => (
                 <div key={index} className="media-preview">
                   {mediaFiles[index]?.type.startsWith('image/') && (
-                    <img src={preview} alt={`Preview ${index + 1}`} />
+                    <Image
+                      src={preview}
+                      alt={`Preview ${index + 1}`}
+                      width={200}
+                      height={200}
+                      style={{ objectFit: 'cover' }}
+                      unoptimized
+                    />
                   )}
                   {mediaFiles[index]?.type.startsWith('video/') && (
                     <video src={preview} controls />

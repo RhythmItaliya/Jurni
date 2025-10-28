@@ -6,15 +6,26 @@ import { AuthUser } from './user';
  * @property {boolean} success - Operation success status
  * @property {string} message - Response message
  * @property {T} [data] - Response data (optional)
- * @property {any} [meta] - Pagination metadata (optional)
+ * @property {PaginationMeta} [meta] - Pagination metadata (optional)
  * @property {string} [error] - Error message (optional)
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   message: string;
   data?: T;
-  meta?: any;
+  meta?: PaginationMeta;
   error?: string;
+}
+
+/**
+ * Pagination metadata interface
+ * @interface PaginationMeta
+ */
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 /**

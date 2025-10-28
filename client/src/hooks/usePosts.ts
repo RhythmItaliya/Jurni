@@ -15,6 +15,18 @@ export const postsKeys = {
 
 /**
  * Hook to create a post with media files
+ * Handles post creation with file uploads and form validation
+ *
+ * @description
+ * - Creates FormData with post data and media files
+ * - Makes multipart API call to create post endpoint
+ * - Invalidates posts list cache on success
+ * - Shows success/error toast notifications
+ *
+ * @usedIn
+ * - PostCreationForm component for creating new posts
+ *
+ * @returns {UseMutationResult} Mutation object with post creation state and methods
  */
 export function useCreatePostWithMedia() {
   const queryClient = useQueryClient();
@@ -64,7 +76,7 @@ export function useCreatePostWithMedia() {
       });
       return response.data;
     },
-    onSuccess: data => {
+    onSuccess: _data => {
       queryClient.invalidateQueries({ queryKey: postsKeys.list() });
       showSuccess(
         'Post Created',
@@ -80,6 +92,20 @@ export function useCreatePostWithMedia() {
 
 /**
  * Hook to fetch posts list
+ * Fetches paginated list of posts with optional filtering
+ *
+ * @description
+ * - Fetches posts from API with query parameters
+ * - Handles pagination and filtering
+ * - Returns posts array with metadata
+ * - Handles loading and error states
+ *
+ * @usedIn
+ * - MainContent component for displaying posts feed
+ * - Profile page for user posts
+ *
+ * @param query - Optional query parameters for filtering/pagination
+ * @returns {UseQueryResult} Query object with posts list and metadata
  */
 export function useGetPosts(query?: Record<string, unknown>) {
   return useQuery({
@@ -106,6 +132,21 @@ export function useGetPosts(query?: Record<string, unknown>) {
 
 /**
  * Hook to fetch posts by user ID (for profile pages)
+ * Fetches paginated list of posts for a specific user
+ *
+ * @description
+ * - Fetches user posts from API with query parameters
+ * - Handles pagination and filtering for user content
+ * - Returns posts array with metadata
+ * - Handles loading and error states
+ *
+ * @usedIn
+ * - Profile page component for displaying user posts
+ * - User profile sections
+ *
+ * @param userId - ID of the user whose posts to fetch
+ * @param query - Optional query parameters for filtering/pagination
+ * @returns {UseQueryResult} Query object with user posts list and metadata
  */
 export function useGetUserPosts(
   userId: string,
@@ -140,6 +181,20 @@ export function useGetUserPosts(
 
 /**
  * Hook to fetch a single post by ID
+ * Fetches detailed post information for post detail pages
+ *
+ * @description
+ * - Fetches single post from API by ID
+ * - Returns complete post data with media and author info
+ * - Handles loading and error states
+ * - Automatically enabled when postId is provided
+ *
+ * @usedIn
+ * - Post detail page component
+ * - Post modal/detail views
+ *
+ * @param postId - ID of the post to fetch
+ * @returns {UseQueryResult} Query object with post data
  */
 export function useGetPostById(postId: string) {
   return useQuery({
@@ -156,6 +211,17 @@ export function useGetPostById(postId: string) {
 
 /**
  * Hook to update a post
+ * Handles post updates with validation and cache invalidation
+ *
+ * @description
+ * - Updates post data via API call
+ * - Invalidates relevant caches on success
+ * - Shows success/error toast notifications
+ *
+ * @usedIn
+ * - Post edit forms and components
+ *
+ * @returns {UseMutationResult} Mutation object with post update state and methods
  */
 export function useUpdatePost() {
   const queryClient = useQueryClient();
@@ -185,6 +251,18 @@ export function useUpdatePost() {
 
 /**
  * Hook to delete a post
+ * Handles post deletion with confirmation and cache cleanup
+ *
+ * @description
+ * - Deletes post via API call
+ * - Invalidates relevant caches on success
+ * - Shows success/error toast notifications
+ *
+ * @usedIn
+ * - Post management components
+ * - Post detail pages with delete option
+ *
+ * @returns {UseMutationResult} Mutation object with post deletion state and methods
  */
 export function useDeletePost() {
   const queryClient = useQueryClient();
