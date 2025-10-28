@@ -17,6 +17,8 @@ import 'swiper/css/navigation';
 import 'swiper/css/mousewheel';
 import 'swiper/css/keyboard';
 import '@/styles/components/post/swiper.scss';
+import PostActions from './PostActions';
+import { useLikeStats, useLikeTarget, useUnlikeTarget } from '@/hooks/useLikes';
 
 /**
  * PostCard component
@@ -35,6 +37,56 @@ export default function PostCard({
   const [currentMediaIndex, setCurrentMediaIndex] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
   const [playingIndex, setPlayingIndex] = React.useState<number | null>(null);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] =
+    React.useState(false);
+
+  // Like functionality with local state for real-time updates
+  const { data: likeStats } = useLikeStats('post', post._id);
+  const [localLikeStats, setLocalLikeStats] = React.useState({
+    totalLikes: likeStats?.totalLikes ?? 0,
+    isLikedByUser: likeStats?.isLikedByUser ?? false,
+  });
+
+  // Update local state when server data changes
+  React.useEffect(() => {
+    if (likeStats) {
+      setLocalLikeStats({
+        totalLikes: likeStats.totalLikes,
+        isLikedByUser: likeStats.isLikedByUser,
+      });
+    }
+  }, [likeStats]);
+
+  const likeMutation = useLikeTarget();
+  const unlikeMutation = useUnlikeTarget();
+
+  const handleLike = React.useCallback(() => {
+    const wasLiked = localLikeStats.isLikedByUser;
+    const newLikeCount = wasLiked
+      ? localLikeStats.totalLikes - 1
+      : localLikeStats.totalLikes + 1;
+
+    // Optimistic update
+    setLocalLikeStats({
+      totalLikes: newLikeCount,
+      isLikedByUser: !wasLiked,
+    });
+
+    // Perform the actual mutation
+    const mutation = wasLiked ? unlikeMutation : likeMutation;
+    mutation.mutate(
+      { targetType: 'post', targetId: post._id },
+      {
+        onError: () => {
+          // Revert optimistic update on error
+          setLocalLikeStats({
+            totalLikes: localLikeStats.totalLikes,
+            isLikedByUser: wasLiked,
+          });
+        },
+      }
+    );
+  }, [localLikeStats, likeMutation, unlikeMutation, post._id]);
 
   // Use actual post media or fallback to empty array
   const media = post.media || [];
@@ -250,9 +302,6 @@ export default function PostCard({
             </div>
 
             <div className="post-content">
-              {post.description && (
-                <p className="post-description">{post.description}</p>
-              )}
               {post.hashtags && post.hashtags.length > 0 && (
                 <div className="post-hashtags">
                   {post.hashtags.map((hashtag, idx) => (
@@ -267,13 +316,31 @@ export default function PostCard({
         </CardBody>
         <CardFooter>
           <div className="post-footer">
+            {post.description && (
+              <div className="post-description-section">
+                <p
+                  className={`post-description ${isDescriptionExpanded ? 'expanded' : 'collapsed'}`}
+                >
+                  {post.description}
+                </p>
+                {post.description.length > 150 && (
+                  <button
+                    className="description-toggle"
+                    onClick={() =>
+                      setIsDescriptionExpanded(!isDescriptionExpanded)
+                    }
+                  >
+                    {isDescriptionExpanded ? 'Show less' : 'Show more'}
+                  </button>
+                )}
+              </div>
+            )}
             <div className="post-footer-left">
-              <IconButton
-                variant="ghost"
-                size="md"
-                className="comment-button"
-                aria-label="Open comments"
-                onClick={() => {
+              <PostActions
+                isLiked={likeStats?.isLikedByUser}
+                likeCount={likeStats?.totalLikes}
+                onLike={handleLike}
+                onComment={() => {
                   try {
                     console.debug(
                       '[PostCard] comment-button clicked',
@@ -283,23 +350,6 @@ export default function PostCard({
                   // ensure we pass a string id to the handler
                   onComment?.(post._id ?? '');
                 }}
-                icon={
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                }
               />
             </div>
           </div>
