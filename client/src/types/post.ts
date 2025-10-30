@@ -65,6 +65,7 @@ export interface PostData {
   status: 'active' | 'deleted' | 'archived' | 'draft';
   media?: PostMedia[];
   commentsCount?: number;
+  likesCount?: number;
   createdAt: string;
   updatedAt: string;
   __v?: number;

@@ -43,19 +43,17 @@ export default function PostCard({
   // Like functionality with local state for real-time updates
   const { data: likeStats } = useLikeStats('post', post._id);
   const [localLikeStats, setLocalLikeStats] = React.useState({
-    totalLikes: likeStats?.totalLikes ?? 0,
+    totalLikes: post.likesCount ?? 0,
     isLikedByUser: likeStats?.isLikedByUser ?? false,
   });
 
   // Update local state when server data changes
   React.useEffect(() => {
-    if (likeStats) {
-      setLocalLikeStats({
-        totalLikes: likeStats.totalLikes,
-        isLikedByUser: likeStats.isLikedByUser,
-      });
-    }
-  }, [likeStats]);
+    setLocalLikeStats(prev => ({
+      totalLikes: post.likesCount ?? 0,
+      isLikedByUser: likeStats?.isLikedByUser ?? prev.isLikedByUser,
+    }));
+  }, [post.likesCount, likeStats?.isLikedByUser]);
 
   const likeMutation = useLikeTarget();
   const unlikeMutation = useUnlikeTarget();
@@ -337,8 +335,8 @@ export default function PostCard({
             )}
             <div className="post-footer-left">
               <PostActions
-                isLiked={likeStats?.isLikedByUser}
-                likeCount={likeStats?.totalLikes}
+                isLiked={localLikeStats.isLikedByUser}
+                likeCount={localLikeStats.totalLikes}
                 commentCount={post.commentsCount}
                 onLike={handleLike}
                 onComment={() => {

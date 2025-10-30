@@ -51,7 +51,7 @@ export default function PostActions({
         />
         <span className="like-count">{likeCount ?? 0}</span>
       </div>
-      <div className="action-group">
+      <div className="action-group comment-group">
         <IconButton
           variant="ghost"
           size="md"
@@ -76,6 +76,7 @@ export default function PostActions({
             </svg>
           }
         />
+        <span className="comment-count">{commentCount ?? 0}</span>
       </div>
       <div className="action-group">
         <IconButton

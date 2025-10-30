@@ -307,5 +307,14 @@
         min-width: 1ch; // Ensure minimum width for single digits
       }
     }
+
+    &.comment-group {
+      .comment-count {
+        font-size: $text-sm;
+        color: $text-secondary;
+        font-weight: $font-medium;
+        min-width: 1ch; // Ensure minimum width for single digits
+      }
+    }
   }
 }

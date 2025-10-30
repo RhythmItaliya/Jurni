@@ -3,6 +3,7 @@ import { useReduxToast } from '@/hooks/useReduxToast';
 import api from '@/lib/axios';
 import { ENDPOINTS } from '@/lib/endpoints';
 import { extractServerMessage } from '@/lib/errorUtils';
+import { postsKeys } from '@/hooks/usePosts';
 import {
   CommentData,
   CreateCommentData,
@@ -44,6 +45,35 @@ export function useCreateComment(postId: string) {
       const response = await api.post(ENDPOINTS.COMMENTS.CREATE(postId), data);
       return response.data;
     },
+    onMutate: async () => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: postsKeys.list() });
+
+      // Snapshot the previous value
+      const previousPosts = queryClient.getQueriesData({
+        queryKey: postsKeys.list(),
+      });
+
+      // Optimistically update the comment count for this post
+      queryClient.setQueriesData(
+        { queryKey: postsKeys.list() },
+        (oldData: any) => {
+          if (!oldData || !oldData.posts) return oldData;
+
+          return {
+            ...oldData,
+            posts: oldData.posts.map((post: any) =>
+              post._id === postId
+                ? { ...post, commentsCount: (post.commentsCount || 0) + 1 }
+                : post
+            ),
+          };
+        }
+      );
+
+      // Return a context object with the snapshotted value
+      return { previousPosts };
+    },
     onSuccess: () => {
       // Invalidate comments list for this post
       queryClient.invalidateQueries({
@@ -51,7 +81,13 @@ export function useCreateComment(postId: string) {
       });
       showSuccess('Comment Added', 'Your comment has been added successfully');
     },
-    onError: error => {
+    onError: (error, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousPosts) {
+        context.previousPosts.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
       const serverMessage = extractServerMessage(error);
       showError('Comment Failed', serverMessage || 'Failed to add comment');
     },
@@ -174,6 +210,38 @@ export function useDeleteComment(postId: string, commentId: string) {
       );
       return response.data;
     },
+    onMutate: async () => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: postsKeys.list() });
+
+      // Snapshot the previous value
+      const previousPosts = queryClient.getQueriesData({
+        queryKey: postsKeys.list(),
+      });
+
+      // Optimistically update the comment count for this post
+      queryClient.setQueriesData(
+        { queryKey: postsKeys.list() },
+        (oldData: any) => {
+          if (!oldData || !oldData.posts) return oldData;
+
+          return {
+            ...oldData,
+            posts: oldData.posts.map((post: any) =>
+              post._id === postId
+                ? {
+                    ...post,
+                    commentsCount: Math.max((post.commentsCount || 0) - 1, 0),
+                  }
+                : post
+            ),
+          };
+        }
+      );
+
+      // Return a context object with the snapshotted value
+      return { previousPosts };
+    },
     onSuccess: () => {
       // Invalidate comments list for this post
       queryClient.invalidateQueries({
@@ -184,7 +252,13 @@ export function useDeleteComment(postId: string, commentId: string) {
         'Your comment has been deleted successfully'
       );
     },
-    onError: error => {
+    onError: (error, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousPosts) {
+        context.previousPosts.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
       const serverMessage = extractServerMessage(error);
       showError('Delete Failed', serverMessage || 'Failed to delete comment');
     },
