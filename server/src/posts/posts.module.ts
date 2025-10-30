@@ -15,7 +15,7 @@ import { LikesModule } from '@/likes/likes.module';
     UploadModule,
     AuthModule,
     forwardRef(() => CommentsModule),
-    LikesModule,
+    forwardRef(() => LikesModule),
   ],
   controllers: [PostController],
   providers: [PostService, PostMediaService],

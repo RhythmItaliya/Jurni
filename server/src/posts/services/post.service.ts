@@ -12,6 +12,7 @@ import { Post, PostDocument } from '@/posts/models/post.model';
 import { CreatePostDto, UpdatePostDto, PostQueryDto } from '@/posts/dto';
 import { PostUtils } from '@/posts/utils/post.utils';
 import { CommentService } from '@/comments/services/comment.service';
+import { LikeService } from '@/likes/services/like.service';
 
 @Injectable()
 export class PostService {
@@ -19,6 +20,7 @@ export class PostService {
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @Inject(forwardRef(() => CommentService))
     private commentService: CommentService,
+    private likeService: LikeService,
   ) {}
 
   /**
@@ -148,16 +150,19 @@ export class PostService {
 
       console.log('Found posts:', posts.length, 'Total:', total);
 
-      // Add comments count to each post
-      const postsWithCommentsCount = await Promise.all(
+      // Add comments count and likes count to each post
+      const postsWithCounts = await Promise.all(
         posts.map(async (post) => {
-          const commentsCount =
-            await this.commentService.getCommentsCountForPost(
+          const [commentsCount, likeStats] = await Promise.all([
+            this.commentService.getCommentsCountForPost(
               (post as any)._id.toString(),
-            );
+            ),
+            this.likeService.getLikeStats('post', (post as any)._id.toString()),
+          ]);
           return {
             ...post.toObject(),
             commentsCount,
+            likesCount: likeStats.totalLikes,
           };
         }),
       );
@@ -165,7 +170,7 @@ export class PostService {
       const totalPages = Math.ceil(total / limit) || 0;
 
       return {
-        posts: postsWithCommentsCount,
+        posts: postsWithCounts,
         total: total || 0,
         page: page || 1,
         totalPages,

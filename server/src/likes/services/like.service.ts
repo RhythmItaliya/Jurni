@@ -3,6 +3,8 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -15,7 +17,7 @@ import { CommentService } from '@/comments/services/comment.service';
 export class LikeService {
   constructor(
     @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
-    private postService: PostService,
+    @Inject(forwardRef(() => PostService)) private postService: PostService,
     private commentService: CommentService,
   ) {}
 
