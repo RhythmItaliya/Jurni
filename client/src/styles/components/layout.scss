@@ -73,27 +73,36 @@
 }
 
 .sidebar-toggle {
-  background: none;
-  border: none;
-  color: var(--text-on-green);
-  font-size: $text-lg;
+  padding: $spacing-sm;
+  background-color: $bg-surface;
+  border: 1px solid $border;
+  border-radius: $radius-md;
   cursor: pointer;
-  padding: $spacing-xs;
-  border-radius: $radius-sm;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  color: $text-primary;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
+    background-color: $green-accent;
+    border-color: $green-shine;
+    box-shadow: 0 0 10px $primary-medium;
+    transform: scale(1.05);
+    color: var(--text-on-green);
   }
 
   &:active {
+    background-color: $primary;
     transform: scale(0.95);
+    color: var(--text-on-green);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px $green-shine;
   }
 }
 

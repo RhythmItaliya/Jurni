@@ -3,13 +3,7 @@ import api from '@/lib/axios';
 import { ENDPOINTS } from '@/lib/endpoints';
 import { useReduxToast } from '@/hooks/useReduxToast';
 import { extractServerMessage } from '@/lib/errorUtils';
-import {
-  CreateLikeData,
-  LikeData,
-  LikeStats,
-  LikesListResponseData,
-  UnlikeData,
-} from '@/types/like';
+import { CreateLikeData, UnlikeData } from '@/types/like';
 
 // Query keys for likes cache
 export const likesKeys = {

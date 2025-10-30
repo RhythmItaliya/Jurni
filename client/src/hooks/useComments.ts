@@ -5,11 +5,11 @@ import { ENDPOINTS } from '@/lib/endpoints';
 import { extractServerMessage } from '@/lib/errorUtils';
 import { postsKeys } from '@/hooks/usePosts';
 import {
-  CommentData,
   CreateCommentData,
   UpdateCommentData,
   CommentsListResponseData,
 } from '@/types/comment';
+import { PostData, PostsListResponseData } from '@/types/post';
 
 // Query keys for comments cache
 export const commentsKeys = {
@@ -57,12 +57,12 @@ export function useCreateComment(postId: string) {
       // Optimistically update the comment count for this post
       queryClient.setQueriesData(
         { queryKey: postsKeys.list() },
-        (oldData: any) => {
-          if (!oldData || !oldData.posts) return oldData;
+        (oldData: PostsListResponseData | undefined) => {
+          if (!oldData || !oldData.data) return oldData;
 
           return {
             ...oldData,
-            posts: oldData.posts.map((post: any) =>
+            data: oldData.data.map((post: PostData) =>
               post._id === postId
                 ? { ...post, commentsCount: (post.commentsCount || 0) + 1 }
                 : post
@@ -222,12 +222,12 @@ export function useDeleteComment(postId: string, commentId: string) {
       // Optimistically update the comment count for this post
       queryClient.setQueriesData(
         { queryKey: postsKeys.list() },
-        (oldData: any) => {
-          if (!oldData || !oldData.posts) return oldData;
+        (oldData: PostsListResponseData | undefined) => {
+          if (!oldData || !oldData.data) return oldData;
 
           return {
             ...oldData,
-            posts: oldData.posts.map((post: any) =>
+            data: oldData.data.map((post: PostData) =>
               post._id === postId
                 ? {
                     ...post,

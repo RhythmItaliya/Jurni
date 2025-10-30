@@ -37,7 +37,15 @@ export default function LeftSidebar() {
             onClick={toggleSidebar}
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            {isCollapsed ? '→' : '←'}
+            {isCollapsed ? (
+              <svg width="20" height="20">
+                <use href="/icons.svg#icon-arrow-right" />
+              </svg>
+            ) : (
+              <svg width="20" height="20">
+                <use href="/icons.svg#icon-arrow-left" />
+              </svg>
+            )}
           </button>
         </div>
       </div>
@@ -47,28 +55,44 @@ export default function LeftSidebar() {
           href="/"
           className={`nav-item ${isActive('/') ? 'nav-item-active' : ''}`}
         >
-          <span className="nav-icon">🏠</span>
+          <span className="nav-icon">
+            <svg width="20" height="20">
+              <use href="/icons.svg#icon-home" />
+            </svg>
+          </span>
           {!isCollapsed && <span className="nav-text">Home</span>}
         </Link>
         <Link
           href="/profile"
           className={`nav-item ${isActive('/profile') ? 'nav-item-active' : ''}`}
         >
-          <span className="nav-icon">👤</span>
+          <span className="nav-icon">
+            <svg width="20" height="20">
+              <use href="/icons.svg#icon-profile" />
+            </svg>
+          </span>
           {!isCollapsed && <span className="nav-text">Profile</span>}
         </Link>
         <Link
           href="/trending"
           className={`nav-item ${isActive('/trending') ? 'nav-item-active' : ''}`}
         >
-          <span className="nav-icon">📈</span>
+          <span className="nav-icon">
+            <svg width="20" height="20">
+              <use href="/icons.svg#icon-trending" />
+            </svg>
+          </span>
           {!isCollapsed && <span className="nav-text">Trending</span>}
         </Link>
         <Link
           href="/upload"
           className={`nav-item ${isActive('/upload') ? 'nav-item-active' : ''}`}
         >
-          <span className="nav-icon">📤</span>
+          <span className="nav-icon">
+            <svg width="20" height="20">
+              <use href="/icons.svg#icon-upload" />
+            </svg>
+          </span>
           {!isCollapsed && <span className="nav-text">Upload</span>}
         </Link>
       </div>
@@ -79,12 +103,20 @@ export default function LeftSidebar() {
             href={`/${session.user.username}`}
             className={`nav-item profile-item ${isProfileActive(session.user.username) ? 'nav-item-active' : ''}`}
           >
-            <span className="nav-icon">👤</span>
+            <span className="nav-icon">
+              <svg width="20" height="20">
+                <use href="/icons.svg#icon-profile" />
+              </svg>
+            </span>
             {!isCollapsed && <span className="nav-text">My Profile</span>}
           </Link>
         )}
         <div className="nav-item logout-item" onClick={handleLogout}>
-          <span className="nav-icon">🚪</span>
+          <span className="nav-icon">
+            <svg width="20" height="20">
+              <use href="/icons.svg#icon-logout" />
+            </svg>
+          </span>
           {!isCollapsed && (
             <span className="nav-text">
               {logoutMutation.isPending ? 'Logging out...' : 'Logout'}

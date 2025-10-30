@@ -6,6 +6,7 @@ import ReduxProvider from '@/components/providers/ReduxProvider';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastContainer } from '@/components/ui/Toast';
 import { ClientLayout } from '@/components/layout';
+import { montserrat, lora } from '@/lib/fonts';
 
 export const metadata: Metadata = {
   title: 'Jurni - Full Stack App',
@@ -19,7 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <head>
+        <link rel="preload" href="/icons.svg" as="image" type="image/svg+xml" />
+      </head>
+      <body className={`${montserrat.variable} ${lora.variable} antialiased`}>
         <ThemeProvider>
           <ReduxProvider>
             <QueryClientProviderWrapper>

@@ -76,7 +76,7 @@ export function useCreatePostWithMedia() {
       });
       return response.data;
     },
-    onSuccess: _data => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: postsKeys.list() });
       showSuccess(
         'Post Created',

@@ -271,13 +271,7 @@ export default function PostCard({
                               fill="none"
                               xmlns="http://www.w3.org/2000/svg"
                             >
-                              <circle
-                                cx="24"
-                                cy="24"
-                                r="24"
-                                fill="rgba(0,0,0,0.6)"
-                              />
-                              <path d="M20 16L34 24L20 32V16Z" fill="#fff" />
+                              <use href="/icons.svg#icon-play" />
                             </svg>
                           </button>
                         )}
@@ -371,13 +365,7 @@ export default function PostCard({
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M10.25 12.5L5.75 8L10.25 3.5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                  <use href="/icons.svg#icon-chevron-left" />
                 </svg>
               }
             />
@@ -396,13 +384,7 @@ export default function PostCard({
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M5.75 12.5L10.25 8L5.75 3.5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                  <use href="/icons.svg#icon-chevron-right" />
                 </svg>
               }
             />
