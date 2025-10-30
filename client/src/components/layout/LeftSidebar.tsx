@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { useLogout } from '@/hooks/useAuth';
 
@@ -9,9 +10,14 @@ export default function LeftSidebar() {
   const logoutMutation = useLogout();
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = () => {
     logoutMutation.mutate();
+  };
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
   };
 
   const isActive = (path: string) => pathname === path;
@@ -19,10 +25,21 @@ export default function LeftSidebar() {
     pathname === `/${username}` || pathname.startsWith(`/${username}/`);
 
   return (
-    <div className="left-sidebar">
+    <div
+      className={`left-sidebar ${isCollapsed ? 'left-sidebar--collapsed' : ''}`}
+    >
       <div className="sidebar-top">
-        <div className="logo">Jurni</div>
-        <ThemeToggle />
+        {!isCollapsed && <div className="logo">Jurni</div>}
+        <div className="sidebar-controls">
+          {!isCollapsed && <ThemeToggle />}
+          <button
+            className="sidebar-toggle"
+            onClick={toggleSidebar}
+            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {isCollapsed ? '→' : '←'}
+          </button>
+        </div>
       </div>
 
       <div className="sidebar-nav">
@@ -31,28 +48,28 @@ export default function LeftSidebar() {
           className={`nav-item ${isActive('/') ? 'nav-item-active' : ''}`}
         >
           <span className="nav-icon">🏠</span>
-          <span className="nav-text">Home</span>
+          {!isCollapsed && <span className="nav-text">Home</span>}
         </Link>
         <Link
           href="/profile"
           className={`nav-item ${isActive('/profile') ? 'nav-item-active' : ''}`}
         >
           <span className="nav-icon">👤</span>
-          <span className="nav-text">Profile</span>
+          {!isCollapsed && <span className="nav-text">Profile</span>}
         </Link>
         <Link
           href="/trending"
           className={`nav-item ${isActive('/trending') ? 'nav-item-active' : ''}`}
         >
           <span className="nav-icon">📈</span>
-          <span className="nav-text">Trending</span>
+          {!isCollapsed && <span className="nav-text">Trending</span>}
         </Link>
         <Link
           href="/upload"
           className={`nav-item ${isActive('/upload') ? 'nav-item-active' : ''}`}
         >
           <span className="nav-icon">📤</span>
-          <span className="nav-text">Upload</span>
+          {!isCollapsed && <span className="nav-text">Upload</span>}
         </Link>
       </div>
 
@@ -63,14 +80,16 @@ export default function LeftSidebar() {
             className={`nav-item profile-item ${isProfileActive(session.user.username) ? 'nav-item-active' : ''}`}
           >
             <span className="nav-icon">👤</span>
-            <span className="nav-text">My Profile</span>
+            {!isCollapsed && <span className="nav-text">My Profile</span>}
           </Link>
         )}
         <div className="nav-item logout-item" onClick={handleLogout}>
           <span className="nav-icon">🚪</span>
-          <span className="nav-text">
-            {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
-          </span>
+          {!isCollapsed && (
+            <span className="nav-text">
+              {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
+            </span>
+          )}
         </div>
       </div>
     </div>

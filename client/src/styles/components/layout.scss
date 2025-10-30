@@ -37,13 +37,18 @@
   box-shadow: 0 0 20px $shadow;
   transition:
     background-color 0.3s ease,
-    border-color 0.3s ease;
+    border-color 0.3s ease,
+    width 0.3s ease;
+
+  &--collapsed {
+    width: 4rem;
+  }
 }
 
 .sidebar-top {
   padding: $spacing-lg;
-  background: linear-gradient(135deg, $primary, $green-glow);
-  border-bottom: 1px solid $green-shine;
+  background-color: $bg-surface;
+  border-bottom: 1px solid $border;
   min-height: 4rem;
   height: 4rem;
   display: flex;
@@ -51,23 +56,44 @@
   justify-content: space-between;
   color: $text-primary;
   flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      $white-overlay,
-      transparent
-    );
-    animation: shine 3s infinite;
+.left-sidebar--collapsed .sidebar-top {
+  justify-content: center;
+  padding: $spacing-sm;
+  min-height: 3rem;
+  height: 3rem;
+}
+
+.sidebar-controls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: var(--text-on-green);
+  font-size: $text-lg;
+  cursor: pointer;
+  padding: $spacing-xs;
+  border-radius: $radius-sm;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 
@@ -84,8 +110,7 @@
   font-size: $text-xl;
   font-weight: $font-bold;
   line-height: $leading-normal;
-  color: var(--text-on-green);
-  text-shadow: 0 0 10px var(--text-on-green-shadow);
+  color: $primary;
   margin: 0;
   height: 4rem;
   display: flex;
@@ -103,6 +128,10 @@
   transition: background-color 0.3s ease;
 }
 
+.left-sidebar--collapsed .sidebar-nav {
+  padding: 0;
+}
+
 // Simple navigation styles
 .nav-item {
   display: flex;
@@ -115,24 +144,32 @@
   transition: all 0.2s ease;
   background-color: transparent;
   border: 1px solid transparent;
-
-  &:hover {
-    background-color: #3b82f6;
-    color: white;
-    border-color: #2563eb;
-    transform: translateX(4px);
-  }
-
-  &:active {
-    background-color: #1d4ed8;
-    transform: translateX(2px);
-  }
+  justify-content: flex-start;
 
   &:last-child {
     margin-bottom: 0;
   }
 }
 
+.left-sidebar--collapsed .nav-item {
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  margin: 0 auto $spacing-xs auto;
+
+  .nav-icon {
+    margin: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
 .nav-icon {
   font-size: 1.2rem;
   margin-right: $spacing-sm;
@@ -148,32 +185,19 @@
 }
 
 .sidebar-bottom {
-  padding: $spacing-lg;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  border-top: 1px solid #4f46e5;
-  min-height: 4rem;
+  padding: $spacing-md;
+  background-color: $bg-surface;
+  border-top: 1px solid $border;
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
   flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
-    animation: shine 3s infinite 1.5s;
-  }
+.left-sidebar--collapsed .sidebar-bottom {
+  padding: 0;
+  gap: $spacing-sm;
 }
 
 .profile-item {
@@ -185,11 +209,7 @@
 }
 
 .logout-item {
-  &:hover {
-    background-color: #dc2626;
-    color: white;
-    border-color: #b91c1c;
-  }
+  background-color: transparent !important;
 }
 
 .main-content {
@@ -414,6 +434,11 @@
     height: 8rem;
   }
 
+  .left-sidebar--collapsed {
+    width: 100%;
+    height: 3rem;
+  }
+
   .main-content {
     min-height: 16rem;
   }
@@ -428,6 +453,11 @@
   .right-sidebar {
     width: 100%;
     height: 10rem;
+  }
+
+  .left-sidebar--collapsed {
+    width: 100%;
+    height: 4rem;
   }
 
   .main-content {
