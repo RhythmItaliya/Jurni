@@ -13,6 +13,16 @@
   background: transparent;
 
   // Sizes
+
+  &.icon-xxs {
+    width: 14px;
+    height: 14px;
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
   &.icon-xs {
     width: 24px;
     height: 24px;

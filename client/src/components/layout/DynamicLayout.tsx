@@ -74,7 +74,10 @@ export default function DynamicLayout({ children }: DynamicLayoutProps) {
 
       {/* MAIN CONTENT AREA - Always same size, content varies based on showPosts */}
       {layoutConfig.showMainContent && (
-        <MainContentArea showPosts={layoutConfig.showPosts}>
+        <MainContentArea
+          showPosts={layoutConfig.showPosts}
+          fullWidth={layoutConfig.mainContentFullWidth}
+        >
           {!layoutConfig.showPosts && children}
         </MainContentArea>
       )}

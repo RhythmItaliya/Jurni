@@ -6,6 +6,7 @@ export interface LayoutConfig {
   showPosts: boolean; // Show actual posts in main content (only for home)
   showCommentsPanel?: boolean; // Whether to enable comments side panel in this layout
   layoutType: 'full' | 'sidebar-only' | 'minimal';
+  mainContentFullWidth?: boolean; // Allow main content to use full width instead of max 600px
 }
 
 // Define which layout components to show on each route
@@ -36,9 +37,10 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
   '/upload': {
     showLeftSidebar: true, // Navigation sidebar
     showRightSidebar: false, // No right sidebar
-    showMainContent: true, // Main content area (same size, but empty)
-    showPosts: false, // No posts, just blank area
+    showMainContent: true, // Use main content area for full width layout
+    showPosts: false, // No posts, just page content inside main area
     layoutType: 'sidebar-only',
+    mainContentFullWidth: true, // Allow full width in main content area
   },
   // Dynamic profile routes
   'profile-view': {

@@ -10,6 +10,7 @@ import { PostData } from '@/types/post';
 interface MainContentAreaProps {
   showPosts: boolean;
   children?: React.ReactNode;
+  fullWidth?: boolean;
 }
 
 /**
@@ -21,6 +22,7 @@ interface MainContentAreaProps {
 export default function MainContentArea({
   showPosts,
   children,
+  fullWidth = false,
 }: MainContentAreaProps) {
   const [openCommentsPostId, setOpenCommentsPostId] = React.useState<
     string | null
@@ -85,7 +87,9 @@ export default function MainContentArea({
           </div>
         ) : (
           // Show page content in the main area (same size as posts area)
-          <div className="page-content-in-main">
+          <div
+            className={`page-content-in-main ${fullWidth ? 'page-content-in-main--full-width' : ''}`}
+          >
             {children || (
               <div className="blank-placeholder">
                 {/* This maintains the same size as the posts area */}

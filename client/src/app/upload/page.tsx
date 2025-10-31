@@ -1,6 +1,6 @@
 'use client';
 
-import PostCreationForm from '@/components/post/PostCreationForm';
+import PostCreationForm from '@/components/post/upload/PostCreationForm';
 import { useRouter } from 'next/navigation';
 import { CreatePostData } from '@/types/post';
 import { useCreatePostWithMedia } from '@/hooks/usePosts';
@@ -35,13 +35,11 @@ export default function UploadPage() {
 
   return (
     <div className="upload-page">
-      <div className="container">
-        <PostCreationForm
-          onSubmit={handleSubmit}
-          loading={createPostWithMedia.isPending}
-          error={createPostWithMedia.error?.message || null}
-        />
-      </div>
+      <PostCreationForm
+        onSubmit={handleSubmit}
+        loading={createPostWithMedia.isPending}
+        error={createPostWithMedia.error?.message || null}
+      />
     </div>
   );
 }
