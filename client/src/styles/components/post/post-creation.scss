@@ -106,40 +106,39 @@
                 object-fit: cover;
                 display: block;
               }
+            }
 
-              .nav-arrow {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                z-index: 10;
-                background-color: rgba(0, 0, 0, 0.5);
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: background-color 0.3s ease;
+            .nav-arrow {
+              position: absolute;
+              top: 10px;
+              z-index: 10;
+              background-color: rgba(0, 0, 0, 0.5);
+              border-radius: 50%;
+              width: 40px;
+              height: 40px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: background-color 0.3s ease;
 
-                &:hover {
-                  background-color: rgba(0, 0, 0, 0.7);
-                }
-
-                &.nav-arrow-left {
-                  left: 15px;
-                }
-
-                &.nav-arrow-right {
-                  right: 15px;
-                }
+              &:hover {
+                background-color: rgba(0, 0, 0, 0.7);
               }
 
-              .close-preview-btn {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                z-index: 10;
+              &.nav-arrow-left {
+                left: 10px;
               }
+
+              &.nav-arrow-right {
+                right: 60px;
+              }
+            }
+
+            .close-preview-btn {
+              position: absolute;
+              top: 10px;
+              right: 10px;
+              z-index: 10;
             }
 
             .thumbnail-strip {
