@@ -50,15 +50,7 @@
           @include flex-center;
           flex-direction: column;
           background-color: var(--bg-surface);
-          transition:
-            border-color 0.3s ease,
-            background-color 0.3s ease;
           cursor: pointer;
-
-          &:hover {
-            border-color: var(--primary-color);
-            background-color: var(--bg-hover);
-          }
 
           &.drag-over {
             border-color: var(--primary-color);
@@ -70,11 +62,6 @@
             align-items: stretch;
             justify-content: stretch;
             cursor: default;
-
-            &:hover {
-              border-color: var(--border-color);
-              background-color: var(--bg-surface);
-            }
           }
 
           .upload-placeholder {
@@ -119,11 +106,6 @@
               display: flex;
               align-items: center;
               justify-content: center;
-              transition: background-color 0.3s ease;
-
-              &:hover {
-                background-color: rgba(0, 0, 0, 0.7);
-              }
 
               &.nav-arrow-left {
                 left: 10px;
@@ -166,14 +148,9 @@
                 overflow: hidden;
                 cursor: pointer;
                 border: 2px solid transparent;
-                transition: border-color 0.3s ease;
                 flex-shrink: 0;
 
                 &.active {
-                  border-color: var(--primary-color);
-                }
-
-                &:hover {
                   border-color: var(--primary-color);
                 }
 
@@ -230,15 +207,7 @@
               overflow: hidden;
               background-color: var(--bg-secondary);
               border: 1px solid var(--border-color);
-              transition:
-                border-color 0.3s ease,
-                transform 0.2s ease;
               cursor: pointer;
-
-              &:hover {
-                border-color: var(--primary-color);
-                transform: scale(1.02);
-              }
 
               .selected-media-image,
               .selected-media-video-thumb {
@@ -303,15 +272,6 @@
                 right: 3px;
                 z-index: 10;
                 opacity: 0;
-                transition: opacity 0.3s ease;
-
-                &:hover {
-                  opacity: 1 !important;
-                }
-              }
-
-              &:hover .remove-media-btn {
-                opacity: 1;
               }
             }
 
@@ -322,17 +282,9 @@
               @include flex-center;
               cursor: pointer;
               background-color: var(--bg-surface);
-              transition: all 0.3s ease;
               font-size: 0.8rem;
               font-weight: 500;
               color: var(--text-secondary);
-
-              &:hover {
-                border-color: var(--primary-color);
-                background-color: var(--bg-hover);
-                color: var(--primary-color);
-                transform: scale(1.02);
-              }
 
               span {
                 text-align: center;

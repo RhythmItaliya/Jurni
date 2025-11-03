@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
 import { IconButton } from '@/components/ui/IconButton';
 import { PostData } from '@/types/post';
@@ -66,7 +66,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
           {/* Left side - Image/Media selection */}
           <div className="media-selection-section">
             <h3>Media Selection</h3>
-            <div
+            <motion.div
               className={`media-upload-area ${isDragOver ? 'drag-over' : ''} ${selectedFiles.length > 0 ? 'has-media' : ''}`}
               onDragOver={e => handleDragOver(e, setIsDragOver)}
               onDragLeave={e => handleDragLeave(e, setIsDragOver)}
@@ -82,6 +82,22 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
               onClick={() =>
                 selectedFiles.length === 0 && fileInputRef.current?.click()
               }
+              whileHover={
+                selectedFiles.length === 0
+                  ? {
+                      borderColor: 'var(--primary-color)',
+                      backgroundColor: 'var(--bg-hover)',
+                    }
+                  : {}
+              }
+              animate={{
+                borderColor: isDragOver
+                  ? 'var(--primary-color)'
+                  : 'var(--border-color)',
+                backgroundColor: isDragOver
+                  ? 'var(--primary-light)'
+                  : 'var(--bg-surface)',
+              }}
             >
               {selectedFiles.length === 0 ? (
                 <div className="upload-placeholder">
@@ -95,8 +111,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                     {selectedFiles[currentPreviewIndex]?.type.startsWith(
                       'image/'
                     ) ? (
-                      <Image
-                        fill
+                      <img
                         src={previews[currentPreviewIndex]}
                         alt={selectedFiles[currentPreviewIndex].name}
                         className="preview-media"
@@ -115,46 +130,60 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                     {/* Navigation Arrows */}
                     {selectedFiles.length > 1 && (
                       <>
-                        <IconButton
-                          variant="sky"
-                          size="md"
+                        <motion.div
                           className="nav-arrow nav-arrow-left"
-                          onClick={e => {
-                            e.stopPropagation();
-                            prevPreview(selectedFiles, setCurrentPreviewIndex);
-                          }}
-                          icon={
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 16 16"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <use href="/icons.svg#icon-chevron-left" />
-                            </svg>
-                          }
-                        />
-                        <IconButton
-                          variant="sky"
-                          size="md"
+                          whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                        >
+                          <IconButton
+                            variant="sky"
+                            size="md"
+                            onClick={e => {
+                              e.stopPropagation();
+                              prevPreview(
+                                selectedFiles,
+                                setCurrentPreviewIndex
+                              );
+                            }}
+                            icon={
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <use href="/icons.svg#icon-chevron-left" />
+                              </svg>
+                            }
+                          />
+                        </motion.div>
+                        <motion.div
                           className="nav-arrow nav-arrow-right"
-                          onClick={e => {
-                            e.stopPropagation();
-                            nextPreview(selectedFiles, setCurrentPreviewIndex);
-                          }}
-                          icon={
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 16 16"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <use href="/icons.svg#icon-chevron-right" />
-                            </svg>
-                          }
-                        />
+                          whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                        >
+                          <IconButton
+                            variant="sky"
+                            size="md"
+                            onClick={e => {
+                              e.stopPropagation();
+                              nextPreview(
+                                selectedFiles,
+                                setCurrentPreviewIndex
+                              );
+                            }}
+                            icon={
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <use href="/icons.svg#icon-chevron-right" />
+                              </svg>
+                            }
+                          />
+                        </motion.div>
                       </>
                     )}
 
@@ -185,7 +214,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                   {selectedFiles.length > 1 && (
                     <div className="thumbnail-strip">
                       {selectedFiles.map((file, index) => (
-                        <div
+                        <motion.div
                           key={index}
                           className={`thumbnail-item ${index === currentPreviewIndex ? 'active' : ''}`}
                           onClick={e => {
@@ -196,10 +225,10 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                               setIsPreviewMode
                             );
                           }}
+                          whileHover={{ borderColor: 'var(--primary-color)' }}
                         >
                           {file.type.startsWith('image/') ? (
-                            <Image
-                              fill
+                            <img
                               src={previews[index]}
                               alt={file.name}
                               className="thumbnail-media"
@@ -214,36 +243,41 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                               <div className="video-thumb-overlay">VIDEO</div>
                             </div>
                           )}
-                          <IconButton
-                            variant="accent"
-                            size="xxs"
+                          <motion.div
                             className="remove-thumb-btn"
-                            onClick={e => {
-                              e.stopPropagation();
-                              removeFile(
-                                index,
-                                selectedFiles,
-                                setSelectedFiles,
-                                previews,
-                                setPreviews,
-                                currentPreviewIndex,
-                                setCurrentPreviewIndex,
-                                setIsPreviewMode
-                              );
-                            }}
-                            icon={
-                              <svg
-                                width="12"
-                                height="12"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <use href="/icons.svg#icon-close" />
-                              </svg>
-                            }
-                          />
-                        </div>
+                            animate={{ opacity: 0 }}
+                            whileHover={{ opacity: 1 }}
+                          >
+                            <IconButton
+                              variant="accent"
+                              size="xxs"
+                              onClick={e => {
+                                e.stopPropagation();
+                                removeFile(
+                                  index,
+                                  selectedFiles,
+                                  setSelectedFiles,
+                                  previews,
+                                  setPreviews,
+                                  currentPreviewIndex,
+                                  setCurrentPreviewIndex,
+                                  setIsPreviewMode
+                                );
+                              }}
+                              icon={
+                                <svg
+                                  width="12"
+                                  height="12"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <use href="/icons.svg#icon-close" />
+                                </svg>
+                              }
+                            />
+                          </motion.div>
+                        </motion.div>
                       ))}
                     </div>
                   )}
@@ -251,7 +285,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
               ) : (
                 <div className="selected-media-grid">
                   {selectedFiles.map((file, index) => (
-                    <div
+                    <motion.div
                       key={index}
                       className="selected-media-item"
                       onClick={() =>
@@ -261,10 +295,13 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                           setIsPreviewMode
                         )
                       }
+                      whileHover={{
+                        borderColor: 'var(--primary-color)',
+                        scale: 1.02,
+                      }}
                     >
                       {file.type.startsWith('image/') ? (
-                        <Image
-                          fill
+                        <img
                           src={previews[index]}
                           alt={file.name}
                           className="selected-media-image"
@@ -285,49 +322,60 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                           ({(file.size / 1024 / 1024).toFixed(1)} MB)
                         </span>
                       </div>
-                      <IconButton
-                        variant="accent"
-                        size="xxs"
+                      <motion.div
                         className="remove-media-btn"
-                        onClick={e => {
-                          e.stopPropagation();
-                          removeFile(
-                            index,
-                            selectedFiles,
-                            setSelectedFiles,
-                            previews,
-                            setPreviews,
-                            currentPreviewIndex,
-                            setCurrentPreviewIndex,
-                            setIsPreviewMode
-                          );
-                        }}
-                        icon={
-                          <svg
-                            width="12"
-                            height="12"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <use href="/icons.svg#icon-close" />
-                          </svg>
-                        }
-                      />
-                    </div>
+                        animate={{ opacity: 0 }}
+                        whileHover={{ opacity: 1 }}
+                      >
+                        <IconButton
+                          variant="accent"
+                          size="xxs"
+                          onClick={e => {
+                            e.stopPropagation();
+                            removeFile(
+                              index,
+                              selectedFiles,
+                              setSelectedFiles,
+                              previews,
+                              setPreviews,
+                              currentPreviewIndex,
+                              setCurrentPreviewIndex,
+                              setIsPreviewMode
+                            );
+                          }}
+                          icon={
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <use href="/icons.svg#icon-close" />
+                            </svg>
+                          }
+                        />
+                      </motion.div>
+                    </motion.div>
                   ))}
-                  <div
+                  <motion.div
                     className="add-media-item"
                     onClick={e => {
                       e.stopPropagation();
                       fileInputRef.current?.click();
                     }}
+                    whileHover={{
+                      borderColor: 'var(--primary-color)',
+                      backgroundColor: 'var(--bg-hover)',
+                      color: 'var(--primary-color)',
+                      scale: 1.02,
+                    }}
                   >
                     <span>+ Add More</span>
-                  </div>
+                  </motion.div>
                 </div>
               )}
-            </div>
+            </motion.div>
             <input
               ref={fileInputRef}
               type="file"

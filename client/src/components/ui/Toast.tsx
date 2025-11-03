@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { removeToast } from '@/store/slices/toastSlice';
 
@@ -40,13 +41,9 @@ export const Toast: React.FC<ToastProps> = ({
   duration = 5000,
 }) => {
   const dispatch = useAppDispatch();
-  const [isLeaving, setIsLeaving] = useState(false);
 
   const handleClose = useCallback(() => {
-    setIsLeaving(true);
-    setTimeout(() => {
-      dispatch(removeToast(id));
-    }, 300);
+    dispatch(removeToast(id));
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -59,7 +56,18 @@ export const Toast: React.FC<ToastProps> = ({
   }, [duration, handleClose]);
 
   return (
-    <div className={`toast ${type} ${isLeaving ? 'leaving' : ''}`}>
+    <motion.div
+      className={`toast ${type}`}
+      initial={{ opacity: 0, x: 300, scale: 0.8 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 300, scale: 0.8 }}
+      transition={{
+        type: 'spring',
+        stiffness: 400,
+        damping: 30,
+        duration: 0.4,
+      }}
+    >
       <div className="toast-content">
         <div className="toast-icon">{toastIcons[type]}</div>
         <div className="toast-text">
@@ -77,7 +85,7 @@ export const Toast: React.FC<ToastProps> = ({
           </svg>
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -97,16 +105,27 @@ export const ToastContainer: React.FC = () => {
 
   return createPortal(
     <div className="toast-container">
-      {toasts.map((toast, index) => (
-        <div
-          key={toast.id}
-          style={{
-            zIndex: 50 - index,
-          }}
-        >
-          <Toast {...toast} />
-        </div>
-      ))}
+      <AnimatePresence mode="popLayout">
+        {toasts.map((toast, index) => (
+          <motion.div
+            key={toast.id}
+            layout
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50, scale: 0.95 }}
+            transition={{
+              layout: { type: 'spring', stiffness: 500, damping: 30 },
+              opacity: { duration: 0.2 },
+              y: { type: 'spring', stiffness: 400, damping: 30 },
+            }}
+            style={{
+              zIndex: 50 - index,
+            }}
+          >
+            <Toast {...toast} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>,
     document.body
   );

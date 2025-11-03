@@ -9,20 +9,10 @@
   position: relative;
   max-width: 24rem;
   width: 100%;
-  transform: translateX(0);
-  opacity: 1;
-  scale: 1;
-  transition: all 0.3s ease-in-out;
   border-radius: $radius-lg;
   box-shadow: 0 4px 6px $shadow-light;
   padding: $spacing-md;
   margin-bottom: $spacing-sm;
-
-  &.leaving {
-    transform: translateX(100%);
-    opacity: 0;
-    scale: 0.95;
-  }
 
   // Toast Types
   &.success {
