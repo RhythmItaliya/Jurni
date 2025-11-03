@@ -49,6 +49,7 @@ $shadow-strong: rgba(0, 0, 0, 0.3);
   --text-on-green-shadow: rgba(0, 255, 136, 0.3);
   --primary-color: #2d5016;
   --primary-hover: #4a7c59;
+  --primary-border: rgba(45, 80, 22, 0.3);
 }
 
 [data-theme='dark'] {
@@ -68,8 +69,9 @@ $shadow-strong: rgba(0, 0, 0, 0.3);
   --overlay: rgba(0, 0, 0, 0.8);
   --text-on-green: #ffffff;
   --text-on-green-shadow: rgba(0, 255, 136, 0.3);
-  --primary-color: #4a7c59;
+  --primary-color: #ffffff;
   --primary-hover: #5a8c69;
+  --primary-border: rgba(255, 255, 255, 0.3);
 }
 
 // SCSS Variables using CSS Custom Properties

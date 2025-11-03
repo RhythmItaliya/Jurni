@@ -115,8 +115,8 @@
 @mixin button-outline {
   @include button-base;
   background-color: transparent;
-  color: $primary;
-  border: 2px solid $primary;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-border);
 
   &:hover:not(:disabled) {
     background-color: $primary;
