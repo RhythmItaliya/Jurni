@@ -17,7 +17,7 @@ export class CommentUtils {
   ) {
     return commentModel
       .find(query)
-      .populate('userId', 'username avatarUrl')
+      .populate('userId', '_id uuid username avatarUrl')
       .populate('parentId', '_id content userId')
       .sort({ createdAt: -1 });
   }
