@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
 import { IconButton } from '@/components/ui/IconButton';
-import { PostData } from '@/types/post';
+import { Input, TextArea, Select, Checkbox, Button } from '@/components/ui';
+import { PostData, CreatePostData } from '@/types/post';
 import {
   handleDragOver,
   handleDragLeave,
@@ -16,7 +17,7 @@ import {
 } from '../utils/mediaHandlers';
 
 interface PostCreationFormProps {
-  onSubmit: (postData: PostData, mediaFiles?: File[]) => Promise<void>;
+  onSubmit: (postData: CreatePostData, mediaFiles?: File[]) => Promise<void>;
   loading?: boolean;
   error?: string | null;
 }
@@ -32,6 +33,21 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
   const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Form state
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [hashtags, setHashtags] = useState<string[]>([]);
+  const [visibility, setVisibility] = useState<
+    'public' | 'private' | 'friends' | 'followers'
+  >('public');
+  const [allowComments, setAllowComments] = useState(true);
+  const [allowLikes, setAllowLikes] = useState(true);
+  const [allowShares, setAllowShares] = useState(true);
+  const [location, setLocation] = useState<
+    | { name: string; latitude?: number; longitude?: number; address?: string }
+    | undefined
+  >();
 
   // Keyboard navigation for preview mode
   useEffect(() => {
@@ -397,8 +413,121 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
           <div className="post-details-section">
             <h3>Post Details</h3>
             <div className="post-form">
-              <p>Form fields for post details</p>
-              {/* Placeholder for form inputs */}
+              <div className="form-group">
+                <label htmlFor="title">Title *</label>
+                <Input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  placeholder="Enter post title"
+                  maxLength={2200}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="description">Description</label>
+                <TextArea
+                  id="description"
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                  placeholder="Tell your story..."
+                  maxLength={5000}
+                  rows={4}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="hashtags">Hashtags</label>
+                <Input
+                  type="text"
+                  id="hashtags"
+                  value={hashtags.join(' ')}
+                  onChange={e =>
+                    setHashtags(
+                      e.target.value.split(' ').filter(tag => tag.trim() !== '')
+                    )
+                  }
+                  placeholder="#travel #adventure"
+                />
+                <small>Separate with spaces, max 30 tags</small>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="visibility">Visibility</label>
+                <Select
+                  id="visibility"
+                  value={visibility}
+                  onChange={e =>
+                    setVisibility(e.target.value as typeof visibility)
+                  }
+                >
+                  <option value="public">Public</option>
+                  <option value="friends">Friends</option>
+                  <option value="followers">Followers</option>
+                  <option value="private">Private</option>
+                </Select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="location">Location</label>
+                <Input
+                  type="text"
+                  id="location"
+                  value={location?.name || ''}
+                  onChange={e =>
+                    setLocation(
+                      e.target.value ? { name: e.target.value } : undefined
+                    )
+                  }
+                  placeholder="Add location"
+                />
+              </div>
+
+              <div className="form-group checkboxes">
+                <Checkbox
+                  checked={allowComments}
+                  onChange={e => setAllowComments(e.target.checked)}
+                  label="Allow Comments"
+                />
+                <Checkbox
+                  checked={allowLikes}
+                  onChange={e => setAllowLikes(e.target.checked)}
+                  label="Allow Likes"
+                />
+                <Checkbox
+                  checked={allowShares}
+                  onChange={e => setAllowShares(e.target.checked)}
+                  label="Allow Shares"
+                />
+              </div>
+
+              <Button
+                onClick={() => {
+                  if (!title.trim()) {
+                    alert('Title is required');
+                    return;
+                  }
+                  const postData: CreatePostData = {
+                    title: title.trim(),
+                    description: description.trim() || undefined,
+                    hashtags: hashtags.length > 0 ? hashtags : undefined,
+                    visibility,
+                    allowComments,
+                    allowLikes,
+                    allowShares,
+                    location,
+                  };
+                  _onSubmit(postData, selectedFiles);
+                }}
+                disabled={_loading}
+                className="submit-btn"
+              >
+                {_loading ? 'Creating Post...' : 'Create Post'}
+              </Button>
+
+              {_error && <div className="error-message">{_error}</div>}
             </div>
           </div>
         </div>

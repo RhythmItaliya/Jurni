@@ -1,0 +1,39 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// TEXTAREA COMPONENT STYLES
+// ========================================
+.textarea {
+  @include input-base;
+  resize: vertical;
+  min-height: 80px;
+
+  &::placeholder {
+    color: $text-secondary;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 2px rgba($primary, 0.2);
+  }
+}
+
+.textarea-placeholder {
+  width: 100%;
+  background-color: $bg-secondary;
+  border-radius: $radius-md;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

@@ -1,0 +1,42 @@
+@use 'sass:color';
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+// ========================================
+// CHECKBOX COMPONENT STYLES
+// ========================================
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  .checkbox {
+    width: 1rem;
+    height: 1rem;
+    accent-color: $primary;
+    cursor: pointer;
+  }
+
+  .checkbox-text {
+    color: $text-primary;
+  }
+}
+
+.checkbox-placeholder {
+  width: 100%;
+  background-color: $bg-secondary;
+  border-radius: $radius-md;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

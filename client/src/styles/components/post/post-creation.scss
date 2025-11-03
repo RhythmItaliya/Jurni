@@ -294,6 +294,109 @@
           }
         }
       }
+
+      .post-details-section {
+        .post-form {
+          padding: 2rem;
+          border: 2px dashed var(--border-color);
+          border-radius: 8px;
+          background-color: var(--bg-surface);
+          min-height: 600px;
+          max-height: 600px;
+          overflow-y: auto;
+
+          .form-group {
+            margin-bottom: 1.5rem;
+
+            label {
+              display: block;
+              margin-bottom: 0.5rem;
+              font-weight: 500;
+              color: var(--text-primary);
+            }
+
+            .input,
+            .textarea,
+            .select {
+              width: 100%;
+              padding: 0.75rem;
+              border: 1px solid var(--border-color);
+              border-radius: 6px;
+              background-color: var(--bg-input);
+              color: var(--text-primary);
+              font-size: 1rem;
+
+              &:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+              }
+            }
+
+            .textarea {
+              resize: vertical;
+              min-height: 80px;
+            }
+
+            small {
+              display: block;
+              margin-top: 0.25rem;
+              color: var(--text-secondary);
+              font-size: 0.8rem;
+            }
+
+            &.checkboxes {
+              display: flex;
+              flex-direction: column;
+              gap: 0.75rem;
+
+              .checkbox-label {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0;
+                cursor: pointer;
+
+                .checkbox {
+                  width: auto;
+                  margin: 0;
+                }
+              }
+            }
+          }
+
+          .submit-btn {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover:not(:disabled) {
+              background-color: var(--primary-hover);
+            }
+
+            &:disabled {
+              background-color: var(--text-secondary);
+              cursor: not-allowed;
+            }
+          }
+
+          .error-message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            border-radius: 6px;
+            border: 1px solid var(--error-border);
+          }
+        }
+      }
     }
   }
 }
