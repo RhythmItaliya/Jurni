@@ -111,6 +111,14 @@ export default function LeftSidebar() {
             {!isCollapsed && <span className="nav-text">My Profile</span>}
           </Link>
         )}
+        <div className="nav-item" onClick={() => console.log('more')}>
+          <span className="nav-icon">
+            <svg width="20" height="20">
+              <use href="/icons.svg#icon-dots" />
+            </svg>
+          </span>
+          {!isCollapsed && <span className="nav-text">More</span>}
+        </div>
         <div className="nav-item logout-item" onClick={handleLogout}>
           <span className="nav-icon">
             <svg width="20" height="20">

@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import { IconButton } from '@/components/ui/IconButton';
+import { PostData } from '@/types/post';
 import {
   handleDragOver,
   handleDragLeave,
@@ -14,15 +16,15 @@ import {
 } from '../utils/mediaHandlers';
 
 interface PostCreationFormProps {
-  onSubmit: (postData: any, mediaFiles?: File[]) => Promise<void>;
+  onSubmit: (postData: PostData, mediaFiles?: File[]) => Promise<void>;
   loading?: boolean;
   error?: string | null;
 }
 
 const PostCreationForm: React.FC<PostCreationFormProps> = ({
-  onSubmit,
-  loading = false,
-  error = null,
+  onSubmit: _onSubmit,
+  loading: _loading,
+  error: _error,
 }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -55,7 +57,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
-  }, [isPreviewMode, selectedFiles.length]);
+  }, [isPreviewMode, selectedFiles]);
 
   return (
     <div className="post-creation-container">
@@ -93,7 +95,8 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                     {selectedFiles[currentPreviewIndex]?.type.startsWith(
                       'image/'
                     ) ? (
-                      <img
+                      <Image
+                        fill
                         src={previews[currentPreviewIndex]}
                         alt={selectedFiles[currentPreviewIndex].name}
                         className="preview-media"
@@ -195,7 +198,8 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                           }}
                         >
                           {file.type.startsWith('image/') ? (
-                            <img
+                            <Image
+                              fill
                               src={previews[index]}
                               alt={file.name}
                               className="thumbnail-media"
@@ -259,7 +263,8 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                       }
                     >
                       {file.type.startsWith('image/') ? (
-                        <img
+                        <Image
+                          fill
                           src={previews[index]}
                           alt={file.name}
                           className="selected-media-image"

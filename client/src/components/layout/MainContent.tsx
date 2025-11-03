@@ -7,23 +7,23 @@ import { useGetPosts } from '@/hooks/usePosts';
 import SkeletonPost from '@/components/ui/post/SkeletonPost';
 import { PostData } from '@/types/post';
 
-interface MainContentAreaProps {
+interface MainContentProps {
   showPosts: boolean;
   children?: React.ReactNode;
   fullWidth?: boolean;
 }
 
 /**
- * Main content area component - always same size, but content varies
+ * Main content component - always same size, but content varies
  * @param showPosts - Whether to show actual posts or show page content
  * @param children - Page content to show when not showing posts
- * @returns {JSX.Element} Main content area with posts or page content
+ * @returns {JSX.Element} Main content with posts or page content
  */
-export default function MainContentArea({
+export default function MainContent({
   showPosts,
   children,
   fullWidth = false,
-}: MainContentAreaProps) {
+}: MainContentProps) {
   const [openCommentsPostId, setOpenCommentsPostId] = React.useState<
     string | null
   >(null);

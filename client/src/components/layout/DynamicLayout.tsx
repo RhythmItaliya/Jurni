@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { layoutManager } from '@/lib/layoutManager';
 import LeftSidebar from './LeftSidebar';
 import RightSidebar from './RightSidebar';
-import MainContentArea from './MainContentArea';
+import MainContent from './MainContent';
 
 interface DynamicLayoutProps {
   children?: React.ReactNode;
@@ -74,12 +74,12 @@ export default function DynamicLayout({ children }: DynamicLayoutProps) {
 
       {/* MAIN CONTENT AREA - Always same size, content varies based on showPosts */}
       {layoutConfig.showMainContent && (
-        <MainContentArea
+        <MainContent
           showPosts={layoutConfig.showPosts}
           fullWidth={layoutConfig.mainContentFullWidth}
         >
           {!layoutConfig.showPosts && children}
-        </MainContentArea>
+        </MainContent>
       )}
 
       {/* PAGE CONTENT - Individual page content (when MainContent is false) */}
