@@ -13,6 +13,7 @@ import { CreatePostDto, UpdatePostDto, PostQueryDto } from '@/posts/dto';
 import { PostUtils } from '@/posts/utils/post.utils';
 import { CommentService } from '@/comments/services/comment.service';
 import { LikeService } from '@/likes/services/like.service';
+import { SavePostService } from '@/saveposts/services/savepost.service';
 
 @Injectable()
 export class PostService {
@@ -21,6 +22,7 @@ export class PostService {
     @Inject(forwardRef(() => CommentService))
     private commentService: CommentService,
     private likeService: LikeService,
+    private savePostService: SavePostService,
   ) {}
 
   /**
@@ -44,6 +46,7 @@ export class PostService {
       allowComments: createPostDto.allowComments ?? true,
       allowLikes: createPostDto.allowLikes ?? true,
       allowShares: createPostDto.allowShares ?? true,
+      allowSaves: createPostDto.allowSaves ?? true,
     };
 
     const post = new this.postModel(postData);
@@ -82,7 +85,7 @@ export class PostService {
         search,
         sortBy = 'recent',
         page = 1,
-        limit = 10,
+        limit = 2,
         dateFrom,
         dateTo,
       } = query;
@@ -153,16 +156,18 @@ export class PostService {
       // Add comments count and likes count to each post
       const postsWithCounts = await Promise.all(
         posts.map(async (post) => {
-          const [commentsCount, likeStats] = await Promise.all([
+          const [commentsCount, likeStats, saveStats] = await Promise.all([
             this.commentService.getCommentsCountForPost(
               (post as any)._id.toString(),
             ),
             this.likeService.getLikeStats('post', (post as any)._id.toString()),
+            this.savePostService.getSaveStats((post as any)._id.toString()),
           ]);
           return {
             ...post.toObject(),
             commentsCount,
             likesCount: likeStats.totalLikes,
+            savesCount: saveStats.totalSaves,
           };
         }),
       );
@@ -190,10 +195,7 @@ export class PostService {
   /**
    * Get a single post by ID
    */
-  async getPostById(
-    postId: string,
-    requestingUserId?: string,
-  ): Promise<PostDocument> {
+  async getPostById(postId: string, requestingUserId?: string): Promise<any> {
     try {
       if (!Types.ObjectId.isValid(postId)) {
         throw new BadRequestException('Invalid post ID');
@@ -216,7 +218,21 @@ export class PostService {
         throw new ForbiddenException('This post is private');
       }
 
-      return post;
+      // Add counts to the post
+      const [commentsCount, likeStats, saveStats] = await Promise.all([
+        this.commentService.getCommentsCountForPost(postId),
+        this.likeService.getLikeStats('post', postId, requestingUserId),
+        this.savePostService.getSaveStats(postId, requestingUserId),
+      ]);
+
+      return {
+        ...post.toObject(),
+        commentsCount,
+        likesCount: likeStats.totalLikes,
+        savesCount: saveStats.totalSaves,
+        isSavedByUser: saveStats.isSavedByUser,
+        isLikedByUser: likeStats.isLikedByUser,
+      };
     } catch (error) {
       if (
         error instanceof NotFoundException ||

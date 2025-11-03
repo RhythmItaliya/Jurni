@@ -8,6 +8,7 @@ import { UploadModule } from '@/upload/upload.module';
 import { AuthModule } from '@/auth/auth.module';
 import { CommentsModule } from '@/comments/comments.module';
 import { LikesModule } from '@/likes/likes.module';
+import { SavePostsModule } from '@/saveposts/saveposts.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { LikesModule } from '@/likes/likes.module';
     AuthModule,
     forwardRef(() => CommentsModule),
     forwardRef(() => LikesModule),
+    forwardRef(() => SavePostsModule),
   ],
   controllers: [PostController],
   providers: [PostService, PostMediaService],

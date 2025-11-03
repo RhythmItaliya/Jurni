@@ -10,6 +10,7 @@ import { UploadModule } from '@/upload/upload.module';
 import { PostsModule } from '@/posts/posts.module';
 import { CommentsModule } from '@/comments/comments.module';
 import { LikesModule } from '@/likes/likes.module';
+import { SavePostsModule } from '@/saveposts/saveposts.module';
 import { ENV_VARS } from '@config/env';
 
 /**
@@ -34,6 +35,7 @@ import { ENV_VARS } from '@config/env';
     PostsModule,
     CommentsModule,
     LikesModule,
+    SavePostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

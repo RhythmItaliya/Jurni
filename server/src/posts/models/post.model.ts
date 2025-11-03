@@ -47,6 +47,9 @@ export class Post {
   @Prop({ default: true })
   allowShares: boolean;
 
+  @Prop({ default: true })
+  allowSaves: boolean;
+
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Media' }], default: [] })
   media: Types.ObjectId[];
 

@@ -150,6 +150,16 @@ export class CreatePostDto {
   allowShares?: boolean;
 
   @ApiProperty({
+    description: 'Allow saves of this post',
+    example: true,
+    type: Boolean,
+    required: false,
+  })
+  @IsOptional()
+  @TransformToBoolean()
+  allowSaves?: boolean;
+
+  @ApiProperty({
     description: 'Location information for the post',
     type: LocationDto,
     required: false,
@@ -265,6 +275,23 @@ export class UpdatePostDto {
     return Boolean(value);
   })
   allowShares?: boolean;
+
+  @ApiProperty({
+    description: 'Allow saves of this post',
+    example: true,
+    type: Boolean,
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean({ message: 'Allow saves must be a boolean' })
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return true;
+    if (typeof value === 'string') {
+      return value.toLowerCase() === 'true';
+    }
+    return Boolean(value);
+  })
+  allowSaves?: boolean;
 
   @ApiProperty({
     description: 'Location information for the post',

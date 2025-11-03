@@ -117,7 +117,7 @@ export class PostController {
         data: result.posts,
         meta: {
           page: result.page,
-          limit: query.limit || 10,
+          limit: query.limit || 2,
           total: result.total,
           totalPages: result.totalPages,
         },

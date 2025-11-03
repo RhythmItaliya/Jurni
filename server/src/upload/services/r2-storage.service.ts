@@ -52,11 +52,6 @@ export class R2StorageService implements OnModuleInit {
       },
       forcePathStyle: true, // Required for R2
     });
-
-    this.logger.log('🚀 R2 Storage Service initialized');
-    this.logger.log(`📁 Bucket: ${this.bucketName}`);
-    this.logger.log(`🌐 Endpoint: ${ENV_VARS.R2_ENDPOINT}`);
-    this.logger.log(`🔧 Environment: ${ENV_VARS.NODE_ENV}`);
   }
 
   /**
@@ -308,8 +303,6 @@ export class R2StorageService implements OnModuleInit {
       this.logger.error(error);
       throw new Error(error);
     }
-
-    this.logger.log('✅ R2 configuration validation passed');
   }
 
   /**
@@ -317,8 +310,6 @@ export class R2StorageService implements OnModuleInit {
    */
   async testConnection(): Promise<boolean> {
     try {
-      this.logger.log('🔍 Testing R2 connection (list buckets)...');
-
       const startTime = Date.now();
 
       // Test connection by listing buckets (simpler approach)
@@ -338,7 +329,7 @@ export class R2StorageService implements OnModuleInit {
       this.connectionStatus = 'connected';
       this.lastConnectionTest = new Date();
       this.logger.log(
-        `✅ R2 connection successful, bucket "${this.bucketName}" exists (${responseTime}ms)`,
+        `R2 connection successful, bucket "${this.bucketName}" exists (${responseTime}ms)`,
       );
       return true;
     } catch (error: any) {

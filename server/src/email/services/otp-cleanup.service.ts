@@ -15,8 +15,6 @@ export class OTPCleanupService {
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleExpiredOTPCleanup() {
     try {
-      this.logger.log('Starting expired OTP cleanup task...');
-
       // Clean up expired OTPs
       await this.otpService.cleanupExpiredOTPs();
 
