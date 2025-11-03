@@ -1,13 +1,20 @@
 'use client';
 
 import React from 'react';
-import { Button, IconButton, Avatar } from '@/components/ui';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button, IconButton, Avatar, Spinner } from '@/components/ui';
 import Input from '@/components/ui/Input';
 import { useGetComments, useCreateComment } from '@/hooks/useComments';
 import { CommentData } from '@/types/comment';
 import { PostData } from '@/types/post';
 
-function CommentItem({ comment }: { comment: CommentData }) {
+function CommentItem({
+  comment,
+  index,
+}: {
+  comment: CommentData;
+  index: number;
+}) {
   // Format timestamp to relative time
   const formatTimestamp = (dateString: string) => {
     const date = new Date(dateString);
@@ -25,7 +32,12 @@ function CommentItem({ comment }: { comment: CommentData }) {
   };
 
   return (
-    <div className="comment-item">
+    <motion.div
+      className="comment-item"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.1 }}
+    >
       <div className="comment-header">
         <Avatar
           src={comment.userId?.avatarUrl || undefined}
@@ -41,7 +53,7 @@ function CommentItem({ comment }: { comment: CommentData }) {
         </span>
       </div>
       <p className="comment-text">{comment.content}</p>
-    </div>
+    </motion.div>
   );
 }
 
@@ -142,18 +154,18 @@ export default function CommentsPanel({
           </div>
         ) : commentsLoading ? (
           <div className="comments-loading">
-            <p>Loading comments...</p>
+            <Spinner size="md" />
           </div>
         ) : comments.length === 0 ? (
           <div className="comments-empty">
             <p>No comments yet. Be the first to comment!</p>
           </div>
         ) : (
-          <div className="comments-list">
-            {comments.map(comment => (
-              <CommentItem key={comment._id} comment={comment} />
+          <AnimatePresence>
+            {comments.map((comment, index) => (
+              <CommentItem key={comment._id} comment={comment} index={index} />
             ))}
-          </div>
+          </AnimatePresence>
         )}
       </div>
 

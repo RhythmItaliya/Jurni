@@ -1,11 +1,13 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { layoutManager } from '@/lib/layoutManager';
 import LeftSidebar from './LeftSidebar';
 import RightSidebar from './RightSidebar';
 import MainContent from './MainContent';
+import MoreSidebar from './MoreSidebar';
 
 interface DynamicLayoutProps {
   children?: React.ReactNode;
@@ -26,6 +28,7 @@ interface DynamicLayoutProps {
  */
 export default function DynamicLayout({ children }: DynamicLayoutProps) {
   const pathname = usePathname();
+  const [showMoreSidebar, setShowMoreSidebar] = useState(false);
 
   const layoutConfig = useMemo(
     () => layoutManager.getConfig(pathname),
@@ -70,7 +73,25 @@ export default function DynamicLayout({ children }: DynamicLayoutProps) {
   return (
     <div className={`app-layout layout-${layoutConfig.layoutType}`}>
       {/* LEFT SIDEBAR - Navigation (when true, shows navigation menu) */}
-      {layoutConfig.showLeftSidebar && <LeftSidebar />}
+      {layoutConfig.showLeftSidebar && (
+        <LeftSidebar
+          onMoreToggle={() => setShowMoreSidebar(!showMoreSidebar)}
+        />
+      )}
+
+      {/* MORE SIDEBAR - Additional options */}
+      <motion.div
+        initial={{ x: -100, opacity: 0 }}
+        animate={{
+          x: showMoreSidebar ? 0 : -100,
+          opacity: showMoreSidebar ? 1 : 0,
+        }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      >
+        {showMoreSidebar && (
+          <MoreSidebar onClose={() => setShowMoreSidebar(false)} />
+        )}
+      </motion.div>
 
       {/* MAIN CONTENT AREA - Always same size, content varies based on showPosts */}
       {layoutConfig.showMainContent && (

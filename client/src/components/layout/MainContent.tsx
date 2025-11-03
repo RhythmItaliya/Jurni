@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PostCard } from '@/components/ui';
 import CommentsPanel from './CommentsPanel';
 import { useGetPosts } from '@/hooks/usePosts';
@@ -73,17 +74,27 @@ export default function MainContent({
                 </div>
               )}
             </div>
-            {openCommentsPostId && (
-              <div className="comments-container">
-                <CommentsPanel
-                  post={
-                    posts.find((p: PostData) => p._id === openCommentsPostId) ||
-                    null
-                  }
-                  onClose={() => setOpenCommentsPostId(null)}
-                />
-              </div>
-            )}
+            <AnimatePresence>
+              {openCommentsPostId && (
+                <motion.div
+                  key="comments-panel"
+                  className="comments-container"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: '400px', opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                >
+                  <CommentsPanel
+                    post={
+                      posts.find(
+                        (p: PostData) => p._id === openCommentsPostId
+                      ) || null
+                    }
+                    onClose={() => setOpenCommentsPostId(null)}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         ) : (
           // Show page content in the main area (same size as posts area)

@@ -3,10 +3,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import ThemeToggle from '@/components/ui/ThemeToggle';
+import { motion } from 'framer-motion';
 import { useLogout } from '@/hooks/useAuth';
 
-export default function LeftSidebar() {
+export default function LeftSidebar({
+  onMoreToggle,
+}: {
+  onMoreToggle?: () => void;
+}) {
   const logoutMutation = useLogout();
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -25,13 +29,15 @@ export default function LeftSidebar() {
     pathname === `/${username}` || pathname.startsWith(`/${username}/`);
 
   return (
-    <div
+    <motion.div
       className={`left-sidebar ${isCollapsed ? 'left-sidebar--collapsed' : ''}`}
+      animate={{ width: isCollapsed ? 60 : 240 }}
+      transition={{ type: 'tween', duration: 0.2 }}
+      layout
     >
       <div className="sidebar-top">
         {!isCollapsed && <div className="logo">Jurni</div>}
         <div className="sidebar-controls">
-          {!isCollapsed && <ThemeToggle />}
           <button
             className="sidebar-toggle"
             onClick={toggleSidebar}
@@ -111,7 +117,7 @@ export default function LeftSidebar() {
             {!isCollapsed && <span className="nav-text">My Profile</span>}
           </Link>
         )}
-        <div className="nav-item" onClick={() => console.log('more')}>
+        <div className="nav-item" onClick={onMoreToggle}>
           <span className="nav-icon">
             <svg width="20" height="20">
               <use href="/icons.svg#icon-dots" />
@@ -132,6 +138,6 @@ export default function LeftSidebar() {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

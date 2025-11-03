@@ -1,12 +1,17 @@
 'use client';
 import { useTheme } from '@/contexts/ThemeContext';
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  onClick?: () => void;
+}
+
+export default function ThemeToggle({ onClick }: ThemeToggleProps = {}) {
   const { theme, toggleTheme } = useTheme();
+  const handleClick = onClick || toggleTheme;
 
   return (
     <button
-      onClick={toggleTheme}
+      onClick={handleClick}
       className="theme-toggle"
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >

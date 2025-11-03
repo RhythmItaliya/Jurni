@@ -5,7 +5,7 @@
   flex: 1 1 auto;
   overflow-y: auto;
   padding: $spacing-md;
-  min-height: 0; // allow flex children to shrink properly
+  min-height: 0;
 
   .comments-list {
     display: flex;
@@ -13,11 +13,41 @@
     gap: $spacing-md;
   }
 
+  .comments-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    width: 100%;
+  }
+
+  .comments-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    width: 100%;
+    text-align: center;
+    color: $text-secondary;
+    font-size: $text-sm;
+  }
+
+  .comments-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    width: 100%;
+    text-align: center;
+    color: $text-secondary;
+    font-size: $text-sm;
+  }
+
   .comment-item {
     display: flex;
     flex-direction: column;
     gap: $spacing-sm;
-    padding-bottom: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
     border-bottom: 1px solid $border;
 
     &:last-child {
@@ -30,8 +60,6 @@
       align-items: center;
       gap: $spacing-sm;
     }
-
-    /* Avatar sizes and base styles come from components/ui/avatar.scss */
 
     .comment-author {
       font-size: $text-sm;
