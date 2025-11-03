@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useInfiniteQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useReduxToast } from '@/hooks/useReduxToast';
 import { CreatePostData, PostData } from '@/types/post';
 import api from '@/lib/axios';
@@ -118,12 +123,12 @@ export function useGetPosts(query?: Record<string, unknown>) {
       if (data && data.success && data.data) {
         return {
           posts: Array.isArray(data.data) ? data.data : [],
-          meta: data.meta || { page: 1, limit: 10, total: 0, totalPages: 0 },
+          meta: data.meta || { page: 1, limit: 2, total: 0, totalPages: 0 },
         };
       }
       return {
         posts: [] as PostData[],
-        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+        meta: { page: 1, limit: 2, total: 0, totalPages: 0 },
       };
     },
     staleTime: 5 * 60 * 1000,
@@ -163,7 +168,7 @@ export function useGetUserPosts(
           posts: Array.isArray(response.data.data) ? response.data.data : [],
           meta: response.data.meta || {
             page: 1,
-            limit: 10,
+            limit: 2,
             total: 0,
             totalPages: 0,
           },
@@ -171,10 +176,55 @@ export function useGetUserPosts(
       }
       return {
         posts: [] as PostData[],
-        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+        meta: { page: 1, limit: 2, total: 0, totalPages: 0 },
       };
     },
     enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Hook to fetch posts with infinite scrolling
+ * Fetches posts page by page for infinite scroll implementation
+ *
+ * @description
+ * - Uses infinite query to load posts in pages
+ * - Automatically fetches next page when needed
+ * - Returns flattened posts array and pagination info
+ * - Handles loading and error states
+ *
+ * @usedIn
+ * - MainContent component for infinite scrolling posts feed
+ *
+ * @returns {UseInfiniteQueryResult} Infinite query object with posts data
+ */
+export function useInfinitePosts(query?: Record<string, unknown>) {
+  return useInfiniteQuery({
+    queryKey: [...postsKeys.list(), 'infinite', JSON.stringify(query || {})],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await api.get(ENDPOINTS.POSTS.LIST, {
+        params: { ...query, page: pageParam, limit: 2 },
+      });
+      const data = response.data;
+      if (data && data.success && data.data) {
+        return {
+          posts: Array.isArray(data.data) ? data.data : [],
+          meta: data.meta || { page: 1, limit: 2, total: 0, totalPages: 0 },
+          nextPage:
+            pageParam < (data.meta?.totalPages || 1)
+              ? pageParam + 1
+              : undefined,
+        };
+      }
+      return {
+        posts: [],
+        meta: { page: 1, limit: 2, total: 0, totalPages: 0 },
+        nextPage: undefined,
+      };
+    },
+    getNextPageParam: lastPage => lastPage.nextPage,
+    initialPageParam: 1,
     staleTime: 5 * 60 * 1000,
   });
 }

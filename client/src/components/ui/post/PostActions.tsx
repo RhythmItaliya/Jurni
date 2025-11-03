@@ -8,20 +8,24 @@ export type PostActionsProps = {
   isLiked?: boolean;
   likeCount?: number;
   commentCount?: number;
+  isSaved?: boolean;
+  saveCount?: number;
   onLike?: () => void;
   onComment?: () => void;
   onShare?: () => void;
-  onBookmark?: () => void;
+  onSave?: () => void;
 };
 
 export default function PostActions({
   isLiked,
   likeCount,
   commentCount,
+  isSaved,
+  saveCount,
   onLike,
   onComment,
   onShare,
-  onBookmark,
+  onSave,
 }: PostActionsProps) {
   return (
     <div className="post-actions">
@@ -100,23 +104,34 @@ export default function PostActions({
       </div>
       <div className="action-group">
         <IconButton
-          variant="ghost"
+          variant={isSaved ? 'primary' : 'ghost'}
           size="md"
           className="bookmark-button"
-          aria-label="Save post"
-          onClick={onBookmark}
+          aria-label={isSaved ? 'Unsave post' : 'Save post'}
+          onClick={onSave}
           icon={
-            <svg
+            <motion.svg
               width="18"
               height="18"
               viewBox="0 0 24 24"
-              fill="none"
+              fill={isSaved ? 'currentColor' : 'none'}
               xmlns="http://www.w3.org/2000/svg"
+              animate={{
+                scale: isSaved ? [1, 1.2, 1] : 1,
+              }}
+              transition={{ duration: 0.3 }}
             >
               <use href="/icons.svg#icon-bookmark" />
-            </svg>
+            </motion.svg>
           }
         />
+        <motion.span
+          className="save-count"
+          animate={{ scale: isSaved ? [1, 1.2, 1] : 1 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          {saveCount ?? 0}
+        </motion.span>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PostCard } from '@/components/ui';
 import CommentsPanel from './CommentsPanel';
-import { useGetPosts } from '@/hooks/usePosts';
+import { useInfinitePosts } from '@/hooks/usePosts';
 import SkeletonPost from '@/components/ui/post/SkeletonPost';
 import { PostData } from '@/types/post';
 
@@ -29,9 +29,38 @@ export default function MainContent({
     string | null
   >(null);
 
-  const postsQuery = useGetPosts();
-  const { data: postsData, isLoading, error } = postsQuery;
-  const posts = showPosts ? postsData?.posts || [] : [];
+  const postsQuery = useInfinitePosts();
+  const {
+    data: postsData,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = postsQuery;
+  const posts = showPosts
+    ? postsData?.pages.flatMap(page => page.posts) || []
+    : [];
+
+  // Intersection observer for infinite scrolling
+  const loadMoreRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <div
@@ -54,20 +83,30 @@ export default function MainContent({
                   <p>Failed to load posts. Please try again.</p>
                 </div>
               ) : posts && posts.length > 0 ? (
-                posts.map((post: PostData) => (
-                  <PostCard
-                    key={post._id}
-                    post={post}
-                    onComment={postId => {
-                      // Toggle logic: if same post is clicked, close it; otherwise open the new post
-                      if (openCommentsPostId === postId) {
-                        setOpenCommentsPostId(null);
-                      } else {
-                        setOpenCommentsPostId(postId);
-                      }
-                    }}
-                  />
-                ))
+                <>
+                  {posts.map((post: PostData) => (
+                    <PostCard
+                      key={post._id}
+                      post={post}
+                      onComment={postId => {
+                        // Toggle logic: if same post is clicked, close it; otherwise open the new post
+                        if (openCommentsPostId === postId) {
+                          setOpenCommentsPostId(null);
+                        } else {
+                          setOpenCommentsPostId(postId);
+                        }
+                      }}
+                    />
+                  ))}
+                  {/* Loading indicator for next page */}
+                  {isFetchingNextPage && (
+                    <div className="loading-more">
+                      <SkeletonPost />
+                    </div>
+                  )}
+                  {/* Invisible element to trigger loading */}
+                  <div ref={loadMoreRef} className="load-more-trigger" />
+                </>
               ) : (
                 <div className="no-posts-container">
                   <p>No posts available.</p>

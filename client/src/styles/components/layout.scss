@@ -308,6 +308,16 @@
     height: 100%;
     box-sizing: border-box;
     transition: all 0.3s ease;
+
+    .loading-more {
+      margin: $spacing-md 0;
+    }
+
+    .load-more-trigger {
+      height: 20px;
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 
   .comments-container {
@@ -367,6 +377,16 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 0 $spacing-md;
+
+  .loading-more {
+    margin: $spacing-md 0;
+  }
+
+  .load-more-trigger {
+    height: 20px;
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 // Page content in main area (when not showing posts)

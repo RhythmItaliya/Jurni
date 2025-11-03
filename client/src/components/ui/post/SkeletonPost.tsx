@@ -69,6 +69,7 @@ export default function SkeletonPost() {
                 </div>
                 <div className="action-group bookmark-group">
                   <div className="skeleton-pill" />
+                  <div className="skeleton-line w-8" />
                 </div>
               </div>
             </div>

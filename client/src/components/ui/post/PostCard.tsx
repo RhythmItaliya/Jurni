@@ -19,6 +19,11 @@ import 'swiper/css/keyboard';
 import '@/styles/components/post/swiper.scss';
 import PostActions from './PostActions';
 import { useLikeStats, useLikeTarget, useUnlikeTarget } from '@/hooks/useLikes';
+import {
+  useSavePostStats,
+  useSavePost,
+  useUnsavePost,
+} from '@/hooks/useSavePosts';
 
 /**
  * PostCard component
@@ -86,7 +91,51 @@ export default function PostCard({
     );
   }, [localLikeStats, likeMutation, unlikeMutation, post._id]);
 
-  // Use actual post media or fallback to empty array
+  // Save functionality with local state for real-time updates
+  const { data: saveStats } = useSavePostStats(post._id);
+  const [localSaveStats, setLocalSaveStats] = React.useState({
+    totalSaves: 0,
+    isSavedByUser: false,
+  });
+
+  // Update local state when server data changes
+  React.useEffect(() => {
+    setLocalSaveStats(prev => ({
+      totalSaves: saveStats?.totalSaves ?? 0,
+      isSavedByUser: saveStats?.isSavedByUser ?? false,
+    }));
+  }, [saveStats?.isSavedByUser, saveStats?.totalSaves]);
+
+  const saveMutation = useSavePost();
+  const unsaveMutation = useUnsavePost();
+
+  const handleSave = React.useCallback(() => {
+    const wasSaved = localSaveStats.isSavedByUser;
+    const newSaveCount = wasSaved
+      ? localSaveStats.totalSaves - 1
+      : localSaveStats.totalSaves + 1;
+
+    // Optimistic update
+    setLocalSaveStats({
+      totalSaves: newSaveCount,
+      isSavedByUser: !wasSaved,
+    });
+
+    // Perform the actual mutation
+    const mutation = wasSaved ? unsaveMutation : saveMutation;
+    mutation.mutate(
+      { postId: post._id },
+      {
+        onError: () => {
+          // Revert optimistic update on error
+          setLocalSaveStats({
+            totalSaves: localSaveStats.totalSaves,
+            isSavedByUser: wasSaved,
+          });
+        },
+      }
+    );
+  }, [localSaveStats, saveMutation, unsaveMutation, post._id]);
   const media = post.media || [];
   const hasMultipleMedia = media.length > 1;
 
@@ -332,7 +381,10 @@ export default function PostCard({
                 isLiked={localLikeStats.isLikedByUser}
                 likeCount={localLikeStats.totalLikes}
                 commentCount={post.commentsCount}
+                isSaved={localSaveStats.isSavedByUser}
+                saveCount={localSaveStats.totalSaves}
                 onLike={handleLike}
+                onSave={handleSave}
                 onComment={() => {
                   try {
                     console.debug(

@@ -66,6 +66,8 @@ export interface PostData {
   media?: PostMedia[];
   commentsCount?: number;
   likesCount?: number;
+  savesCount?: number;
+  isSavedByUser?: boolean;
   createdAt: string;
   updatedAt: string;
   __v?: number;

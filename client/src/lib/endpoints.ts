@@ -40,6 +40,12 @@ export const ENDPOINTS = {
     GET_LIKES: (targetType: string, targetId: string) =>
       `/likes/${targetType}/${targetId}`,
   },
+  SAVEPOSTS: {
+    SAVE: '/saveposts/save',
+    UNSAVE: (postId: string) => `/saveposts/unsave/${postId}`,
+    STATS: (postId: string) => `/saveposts/stats/${postId}`,
+    LIST: '/saveposts/list',
+  },
 } as const;
 
 // Helper function to build full URL
@@ -53,3 +59,4 @@ export type AuthEndpointKey = keyof typeof ENDPOINTS.AUTH;
 export type PostsEndpointKey = keyof typeof ENDPOINTS.POSTS;
 export type CommentsEndpointKey = keyof typeof ENDPOINTS.COMMENTS;
 export type LikesEndpointKey = keyof typeof ENDPOINTS.LIKES;
+export type SavePostsEndpointKey = keyof typeof ENDPOINTS.SAVEPOSTS;
