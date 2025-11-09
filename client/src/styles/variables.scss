@@ -113,15 +113,9 @@ $overlay-green: $primary-light;
 $shine-gradient: linear-gradient(135deg, $primary-medium, $secondary-light);
 
 // Typography Variables
-$font-family-base:
-  var(--font-montserrat),
-  -apple-system,
-  BlinkMacSystemFont,
-  'Segoe UI',
-  Roboto,
-  sans-serif;
+$font-family-base: var(--font-montserrat), sans-serif;
 
-$font-family-content: var(--font-lora), Georgia, 'Times New Roman', serif;
+$font-family-content: var(--font-lora), serif;
 
 // Font Weights
 $font-thin: 100;

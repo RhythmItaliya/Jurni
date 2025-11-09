@@ -21,17 +21,42 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Public routes that should be accessible without authentication
+  const publicPaths = new Set<string>([
+    '/',
+    '/about',
+    '/contact',
+    '/auth/login',
+    '/auth/register',
+    '/auth/verify-otp',
+    '/auth/forgot-password',
+    '/auth/reset-password',
+  ]);
+
+  const isPublicRoute =
+    publicPaths.has(pathname) || pathname.startsWith('/auth/');
+
   useEffect(() => {
-    // Don't redirect if already on auth page or if still loading
-    if (status === 'loading' || pathname.startsWith('/auth/')) {
+    // Don't redirect while loading
+    if (status === 'loading') return;
+
+    // Redirect authenticated users from / to /@me
+    if (status === 'authenticated' && pathname === '/') {
+      router.push('/@me');
       return;
     }
 
-    // Redirect to login if not authenticated and not on root
-    if (status === 'unauthenticated' && pathname !== '/') {
-      router.push('/auth/login');
+    // Redirect unauthenticated users from /@me to /
+    if (status === 'unauthenticated' && pathname.startsWith('/@me')) {
+      router.push('/');
+      return;
     }
-  }, [status, router, pathname]);
+
+    // Redirect to home (/) only if route is protected (not public)
+    if (status === 'unauthenticated' && !isPublicRoute) {
+      router.push('/');
+    }
+  }, [status, router, pathname, isPublicRoute]);
 
   // Show loading while checking authentication
   if (status === 'loading') {
@@ -40,17 +65,21 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   // Don't render anything while redirecting unauthenticated users
   if (status === 'unauthenticated') {
-    // If user is on root, show marketing/website landing page
-    if (pathname === '/') {
+    // Show website pages without DynamicLayout (no sidebars)
+    if (pathname === '/' || pathname === '/about' || pathname === '/contact') {
       return <Home />;
     }
 
-    // For other pages (except auth) we avoid rendering while redirecting
-    if (!pathname.startsWith('/auth/')) {
-      return null;
+    // Allow rendering of auth routes
+    if (pathname.startsWith('/auth/')) {
+      return <>{children}</>;
     }
+
+    // For protected pages we avoid rendering while redirecting
+    return null;
   }
 
+  // Authenticated users
   return (
     <>
       <DynamicLayout>{children}</DynamicLayout>

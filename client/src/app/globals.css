@@ -1,99 +1,12 @@
 @import '../styles/main.scss';
 
-/* Custom Lexend Font */
-@font-face {
-  font-family: 'Lexend';
-  src: url('/assets/font/Lexend/Lexend-VariableFont_wght.ttf')
-    format('truetype');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lexend';
-  src: url('/assets/font/Lexend/static/Lexend-Thin.ttf') format('truetype');
-  font-weight: 100;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lexend';
-  src: url('/assets/font/Lexend/static/Lexend-ExtraLight.ttf')
-    format('truetype');
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lexend';
-  src: url('/assets/font/Lexend/static/Lexend-Light.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lexend';
-  src: url('/assets/font/Lexend/static/Lexend-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lexend';
-  src: url('/assets/font/Lexend/static/Lexend-Medium.ttf') format('truetype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lexend';
-  src: url('/assets/font/Lexend/static/Lexend-SemiBold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lexend';
-  src: url('/assets/font/Lexend/static/Lexend-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lexend';
-  src: url('/assets/font/Lexend/static/Lexend-ExtraBold.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lexend';
-  src: url('/assets/font/Lexend/static/Lexend-Black.ttf') format('truetype');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* Global base styles */
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family:
-    'Lexend',
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-montserrat), sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -150,9 +63,5 @@ strong,
 em,
 b,
 i {
-  font-family:
-    'Lexend',
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: inherit;
 }

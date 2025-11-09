@@ -1,23 +1,51 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import ThemeToggle from '@/components/ui/ThemeToggle';
-import { Button } from '@/components/ui/Button';
 
-const navVariants = {
-  hidden: {},
+const headerVariants: Variants = {
+  hidden: { opacity: 0, y: -50 },
   visible: {
+    opacity: 1,
+    y: 0,
     transition: {
+      duration: 0.6,
       staggerChildren: 0.1,
+      delayChildren: 0.2,
     },
   },
 };
 
-const itemVariants = {
+const navVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: -20 },
-  visible: { opacity: 1, y: 0 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+    },
+  },
+};
+
+const logoVariants: Variants = {
+  hidden: { opacity: 0, x: -30 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.5,
+    },
+  },
 };
 
 export default function Header() {
@@ -25,89 +53,56 @@ export default function Header() {
   return (
     <motion.header
       className="website-header"
-      initial={{ opacity: 0, y: -100 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      initial="hidden"
+      animate="visible"
+      variants={headerVariants}
     >
-      <motion.div
-        className="container header-inner"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.2 }}
-      >
-        <div className="header-left">
-          <motion.div
-            initial={{ x: -100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{
-              type: 'spring',
-              stiffness: 100,
-              damping: 20,
-              delay: 0.5,
-            }}
-          >
+      <motion.div className="container header-inner">
+        <motion.div className="header-left" variants={itemVariants}>
+          <motion.div variants={logoVariants}>
             <Link href="/" className="auth-logo-placeholder">
               Jurni
             </Link>
           </motion.div>
-        </div>
+        </motion.div>
 
-        <motion.nav
-          className="site-nav header-center"
-          variants={navVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div
-            variants={itemVariants}
-            transition={{ type: 'spring', stiffness: 200 }}
-          >
+        <motion.nav className="site-nav header-center" variants={navVariants}>
+          <motion.div variants={itemVariants}>
+            <Link href="/">Home</Link>
+          </motion.div>
+          <motion.div variants={itemVariants}>
             <Link href="/contact">Contact</Link>
           </motion.div>
-          <motion.div
-            variants={itemVariants}
-            transition={{ type: 'spring', stiffness: 200 }}
-          >
+          <motion.div variants={itemVariants}>
             <Link href="/about">About</Link>
           </motion.div>
-          <motion.div
-            variants={itemVariants}
-            transition={{ type: 'spring', stiffness: 200 }}
-          >
+          <motion.div variants={itemVariants}>
             <Link href="/website/vision">Our Vision</Link>
           </motion.div>
         </motion.nav>
 
-        <div className="header-right">
-          <motion.div
-            variants={itemVariants}
-            transition={{ type: 'spring', stiffness: 200 }}
-          >
-            <ThemeToggle />
-          </motion.div>
-          <motion.div
-            variants={itemVariants}
-            transition={{ type: 'spring', stiffness: 200 }}
-          >
-            <Button
-              variant="outline"
+        <motion.div className="header-right" variants={navVariants}>
+          <motion.div variants={itemVariants}>
+            <motion.button
+              className="header-text-button"
               onClick={() => router.push('/auth/login')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Sign In
-            </Button>
+            </motion.button>
           </motion.div>
-          <motion.div
-            variants={itemVariants}
-            transition={{ type: 'spring', stiffness: 200 }}
-          >
-            <Button
-              variant="primary"
+          <motion.div variants={itemVariants}>
+            <motion.button
+              className="header-text-button"
               onClick={() => router.push('/auth/register')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Sign Up
-            </Button>
+            </motion.button>
           </motion.div>
-        </div>
+        </motion.div>
       </motion.div>
     </motion.header>
   );

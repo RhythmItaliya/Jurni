@@ -3,11 +3,16 @@
 
 .website-header {
   --website-header-height: 72px;
-  background: rgba(255, 255, 255, 0.1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  color: var(--primary-color);
+  box-shadow: none;
+  color: white;
   padding: 0;
   height: var(--website-header-height);
   min-height: var(--website-header-height);
@@ -33,15 +38,22 @@
     width: auto;
     max-width: 160px;
     height: 56px;
-    background: #d8d8d8;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0 1rem;
-    color: $primary;
+    color: white;
     font-weight: $font-semibold;
     text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
   }
 
   .header-left,
@@ -52,18 +64,71 @@
     gap: 1rem;
   }
 
+  .header-right {
+    gap: 2rem;
+  }
+
+  .header-text-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: all 0.3s ease;
+    opacity: 0.9;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: white;
+      transition: width 0.3s ease;
+    }
+
+    &:hover {
+      opacity: 1;
+
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+
   .site-nav {
     display: flex;
     gap: 1.5rem;
 
     a {
-      color: inherit;
+      color: white;
       text-decoration: none;
       font-weight: 500;
-      opacity: 0.95;
+      opacity: 0.9;
+      transition: all 0.3s ease;
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: white;
+        transition: width 0.3s ease;
+      }
 
       &:hover {
         opacity: 1;
+
+        &::after {
+          width: 100%;
+        }
       }
     }
   }

@@ -9,14 +9,12 @@ const publicRoutes = [
   '/auth/forgot-password',
   '/auth/reset-password',
   '/api/auth',
+  '/about',
+  '/contact',
 ];
 
 // Routes that require authentication
-const protectedRoutes = [
-  '/', // Root page (home)
-  '/profile',
-  '/settings',
-];
+const protectedRoutes = ['/@me', '/profile', '/settings', '/upload'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -26,25 +24,35 @@ export function middleware(request: NextRequest) {
     request.cookies.has('next-auth.session-token') ||
     request.cookies.has('__Secure-next-auth.session-token');
 
-  // Allow public routes
+  // Allow public routes (auth pages and website pages)
   if (publicRoutes.some(route => pathname.startsWith(route))) {
     return NextResponse.next();
   }
 
-  // Redirect to login if accessing protected route without session
+  // Redirect authenticated users from / to /@me
+  if (pathname === '/' && hasSession) {
+    return NextResponse.redirect(new URL('/@me', request.url));
+  }
+
+  // Redirect unauthenticated users from /@me to /
+  if (pathname.startsWith('/@me') && !hasSession) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  // Redirect to website (/) if accessing protected route without session
   if (
     protectedRoutes.some(
       route => pathname === route || pathname.startsWith(route + '/')
     )
   ) {
     if (!hasSession) {
-      return NextResponse.redirect(new URL('/auth/login', request.url));
+      return NextResponse.redirect(new URL('/', request.url));
     }
   }
 
-  // Redirect authenticated users away from auth pages
+  // Redirect authenticated users away from auth pages to /@me
   if (hasSession && pathname.startsWith('/auth/')) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/@me', request.url));
   }
 
   return NextResponse.next();
