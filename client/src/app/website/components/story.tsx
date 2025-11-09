@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { storyContainerVariants, storyItemVariants } from '@/lib/motion';
 
 const stories = [
@@ -28,7 +29,13 @@ export default function Story() {
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.95 }}
         >
-          <img src={story.image} alt={story.title} className="story-image" />
+          <Image
+            src={story.image}
+            alt={story.title}
+            className="story-image"
+            width={600}
+            height={600}
+          />
           <p className="story-title">{story.title}</p>
         </motion.div>
       ))}

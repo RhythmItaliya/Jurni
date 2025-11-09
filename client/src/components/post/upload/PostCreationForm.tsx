@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
 import { IconButton } from '@/components/ui/IconButton';
 import { Input, TextArea, Select, Checkbox, Button } from '@/components/ui';
-import { PostData, CreatePostData } from '@/types/post';
+import { CreatePostData } from '@/types/post';
 import {
   handleDragOver,
   handleDragLeave,
@@ -127,6 +127,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                     {selectedFiles[currentPreviewIndex]?.type.startsWith(
                       'image/'
                     ) ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={previews[currentPreviewIndex]}
                         alt={selectedFiles[currentPreviewIndex].name}
@@ -244,6 +245,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                           whileHover={{ borderColor: 'var(--primary-color)' }}
                         >
                           {file.type.startsWith('image/') ? (
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={previews[index]}
                               alt={file.name}
@@ -317,6 +319,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                       }}
                     >
                       {file.type.startsWith('image/') ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={previews[index]}
                           alt={file.name}

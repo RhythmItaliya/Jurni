@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { imageVariants, titleVariants, itemVariants } from '@/lib/motion';
-import Story from './Story';
+import Story from './story';
 
 export default function Features() {
   return (
@@ -98,7 +98,7 @@ export default function Features() {
                 </div>
                 <div className="feature-text">
                   <h3>Discover Places</h3>
-                  <p>Explore destinations through travelers' eyes</p>
+                  <p>Explore destinations through travelers&apos; eyes</p>
                 </div>
               </motion.div>
 

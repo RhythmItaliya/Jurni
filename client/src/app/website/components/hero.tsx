@@ -1,6 +1,7 @@
 'use client';
 
-import { motion, type Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 import {
   heroContentVariants,
   heroItemVariants,
@@ -17,10 +18,12 @@ export default function Hero() {
         animate="visible"
         variants={heroImageVariants}
       >
-        <img
+        <Image
           src="https://adventor.wpengine.com/wp-content/uploads/2021/07/slider-1.jpg"
           alt="Adventure Travel"
           className="hero-image"
+          fill
+          priority
         />
         <div className="hero-overlay"></div>
       </motion.div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { servicesContainerVariants, servicesItemVariants } from '@/lib/motion';
 
 export default function Services() {
@@ -136,16 +137,20 @@ export default function Services() {
           transition={{ duration: 0.8 }}
         >
           <div className="services-image-wrapper">
-            <img
+            <Image
               src="https://html-templates.evonicmedia.com/adventurist/assets/images/index/services-img1.webp"
               alt="Adventure travelers"
               className="services-main-image"
+              width={500}
+              height={400}
             />
             <div className="services-camera-image">
-              <img
+              <Image
                 src="https://html-templates.evonicmedia.com/adventurist/assets/images/index/services-img2.webp"
                 alt="Camera"
                 className="camera-image"
+                width={200}
+                height={150}
               />
             </div>
           </div>

@@ -100,10 +100,10 @@ export default function PostCard({
 
   // Update local state when server data changes
   React.useEffect(() => {
-    setLocalSaveStats(prev => ({
+    setLocalSaveStats({
       totalSaves: saveStats?.totalSaves ?? 0,
       isSavedByUser: saveStats?.isSavedByUser ?? false,
-    }));
+    });
   }, [saveStats?.isSavedByUser, saveStats?.totalSaves]);
 
   const saveMutation = useSavePost();
