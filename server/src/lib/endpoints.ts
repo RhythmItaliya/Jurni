@@ -46,6 +46,10 @@ export const ENDPOINTS = {
     STATS: (postId: string) => `stats/${postId}`,
     LIST: 'list',
   },
+  PROFILES: {
+    GET_BY_USERNAME: (username: string) => `${username}`,
+    UPDATE: '',
+  },
 } as const;
 
 // Helper function to build full URL
@@ -60,3 +64,4 @@ export type PostsEndpointKey = keyof typeof ENDPOINTS.POSTS;
 export type CommentsEndpointKey = keyof typeof ENDPOINTS.COMMENTS;
 export type LikesEndpointKey = keyof typeof ENDPOINTS.LIKES;
 export type SavePostsEndpointKey = keyof typeof ENDPOINTS.SAVEPOSTS;
+export type ProfilesEndpointKey = keyof typeof ENDPOINTS.PROFILES;
