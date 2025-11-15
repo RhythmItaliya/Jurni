@@ -1,5 +1,5 @@
-@use '../../variables' as *;
-@use '../../mixins' as *;
+@use '../variables' as *;
+@use '../mixins' as *;
 
 // ========================================
 // PROFILE PAGE STYLES
@@ -7,7 +7,10 @@
 
 // Profile Page Layout
 .profile-page {
-  @extend .page-layout;
+  min-height: 100vh;
+  background-color: $bg-primary;
+  color: $text-primary;
+  transition: all 0.3s ease;
 
   .container {
     max-width: 1000px;
@@ -216,7 +219,10 @@
 // ========================================
 
 .edit-profile-page {
-  @extend .page-layout;
+  min-height: 100vh;
+  background-color: $bg-primary;
+  color: $text-primary;
+  transition: all 0.3s ease;
 
   .container {
     max-width: 700px;

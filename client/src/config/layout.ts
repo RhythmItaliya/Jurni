@@ -21,11 +21,11 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
   },
   '/profile': {
     showLeftSidebar: true, // Navigation sidebar
-    showRightSidebar: true, // Right sidebar for layout
-    showMainContent: true, // Main content area
-    showPosts: true, // Show user's posts
-    showCommentsPanel: true, // Enable comments side panel
-    layoutType: 'full',
+    showRightSidebar: false, // No right sidebar
+    showMainContent: true, // Use main content area for full width layout
+    showPosts: false, // No posts, just page content inside main area
+    layoutType: 'sidebar-only',
+    mainContentFullWidth: true, // Allow full width in main content area
   },
   '/trending': {
     showLeftSidebar: true, // Navigation sidebar

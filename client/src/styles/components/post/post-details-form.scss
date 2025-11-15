@@ -1,0 +1,393 @@
+@use '../../variables' as *;
+@use '../../mixins' as *;
+
+.post-details-section {
+  width: 500px;
+  max-width: 500px;
+
+  h3 {
+    margin: 0 0 $spacing-lg 0;
+    font-size: $text-xl;
+    font-weight: $font-semibold;
+    color: var(--text-primary);
+    padding-bottom: $spacing-sm;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .post-form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+    padding: $spacing-xl;
+    border: 2px solid var(--border-color);
+    border-radius: $radius-lg;
+    background-color: var(--bg-surface);
+    min-height: 600px;
+    max-height: 600px;
+    overflow-y: auto;
+    justify-content: flex-start; // override center from generic post-creation styles
+    align-items: stretch; // ensure children take full width
+    cursor: default; // no pointer cursor on form
+    padding-bottom: $spacing-2xl; // extra space so last button isn't cut off by scrollbar
+
+    // Improve scrollbar appearance (webkit only, degrades gracefully)
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+    &::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+      border-radius: $radius-md;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: $primary-medium;
+      border-radius: $radius-md;
+      border: 2px solid var(--bg-secondary);
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: $primary-strong;
+    }
+
+    // Responsive: let form auto-size on tablet/mobile and use natural height
+    @include tablet {
+      min-height: auto;
+      max-height: none;
+      height: auto;
+      overflow: visible;
+    }
+
+    // Form Group
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-sm;
+      width: 100%;
+
+      .form-label {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        font-weight: $font-medium;
+        color: var(--text-primary);
+        font-size: $text-sm;
+        margin: 0;
+      }
+
+      // Input Field
+      .form-input,
+      .form-textarea {
+        width: 100%;
+        padding: $spacing-md;
+        border: 1.5px solid var(--border-color);
+        border-radius: $radius-md;
+        background-color: var(--bg-input);
+        color: var(--text-primary);
+        font-size: $text-base;
+        font-family: $font-family-base;
+        transition: all 0.2s ease;
+
+        &::placeholder {
+          color: var(--text-muted);
+        }
+
+        &:hover {
+          border-color: var(--border-hover);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+          background-color: var(--bg-surface);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          background-color: var(--bg-secondary);
+        }
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+        max-height: 250px;
+        line-height: $leading-relaxed;
+        font-family: $font-family-content;
+      }
+
+      // Hashtag Input Wrapper
+      .hashtag-input-wrapper {
+        display: flex;
+        gap: $spacing-sm;
+        align-items: center;
+
+        .hashtag-input {
+          flex: 1;
+        }
+
+        .add-hashtag-btn {
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+          padding: $spacing-sm $spacing-md;
+          background: linear-gradient(135deg, $primary 0%, $secondary 100%);
+          color: var(--text-on-green);
+          border: none;
+          border-radius: $radius-md;
+          font-size: $text-sm;
+          font-weight: $font-semibold;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+          box-shadow: 0 2px 4px rgba($primary, 0.2);
+
+          svg {
+            width: 16px;
+            height: 16px;
+          }
+
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, $secondary 0%, $primary 100%);
+            box-shadow: 0 2px 8px rgba($primary, 0.3);
+            transform: translateY(-1px);
+          }
+
+          &:active:not(:disabled) {
+            transform: translateY(0) scale(0.98);
+          }
+
+          &:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            opacity: 0.6;
+            box-shadow: none;
+          }
+        }
+      }
+
+      // Hashtag Preview
+      .hashtag-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-sm;
+        margin-top: $spacing-sm;
+        padding: $spacing-md;
+        background-color: var(--bg-secondary);
+        border-radius: $radius-md;
+        border: 1px solid var(--border-color);
+
+        .hashtag-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: $spacing-xs;
+          padding: $spacing-xs $spacing-sm;
+          background: linear-gradient(135deg, $primary-light, $secondary-light);
+          border: 1px solid rgba($primary, 0.3);
+          border-radius: $radius-md;
+          font-size: $text-sm;
+          color: var(--text-primary);
+          transition: all 0.2s ease;
+
+          .hashtag-text {
+            font-weight: $font-medium;
+            color: $primary;
+          }
+
+          .hashtag-remove {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+
+            svg {
+              width: 12px;
+              height: 12px;
+            }
+
+            &:hover {
+              background-color: rgba($accent, 0.1);
+              color: $accent;
+              transform: scale(1.1);
+            }
+
+            &:active {
+              transform: scale(0.95);
+            }
+          }
+
+          &:hover {
+            box-shadow: 0 2px 4px rgba($primary, 0.15);
+            transform: translateY(-1px);
+          }
+        }
+      }
+
+      // Form Select
+      .form-select {
+        width: 100%;
+        padding: $spacing-md;
+        padding-right: calc($spacing-md + 24px);
+        border: 1.5px solid var(--border-color);
+        border-radius: $radius-md;
+        background-color: var(--bg-input);
+        color: var(--text-primary);
+        font-size: $text-base;
+        font-family: $font-family-base;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236b7280' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right $spacing-md center;
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: var(--border-hover);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+          background-color: var(--bg-surface);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          background-color: var(--bg-secondary);
+        }
+
+        option {
+          padding: $spacing-sm $spacing-md;
+          background-color: var(--bg-surface);
+          color: var(--text-primary);
+          font-size: $text-base;
+          font-family: $font-family-base;
+          white-space: nowrap;
+        }
+
+        // Selected option in the dropdown list (browser support varies)
+        option:checked {
+          background-color: var(--bg-tertiary);
+          color: var(--text-primary);
+        }
+
+        // Disabled option appearance
+        option:disabled {
+          color: var(--text-secondary);
+          background-color: var(--bg-secondary);
+        }
+
+        // Optional hover styling (not supported in all browsers)
+        option:hover {
+          background-color: var(--bg-hover);
+          color: var(--text-primary);
+        }
+      }
+
+      // Placeholder skeleton rendered during SSR/mount by Select component
+      .select-placeholder.form-select {
+        width: 100%;
+        height: 44px; // approx to padding + line-height
+        border: 1.5px solid var(--border-color);
+        border-radius: $radius-md;
+        background-color: var(--bg-input);
+      }
+
+      .select-with-icon {
+        position: relative;
+
+        .leading-icon {
+          position: absolute;
+          left: $spacing-md;
+          top: 50%;
+          transform: translateY(-50%);
+          color: var(--text-secondary);
+          pointer-events: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        // Increase left padding to make room for icon
+        .form-select {
+          padding-left: calc($spacing-md + 20px);
+        }
+      }
+
+      // Form Hint
+      .form-hint {
+        display: block;
+        color: var(--text-secondary);
+        font-size: $text-xs;
+        margin-top: $spacing-xs;
+        line-height: $leading-tight;
+      }
+
+      // Checkbox group for interactions
+      .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-md;
+        padding: $spacing-md;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: $radius-md;
+
+        > * {
+          margin: 0; // normalize any default margins inside Checkbox component
+        }
+      }
+    }
+
+    // Error message banner
+    .error-message {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      padding: $spacing-sm $spacing-md;
+      background-color: var(--error-bg);
+      color: var(--error-text);
+      border: 1px solid var(--error-border);
+      border-radius: $radius-md;
+      font-size: $text-sm;
+    }
+
+    // Submit button
+    .submit-btn {
+      width: 100%;
+      padding: $spacing-md $spacing-lg;
+      background: linear-gradient(135deg, $primary 0%, $secondary 100%);
+      color: var(--text-on-green);
+      border: none;
+      border-radius: $radius-md;
+      font-size: $text-base;
+      font-weight: $font-semibold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba($primary, 0.25);
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, $secondary 0%, $primary 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba($primary, 0.3);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
+  }
+}

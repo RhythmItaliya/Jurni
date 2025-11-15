@@ -1,5 +1,6 @@
 @use '../../variables' as *;
 @use 'post-creation';
+@use 'post-details-form';
 
 .post-card-body {
   padding: 0;

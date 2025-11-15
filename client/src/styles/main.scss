@@ -6,5 +6,6 @@
 @use 'components/layout';
 @use 'components/auth' as auth;
 @use 'components/post';
+@use 'components/profile/_index' as profileIndex;
 @use 'components/comments';
-@use 'website/_index';
+@use 'website/_index' as websiteIndex;
