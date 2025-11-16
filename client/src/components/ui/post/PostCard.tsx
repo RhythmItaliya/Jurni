@@ -188,7 +188,7 @@ export default function PostCard({
           <div className="post-header">
             <div className="author">
               <Avatar
-                src={undefined} // TODO: Add user avatar URL when available
+                src={post?.userId?.avatarImage?.publicUrl || undefined}
                 alt={post?.userId?.username}
                 size="md"
                 className="author-avatar"
@@ -341,18 +341,6 @@ export default function PostCard({
                 ))}
               </Swiper>
             </div>
-
-            <div className="post-content">
-              {post.hashtags && post.hashtags.length > 0 && (
-                <div className="post-hashtags">
-                  {post.hashtags.map((hashtag, idx) => (
-                    <span key={idx} className="hashtag">
-                      #{hashtag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         </CardBody>
         <CardFooter>
@@ -374,6 +362,15 @@ export default function PostCard({
                     {isDescriptionExpanded ? 'Show less' : 'Show more'}
                   </button>
                 )}
+              </div>
+            )}
+            {post.hashtags && post.hashtags.length > 0 && (
+              <div className="post-hashtags">
+                {post.hashtags.map((hashtag, idx) => (
+                  <span key={idx} className="hashtag">
+                    #{hashtag}
+                  </span>
+                ))}
               </div>
             )}
             <div className="post-footer-left">

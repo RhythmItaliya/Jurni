@@ -43,7 +43,7 @@ const handler = NextAuth({
               email: user.email,
               accessToken: accessToken,
               username: user.username,
-              avatarUrl: user.avatarUrl,
+              avatarImage: user.avatarImage,
               isActive: user.isActive,
               otpVerifiedAt: user.otpVerifiedAt,
               createdAt: user.createdAt,
@@ -90,7 +90,7 @@ const handler = NextAuth({
         token.accessToken = user.accessToken;
         token.uuid = user.uuid;
         token.username = user.username;
-        token.avatarUrl = user.avatarUrl;
+        token.avatarImage = user.avatarImage;
         token.isActive = user.isActive;
         token.otpVerifiedAt = user.otpVerifiedAt;
         token.createdAt = user.createdAt;
@@ -114,7 +114,7 @@ const handler = NextAuth({
         session.accessToken = token.accessToken;
         session.user.uuid = token.uuid;
         session.user.name = token.username;
-        session.user.avatarUrl = token.avatarUrl;
+        session.user.avatarImage = token.avatarImage;
         session.user.isActive = token.isActive;
         session.user.otpVerifiedAt = token.otpVerifiedAt;
         session.user.createdAt = token.createdAt;

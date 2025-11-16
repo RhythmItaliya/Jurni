@@ -1,28 +1,39 @@
 'use client';
 import { ProfileEmpty, ProfileHeader, ProfileTabs } from '@/components/profile';
+import { Spinner } from '@/components/ui/Spinner';
 import React from 'react';
+import { useRouter } from 'next/navigation';
+import { useGetMyProfile } from '@/hooks/useProfile';
 
-/**
- * Profile page component - shows user profile
- * Authentication and layout are handled by ClientLayout
- * @returns {JSX.Element} Profile page content
- */
 export default function ProfilePage() {
-  // Example user data (replace with actual user data from context/auth)
+  const router = useRouter();
   const [activeTab, setActiveTab] = React.useState('videos');
-  const username = 'rhythm__22';
-  const bio = '';
+  const { data: profile, isLoading } = useGetMyProfile();
+
   const handleEdit = () => {
-    // TODO: Open edit profile modal
-    alert('Edit profile clicked');
+    router.push('/profile/edit');
   };
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '60vh',
+        }}
+      >
+        <Spinner size="xl" />
+      </div>
+    );
+  }
 
   return (
     <div
       className="profile-page"
-      style={{ maxWidth: 900, margin: '0 auto', padding: '2rem 0' }}
+      style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem 0' }}
     >
-      {/* Profile Header */}
       <div
         style={{
           background: 'var(--bg-primary)',
@@ -31,7 +42,26 @@ export default function ProfilePage() {
           padding: '2rem',
         }}
       >
-        <ProfileHeader username={username} bio={bio} onEdit={handleEdit} />
+        <ProfileHeader
+          username={profile?.username || ''}
+          bio={profile?.bio || ''}
+          onEdit={handleEdit}
+          coverImage={
+            profile?.coverImage?.publicUrl ||
+            'https://placehold.co/1200x300/2d5016/ffffff/png?text=Cover+Image'
+          }
+          avatarImage={
+            profile?.avatarImage?.publicUrl ||
+            'https://placehold.co/400x400/4a7c59/ffffff/png?text=Avatar'
+          }
+          location={profile?.location}
+          isPrivate={profile?.isPrivate}
+          email={profile?.email}
+          isEmailVerified={!!profile?.otpVerifiedAt}
+          firstName={profile?.firstName}
+          lastName={profile?.lastName}
+          createdAt={profile?.createdAt}
+        />
       </div>
 
       {/* Tabs */}

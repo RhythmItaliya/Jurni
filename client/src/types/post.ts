@@ -1,4 +1,5 @@
 import { ApiResponse } from './auth';
+import { LocationData } from './location';
 
 /**
  * Post author information
@@ -32,15 +33,11 @@ export interface PostMedia {
 }
 
 /**
- * Post location information
- * @interface PostLocation
+ * Post location type alias
+ * Uses shared LocationData interface from location.ts
+ * @deprecated Use LocationData directly
  */
-export interface PostLocation {
-  name: string;
-  latitude?: number;
-  longitude?: number;
-  address?: string;
-}
+export type PostLocation = LocationData;
 
 /**
  * Post data structure (matches server schema with populated media)
@@ -52,7 +49,15 @@ export interface PostData {
   userId: {
     _id: string;
     username: string;
-    avatarUrl?: string;
+    avatarImage?: {
+      key: string;
+      url: string;
+      publicUrl: string;
+      bucket: string;
+      size?: number;
+      contentType?: string;
+      mediaId?: string;
+    };
   };
   title: string;
   description?: string;
@@ -62,6 +67,7 @@ export interface PostData {
   allowComments: boolean;
   allowLikes: boolean;
   allowShares: boolean;
+  allowSaves: boolean;
   status: 'active' | 'deleted' | 'archived' | 'draft';
   media?: PostMedia[];
   commentsCount?: number;
@@ -80,11 +86,13 @@ export interface PostData {
 export interface CreatePostData {
   title: string; // Required by server
   description?: string;
+  status?: 'active' | 'deleted' | 'archived' | 'draft';
   hashtags?: string[];
   visibility?: 'public' | 'friends' | 'followers' | 'private';
   allowComments?: boolean;
   allowLikes?: boolean;
   allowShares?: boolean;
+  allowSaves?: boolean;
   location?: PostLocation;
 }
 

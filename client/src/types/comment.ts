@@ -10,7 +10,15 @@ export interface CommentData {
     _id: string;
     uuid: string;
     username: string;
-    avatarUrl?: string;
+    avatarImage?: {
+      key: string;
+      url: string;
+      publicUrl: string;
+      bucket: string;
+      size?: number;
+      contentType?: string;
+      mediaId?: string;
+    };
   };
   postId: string;
   content: string;

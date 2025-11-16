@@ -46,7 +46,7 @@ export function useCreatePostWithMedia() {
       if (data.postData.visibility)
         formData.append('visibility', data.postData.visibility);
       if (data.postData.hashtags)
-        data.postData.hashtags.forEach(h => formData.append('hashtags[]', h));
+        data.postData.hashtags.forEach(h => formData.append('hashtags', h));
       formData.append(
         'allowComments',
         (data.postData.allowComments ?? true).toString()
@@ -59,20 +59,12 @@ export function useCreatePostWithMedia() {
         'allowShares',
         (data.postData.allowShares ?? true).toString()
       );
+      formData.append(
+        'allowSaves',
+        (data.postData.allowSaves ?? true).toString()
+      );
       if (data.postData.location) {
-        formData.append('location[name]', data.postData.location.name);
-        if (data.postData.location.latitude !== undefined)
-          formData.append(
-            'location[latitude]',
-            data.postData.location.latitude.toString()
-          );
-        if (data.postData.location.longitude !== undefined)
-          formData.append(
-            'location[longitude]',
-            data.postData.location.longitude.toString()
-          );
-        if (data.postData.location.address)
-          formData.append('location[address]', data.postData.location.address);
+        formData.append('location', JSON.stringify(data.postData.location));
       }
       if (data.files) data.files.forEach(f => formData.append('files', f));
 
@@ -83,10 +75,7 @@ export function useCreatePostWithMedia() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: postsKeys.list() });
-      showSuccess(
-        'Post Created',
-        'Your post with media was created successfully'
-      );
+      showSuccess('Post Created', 'The post was created successfully');
     },
     onError: error => {
       const serverMessage = extractServerMessage(error);

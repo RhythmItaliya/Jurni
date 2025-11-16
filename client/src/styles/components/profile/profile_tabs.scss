@@ -1,31 +1,77 @@
 @use '../../variables' as *;
 @use '../../mixins' as *;
 
-.tabsRow {
-  display: flex;
-  gap: 2rem;
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 1.5rem;
-}
+// Modern Profile Tabs
+.profile-tabs-modern {
+  background: var(--bg-primary);
+  border-radius: 16px;
+  padding: 0.5rem;
+  margin-bottom: 2rem;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 1px 4px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border-color);
 
-.tab {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  padding: 0.75rem 0;
-  cursor: pointer;
-  position: relative;
-  transition: color 0.2s;
-}
+  .tabs-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    position: relative;
 
-.tab:hover {
-  color: var(--text-primary);
-}
+    @media (max-width: $small) {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
 
-.activeTab {
-  @extend .tab;
-  color: var(--text-primary);
-  font-weight: 600;
-  border-bottom: 2px solid #fff;
+  .tab-button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    font-family: $font-family-base;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    &.active {
+      color: var(--primary-color);
+
+      svg {
+        color: var(--primary-color);
+      }
+    }
+
+    svg {
+      flex-shrink: 0;
+      transition: color 0.2s ease;
+    }
+
+    @media (max-width: $small) {
+      padding: 0.875rem 1rem;
+      font-size: 0.95rem;
+    }
+  }
+
+  .tab-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, #4a7c59 100%);
+    border-radius: 3px 3px 0 0;
+  }
 }

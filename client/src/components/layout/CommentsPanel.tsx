@@ -65,7 +65,7 @@ function CommentItem({
       <div className="comment-header">
         <div className="comment-header-left">
           <Avatar
-            src={comment.userId?.avatarUrl || undefined}
+            src={comment.userId?.avatarImage?.publicUrl || undefined}
             alt={comment.userId?.username || 'User'}
             size="sm"
             className="comment-profile-pic"
@@ -159,7 +159,7 @@ export default function CommentsPanel({
       <div className="comments-panel-header">
         <div className="comments-header-user">
           <Avatar
-            src={post.userId.avatarUrl || undefined}
+            src={post.userId.avatarImage?.publicUrl || undefined}
             alt={post.userId.username}
             size="md"
           />

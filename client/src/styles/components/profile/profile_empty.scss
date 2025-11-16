@@ -1,35 +1,94 @@
 @use '../../variables' as *;
 @use '../../mixins' as *;
 
-.emptyContainer {
+// Modern Profile Empty State
+.profile-empty-modern {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 320px;
-  gap: 1.5rem;
-  color: var(--text-primary);
-}
-
-.iconWrapper {
-  background: var(--bg-tertiary);
-  border-radius: 50%;
-  width: 72px;
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-}
-
-.emptyText {
-  font-size: 1.25rem;
-  font-weight: 600;
+  padding: 4rem 2rem;
   text-align: center;
-}
+  min-height: 400px;
 
-.subText {
-  font-size: 1rem;
-  color: var(--text-muted);
-  text-align: center;
+  @media (max-width: $tablet) {
+    padding: 3rem 1.5rem;
+    min-height: 350px;
+  }
+
+  .empty-icon-wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .empty-icon-bg {
+    position: absolute;
+    inset: -20px;
+    background: linear-gradient(
+      135deg,
+      rgba(45, 80, 22, 0.1) 0%,
+      rgba(74, 124, 89, 0.08) 100%
+    );
+    border-radius: 50%;
+    filter: blur(20px);
+  }
+
+  .empty-icon {
+    position: relative;
+    color: var(--primary-color);
+    opacity: 0.8;
+  }
+
+  .empty-title {
+    font-family: $font-family-base;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.02em;
+
+    @media (max-width: $small) {
+      font-size: 1.5rem;
+    }
+  }
+
+  .empty-message {
+    font-family: $font-family-content;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0 0 2rem 0;
+    max-width: 400px;
+  }
+
+  .empty-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #3a6b47 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: $font-family-base;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(45, 80, 22, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(45, 80, 22, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: $small) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
 }

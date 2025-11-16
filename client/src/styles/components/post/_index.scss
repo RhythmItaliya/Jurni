@@ -1,6 +1,5 @@
 @use '../../variables' as *;
 @use 'post-creation';
-@use 'post-details-form';
 
 .post-card-body {
   padding: 0;
@@ -164,7 +163,6 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  padding: $spacing-md;
   margin: 0;
   gap: $spacing-sm;
   width: 100%;
@@ -218,6 +216,28 @@
       outline: 2px solid var(--primary-color);
       outline-offset: 2px;
       border-radius: $radius-sm;
+    }
+  }
+}
+
+.post-hashtags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-sm;
+
+  .hashtag {
+    color: $text-primary;
+    font-family: $font-family-content;
+    font-size: $text-sm;
+    line-height: $leading-normal;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--primary-color);
+      text-decoration: underline;
     }
   }
 }
