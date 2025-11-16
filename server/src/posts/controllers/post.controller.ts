@@ -43,7 +43,7 @@ export class PostController {
   /**
    * Create post with media files atomically
    * Endpoint: POST /posts/create
-   * @param createPostDto - Post creation data
+   * @param body - Post creation data (multipart form data)
    * @param files - Uploaded media files
    * @param req - Request object with user info
    * @returns Post creation result
@@ -59,7 +59,7 @@ export class PostController {
   })
   @ApiResponse({ status: 400, description: 'Failed to create post with media' })
   async createPostWithMedia(
-    @Body() createPostDto: CreatePostDto,
+    @Body() body: any,
     @UploadedFiles() files: Express.Multer.File[],
     @Request() req: any,
   ): Promise<BaseResponseDto> {
@@ -67,7 +67,7 @@ export class PostController {
       const userId = req.user.id;
       const post = await this.postMediaService.createPostWithMedia(
         userId,
-        createPostDto,
+        body as CreatePostDto,
         files,
       );
 

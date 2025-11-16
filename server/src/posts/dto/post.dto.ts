@@ -11,7 +11,7 @@ import {
   IsObject,
   ValidateNested,
 } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
+import { Type, Transform, plainToClass } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 const TransformToBoolean = () =>
@@ -29,7 +29,7 @@ const TransformToBoolean = () =>
 export class LocationDto {
   @ApiProperty({
     description: 'Location name',
-    example: 'New York',
+    example: 'Gandhinagar, Gujarat, India',
     type: String,
   })
   @IsString({ message: 'Location name must be a string' })
@@ -37,7 +37,7 @@ export class LocationDto {
 
   @ApiProperty({
     description: 'Latitude coordinate',
-    example: 40.7128,
+    example: 23.2095197,
     type: Number,
     required: false,
   })
@@ -47,7 +47,7 @@ export class LocationDto {
 
   @ApiProperty({
     description: 'Longitude coordinate',
-    example: -74.006,
+    example: 72.6335195,
     type: Number,
     required: false,
   })
@@ -57,13 +57,150 @@ export class LocationDto {
 
   @ApiProperty({
     description: 'Full address',
-    example: 'New York, NY, USA',
+    example:
+      'Road 2, Sector 6, गाँधीनगर, Gandhinagar Taluka, Gandhinagar, Gujarat, 382006, India',
     type: String,
     required: false,
   })
   @IsOptional()
   @IsString({ message: 'Address must be a string' })
   address?: string;
+
+  // Additional fields from Nominatim API
+  @ApiProperty({
+    description: 'Place ID from Nominatim',
+    example: 230190965,
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'Place ID must be a number' })
+  place_id?: number;
+
+  @ApiProperty({
+    description: 'OSM type',
+    example: 'way',
+    type: String,
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'OSM type must be a string' })
+  osm_type?: string;
+
+  @ApiProperty({
+    description: 'OSM ID',
+    example: 62525106,
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'OSM ID must be a number' })
+  osm_id?: number;
+
+  @ApiProperty({
+    description: 'OSM class',
+    example: 'highway',
+    type: String,
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'OSM class must be a string' })
+  class?: string;
+
+  @ApiProperty({
+    description: 'OSM type detail',
+    example: 'tertiary',
+    type: String,
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'OSM type detail must be a string' })
+  type?: string;
+
+  @ApiProperty({
+    description: 'Place rank',
+    example: 26,
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'Place rank must be a number' })
+  place_rank?: number;
+
+  @ApiProperty({
+    description: 'Importance score',
+    example: 0.05339261997405963,
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'Importance must be a number' })
+  importance?: number;
+
+  @ApiProperty({
+    description: 'Address type',
+    example: 'road',
+    type: String,
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'Address type must be a string' })
+  addresstype?: string;
+
+  @ApiProperty({
+    description: 'Licence information',
+    example:
+      'Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright',
+    type: String,
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'Licence must be a string' })
+  licence?: string;
+
+  @ApiProperty({
+    description: 'Detailed address object',
+    example: {
+      road: 'Road 2',
+      neighbourhood: 'Sector 6',
+      city: 'गाँधीनगर',
+      county: 'Gandhinagar Taluka',
+      state_district: 'Gandhinagar',
+      state: 'Gujarat',
+      ISO3166_2_lvl4: 'IN-GJ',
+      postcode: '382006',
+      country: 'India',
+      country_code: 'in',
+    },
+    type: Object,
+    required: false,
+  })
+  @IsOptional()
+  @IsObject({ message: 'Address details must be an object' })
+  address_details?: {
+    road?: string;
+    neighbourhood?: string;
+    city?: string;
+    county?: string;
+    state_district?: string;
+    state?: string;
+    ISO3166_2_lvl4?: string;
+    postcode?: string;
+    country?: string;
+    country_code?: string;
+    [key: string]: any;
+  };
+
+  @ApiProperty({
+    description: 'Bounding box coordinates',
+    example: ['23.2084000', '23.2118271', '72.6291747', '72.6357688'],
+    type: [String],
+    required: false,
+  })
+  @IsOptional()
+  @IsArray({ message: 'Bounding box must be an array' })
+  @IsString({ each: true, message: 'Bounding box items must be strings' })
+  boundingbox?: string[];
 }
 
 export class CreatePostDto {
@@ -92,6 +229,18 @@ export class CreatePostDto {
   description?: string;
 
   @ApiProperty({
+    description: 'Post status',
+    example: 'active',
+    enum: ['active', 'deleted', 'archived', 'draft'],
+    required: false,
+  })
+  @IsOptional()
+  @IsEnum(['active', 'deleted', 'archived', 'draft'], {
+    message: 'Status must be one of: active, deleted, archived, draft',
+  })
+  status?: 'active' | 'deleted' | 'archived' | 'draft';
+
+  @ApiProperty({
     description: 'Post visibility',
     example: 'public',
     enum: ['public', 'private', 'friends', 'followers'],
@@ -115,7 +264,10 @@ export class CreatePostDto {
   @IsString({ each: true, message: 'Each hashtag must be a string' })
   @ArrayMaxSize(30, { message: 'Cannot have more than 30 hashtags' })
   @Transform(({ value }) =>
-    value?.map((tag: string) => tag.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')),
+    value?.map((tag: string) => {
+      const cleanedTag = tag.startsWith('#') ? tag.slice(1) : tag;
+      return cleanedTag.replace(/[^a-zA-Z0-9]/g, '');
+    }),
   )
   hashtags?: string[];
 
@@ -165,8 +317,16 @@ export class CreatePostDto {
     required: false,
   })
   @IsOptional()
-  @ValidateNested()
-  @Type(() => LocationDto)
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  })
   location?: LocationDto;
 }
 
@@ -221,7 +381,10 @@ export class UpdatePostDto {
   @IsString({ each: true, message: 'Each hashtag must be a string' })
   @ArrayMaxSize(30, { message: 'Cannot have more than 30 hashtags' })
   @Transform(({ value }) =>
-    value?.map((tag: string) => tag.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')),
+    value?.map((tag: string) => {
+      const cleanedTag = tag.startsWith('#') ? tag.slice(1) : tag;
+      return cleanedTag.replace(/[^a-zA-Z0-9]/g, '');
+    }),
   )
   hashtags?: string[];
 
@@ -299,8 +462,16 @@ export class UpdatePostDto {
     required: false,
   })
   @IsOptional()
-  @ValidateNested()
-  @Type(() => LocationDto)
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  })
   location?: LocationDto;
 
   @ApiProperty({

@@ -136,14 +136,24 @@ export class PostUtils {
     postId: string | Types.ObjectId,
     updateData: any,
   ): Promise<PostDocument> {
-    const updatedPost = await this.getPopulatedSinglePostQuery(postModel)
+    // First update the document
+    const updatedDoc = await postModel
       .findByIdAndUpdate(postId, updateData, { new: true })
       .exec();
 
-    if (!updatedPost) {
+    if (!updatedDoc) {
       throw new Error('Post not found after update');
     }
 
-    return updatedPost;
+    // Then fetch with population
+    const populatedPost = await this.getPopulatedSinglePostQuery(postModel, {
+      _id: postId,
+    }).exec();
+
+    if (!populatedPost) {
+      throw new Error('Post not found after population');
+    }
+
+    return populatedPost;
   }
 }
