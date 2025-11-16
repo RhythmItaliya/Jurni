@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import type { LocationData } from '@/types/location.types';
 
 export type ProfileDocument = Profile &
   Document & {
@@ -45,22 +46,41 @@ export class Profile {
   bio?: string;
 
   @ApiProperty({
-    description: 'User website URL',
-    example: 'https://johndoe.com',
-    type: String,
+    description: 'User cover image media object',
+    required: false,
+    example: {
+      key: 'profiles/covers/image/2025/11/16/user-123/cover.jpg',
+      url: 'https://r2-url.com/cover.jpg',
+      publicUrl: 'https://pub-r2-url.com/cover.jpg',
+      bucket: 'jurni-bucket',
+      size: 1024000,
+      contentType: 'image/jpeg',
+      mediaId: '507f1f77bcf86cd799439011',
+    },
+  })
+  @Prop({
+    type: Object,
     required: false,
   })
-  @Prop({ required: false })
-  website?: string;
+  coverImage?: {
+    key: string;
+    url: string;
+    publicUrl: string;
+    bucket: string;
+    size?: number;
+    contentType?: string;
+    mediaId?: string;
+  };
 
   @ApiProperty({
-    description: 'User location',
-    example: 'San Francisco, CA',
-    type: String,
+    description: 'User location with detailed Nominatim data',
     required: false,
   })
-  @Prop({ required: false })
-  location?: string;
+  @Prop({
+    type: Object,
+    default: null,
+  })
+  location?: LocationData;
 
   @ApiProperty({
     description: 'Is profile private',

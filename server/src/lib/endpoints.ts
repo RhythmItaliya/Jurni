@@ -48,7 +48,8 @@ export const ENDPOINTS = {
   },
   PROFILES: {
     GET_BY_USERNAME: (username: string) => `${username}`,
-    UPDATE: '',
+    GET_ME: 'me',
+    UPDATE: 'update',
   },
 } as const;
 

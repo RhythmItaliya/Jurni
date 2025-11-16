@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@users/services';
 import { LoginDto, RegisterDto, RegistrationOTPDto } from '@/auth/dto/auth.dto';
 import { EmailService, OTPService } from '@/email/services';
-import { createSuccessResponse, createErrorResponse } from '@/lib/response.dto';
+import { createSuccessResponse } from '@/lib/response.dto';
 
 @Injectable()
 export class AuthService {
@@ -67,7 +67,7 @@ export class AuthService {
         uuid: user.uuid,
         username: user.username,
         email: user.email,
-        avatarUrl: user.avatarUrl || null,
+        avatarImage: user.avatarImage || null,
         isActive: user.isActive,
         otpVerifiedAt: user.otpVerifiedAt?.toISOString(),
         createdAt: user.createdAt.toISOString(),
@@ -158,7 +158,7 @@ export class AuthService {
             uuid: user.uuid,
             username: user.username,
             email: user.email,
-            avatarUrl: user.avatarUrl || null,
+            avatarImage: user.avatarImage || null,
             isActive: user.isActive,
             otpVerifiedAt: user.otpVerifiedAt?.toISOString(),
             createdAt: user.createdAt.toISOString(),
@@ -336,7 +336,7 @@ export class AuthService {
         uuid: updatedUser.uuid,
         username: updatedUser.username,
         email: updatedUser.email,
-        avatarUrl: updatedUser.avatarUrl || null,
+        avatarImage: updatedUser.avatarImage || null,
         isActive: updatedUser.isActive,
         updatedAt: updatedUser.updatedAt.toISOString(),
       },

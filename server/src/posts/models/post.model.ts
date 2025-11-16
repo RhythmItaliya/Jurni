@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import type { LocationData } from '@/types/location.types';
 
 export type PostDocument = Post & Document;
 
@@ -18,64 +19,10 @@ export class Post {
   hashtags: string[];
 
   @Prop({
-    type: {
-      name: { type: String, required: true },
-      latitude: Number,
-      longitude: Number,
-      address: String,
-      place_id: Number,
-      osm_type: String,
-      osm_id: Number,
-      class: String,
-      type: String,
-      place_rank: Number,
-      importance: Number,
-      addresstype: String,
-      licence: String,
-      address_details: {
-        road: String,
-        neighbourhood: String,
-        city: String,
-        county: String,
-        state_district: String,
-        state: String,
-        ISO3166_2_lvl4: String,
-        postcode: String,
-        country: String,
-        country_code: String,
-      },
-      boundingbox: [String],
-    },
+    type: Object,
+    default: null,
   })
-  location?: {
-    name: string;
-    latitude?: number;
-    longitude?: number;
-    address?: string;
-    place_id?: number;
-    osm_type?: string;
-    osm_id?: number;
-    class?: string;
-    type?: string;
-    place_rank?: number;
-    importance?: number;
-    addresstype?: string;
-    licence?: string;
-    address_details?: {
-      road?: string;
-      neighbourhood?: string;
-      city?: string;
-      county?: string;
-      state_district?: string;
-      state?: string;
-      ISO3166_2_lvl4?: string;
-      postcode?: string;
-      country?: string;
-      country_code?: string;
-      [key: string]: any;
-    };
-    boundingbox?: string[];
-  };
+  location?: LocationData;
 
   @Prop({ default: 'active' })
   status: 'active' | 'deleted' | 'archived' | 'draft';

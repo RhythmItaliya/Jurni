@@ -2,10 +2,11 @@ import {
   IsString,
   IsOptional,
   IsBoolean,
-  IsUrl,
   MaxLength,
+  IsObject,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import type { LocationData } from '@/types/location.types';
 
 export class CreateProfileDto {
   @ApiProperty({
@@ -42,26 +43,37 @@ export class CreateProfileDto {
   bio?: string;
 
   @ApiProperty({
-    description: 'User website URL',
-    example: 'https://johndoe.com',
-    type: String,
+    description: 'User cover image media object',
     required: false,
+    example: {
+      key: 'profiles/covers/image/2025/11/16/user-123/cover.jpg',
+      url: 'https://r2-url.com/cover.jpg',
+      publicUrl: 'https://pub-r2-url.com/cover.jpg',
+      bucket: 'jurni-bucket',
+      size: 1024000,
+      contentType: 'image/jpeg',
+      mediaId: '507f1f77bcf86cd799439011',
+    },
   })
   @IsOptional()
-  @IsString()
-  @IsUrl()
-  website?: string;
+  @IsObject()
+  coverImage?: {
+    key: string;
+    url: string;
+    publicUrl: string;
+    bucket: string;
+    size?: number;
+    contentType?: string;
+    mediaId?: string;
+  };
 
   @ApiProperty({
-    description: 'User location',
-    example: 'San Francisco, CA',
-    type: String,
+    description: 'User location with detailed Nominatim data',
     required: false,
   })
   @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  location?: string;
+  @IsObject()
+  location?: LocationData;
 
   @ApiProperty({
     description: 'Is profile private',
@@ -110,20 +122,24 @@ export class ProfileResponseDto {
   bio?: string;
 
   @ApiProperty({
-    description: 'User website URL',
-    example: 'https://johndoe.com',
-    type: String,
+    description: 'User cover image media object',
     required: false,
   })
-  website?: string;
+  coverImage?: {
+    key: string;
+    url: string;
+    publicUrl: string;
+    bucket: string;
+    size?: number;
+    contentType?: string;
+    mediaId?: string;
+  };
 
   @ApiProperty({
-    description: 'User location',
-    example: 'San Francisco, CA',
-    type: String,
+    description: 'User location with detailed Nominatim data',
     required: false,
   })
-  location?: string;
+  location?: LocationData;
 
   @ApiProperty({
     description: 'Is profile private',
@@ -180,20 +196,24 @@ export class PublicProfileResponseDto {
   bio?: string;
 
   @ApiProperty({
-    description: 'User website URL',
-    example: 'https://johndoe.com',
-    type: String,
+    description: 'User cover image media object',
     required: false,
   })
-  website?: string;
+  coverImage?: {
+    key: string;
+    url: string;
+    publicUrl: string;
+    bucket: string;
+    size?: number;
+    contentType?: string;
+    mediaId?: string;
+  };
 
   @ApiProperty({
-    description: 'User location',
-    example: 'San Francisco, CA',
-    type: String,
+    description: 'User location with detailed Nominatim data',
     required: false,
   })
-  location?: string;
+  location?: LocationData;
 
   @ApiProperty({
     description: 'Is profile private',
@@ -203,10 +223,153 @@ export class PublicProfileResponseDto {
   isPrivate: boolean;
 
   @ApiProperty({
-    description: 'User avatar URL',
-    example: 'https://example.com/avatar.jpg',
-    type: String,
+    description: 'User avatar image media object',
     required: false,
+    example: {
+      key: 'profiles/avatars/image/2025/11/16/user-123/avatar.jpg',
+      url: 'https://r2-url.com/avatar.jpg',
+      publicUrl: 'https://pub-r2-url.com/avatar.jpg',
+      bucket: 'jurni-bucket',
+      size: 512000,
+      contentType: 'image/jpeg',
+      mediaId: '507f1f77bcf86cd799439011',
+    },
   })
-  avatarUrl?: string;
+  avatarImage?: {
+    key: string;
+    url: string;
+    publicUrl: string;
+    bucket: string;
+    size?: number;
+    contentType?: string;
+    mediaId?: string;
+  };
+}
+
+/**
+ * Complete profile response DTO for editing
+ * Includes ALL fields from both User and Profile tables
+ */
+export class CompleteProfileResponseDto {
+  // User table fields
+  @ApiProperty({
+    description: 'User UUID',
+    example: '609a8703-1574-47ea-a0e2-e2c4e7180446',
+  })
+  uuid: string;
+
+  @ApiProperty({
+    description: 'Username',
+    example: 'johndoe',
+  })
+  username: string;
+
+  @ApiProperty({
+    description: 'Email address',
+    example: 'john@example.com',
+  })
+  email: string;
+
+  @ApiProperty({
+    description: 'User avatar image media object',
+    required: false,
+    nullable: true,
+    example: {
+      key: 'profiles/avatars/image/2025/11/16/user-123/avatar.jpg',
+      url: 'https://r2-url.com/avatar.jpg',
+      publicUrl: 'https://pub-r2-url.com/avatar.jpg',
+      bucket: 'jurni-bucket',
+      size: 512000,
+      contentType: 'image/jpeg',
+      mediaId: '507f1f77bcf86cd799439011',
+    },
+  })
+  avatarImage: {
+    key: string;
+    url: string;
+    publicUrl: string;
+    bucket: string;
+    size?: number;
+    contentType?: string;
+    mediaId?: string;
+  } | null;
+
+  @ApiProperty({
+    description: 'Is user account active',
+    example: true,
+  })
+  isActive: boolean;
+
+  @ApiProperty({
+    description: 'OTP verification timestamp',
+    example: '2025-10-28T12:50:09.672Z',
+    required: false,
+    nullable: true,
+  })
+  otpVerifiedAt: string | null;
+
+  @ApiProperty({
+    description: 'User account creation timestamp',
+    example: '2025-10-28T12:50:09.677Z',
+  })
+  createdAt: string;
+
+  @ApiProperty({
+    description: 'User account last update timestamp',
+    example: '2025-10-28T12:50:09.677Z',
+  })
+  updatedAt: string;
+
+  // Profile table fields
+  @ApiProperty({
+    description: 'User first name',
+    example: 'John',
+    required: false,
+    nullable: true,
+  })
+  firstName: string | null;
+
+  @ApiProperty({
+    description: 'User last name',
+    example: 'Doe',
+    required: false,
+    nullable: true,
+  })
+  lastName: string | null;
+
+  @ApiProperty({
+    description: 'User bio',
+    example: 'Software developer',
+    required: false,
+    nullable: true,
+  })
+  bio: string | null;
+
+  @ApiProperty({
+    description: 'User cover image media object',
+    required: false,
+    nullable: true,
+  })
+  coverImage: {
+    key: string;
+    url: string;
+    publicUrl: string;
+    bucket: string;
+    size?: number;
+    contentType?: string;
+    mediaId?: string;
+  } | null;
+
+  @ApiProperty({
+    description: 'User location with detailed Nominatim data',
+    required: false,
+    nullable: true,
+  })
+  location: LocationData | null;
+
+  @ApiProperty({
+    description: 'Is profile private',
+    example: false,
+  })
+  isPrivate: boolean;
 }

@@ -27,13 +27,31 @@ export class User {
   username: string;
 
   @ApiProperty({
-    description: 'User avatar URL',
-    example: 'https://example.com/avatar.jpg',
-    type: String,
+    description: 'User avatar image media object',
+    required: false,
+    example: {
+      key: 'profiles/avatars/image/2025/11/16/user-123/avatar.jpg',
+      url: 'https://r2-url.com/avatar.jpg',
+      publicUrl: 'https://pub-r2-url.com/avatar.jpg',
+      bucket: 'jurni-bucket',
+      size: 512000,
+      contentType: 'image/jpeg',
+      mediaId: '507f1f77bcf86cd799439011',
+    },
+  })
+  @Prop({
+    type: Object,
     required: false,
   })
-  @Prop({ required: false })
-  avatarUrl?: string;
+  avatarImage?: {
+    key: string;
+    url: string;
+    publicUrl: string;
+    bucket: string;
+    size?: number;
+    contentType?: string;
+    mediaId?: string;
+  };
 
   @ApiProperty({
     description: 'User email address',

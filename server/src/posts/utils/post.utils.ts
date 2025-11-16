@@ -17,7 +17,7 @@ export class PostUtils {
   ) {
     return postModel
       .find(query)
-      .populate('userId', 'username avatarUrl')
+      .populate('userId', 'username avatarImage')
       .populate('media');
   }
 
@@ -33,7 +33,7 @@ export class PostUtils {
   ) {
     return postModel
       .findOne(query)
-      .populate('userId', 'username avatarUrl')
+      .populate('userId', 'username avatarImage')
       .populate('media');
   }
 
