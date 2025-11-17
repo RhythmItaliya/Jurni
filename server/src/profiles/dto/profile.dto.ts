@@ -372,4 +372,35 @@ export class CompleteProfileResponseDto {
     example: false,
   })
   isPrivate: boolean;
+
+  // Statistics
+  @ApiProperty({
+    description: 'Total number of posts by this user',
+    example: 42,
+  })
+  totalPosts: number;
+
+  @ApiProperty({
+    description: 'Total likes received on all user posts from other users',
+    example: 256,
+  })
+  totalLikes: number;
+
+  @ApiProperty({
+    description: 'Total saves received on all user posts from other users',
+    example: 89,
+  })
+  totalSaves: number;
+
+  @ApiProperty({
+    description: 'Total posts this user has saved',
+    example: 15,
+  })
+  totalSavedPosts: number;
+
+  @ApiProperty({
+    description: 'Total posts this user has liked',
+    example: 127,
+  })
+  totalLikedPosts: number;
 }

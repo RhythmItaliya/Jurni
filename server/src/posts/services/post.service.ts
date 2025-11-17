@@ -139,9 +139,6 @@ export class PostService {
 
       const skip = (page - 1) * limit;
 
-      console.log('Posts filter:', filter);
-      console.log('Posts query params:', { page, limit, sortBy });
-
       const [posts, total] = await Promise.all([
         PostUtils.getFormattedPosts(this.postModel, filter, {
           sort,
@@ -150,8 +147,6 @@ export class PostService {
         }),
         this.postModel.countDocuments(filter),
       ]);
-
-      console.log('Found posts:', posts.length, 'Total:', total);
 
       // Add comments count and likes count to each post
       const postsWithCounts = await Promise.all(
@@ -325,6 +320,135 @@ export class PostService {
       }
 
       throw new BadRequestException('Failed to delete post');
+    }
+  }
+
+  /**
+   * Get saved posts for a user
+   */
+  async getSavedPostsForUser(
+    userId: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    posts: PostDocument[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    try {
+      const { saves, total } = await this.savePostService.getSavedPosts(
+        userId,
+        page,
+        limit,
+      );
+
+      const posts = saves
+        .map((save) => save.postId as unknown as PostDocument)
+        .filter((post) => post && post.status === 'active');
+
+      // Add comments count, likes count, and saves count to each post
+      const postsWithCounts = await Promise.all(
+        posts.map(async (post) => {
+          const postId = (post as any)._id.toString();
+          const [commentsCount, likeStats, saveStats] = await Promise.all([
+            this.commentService.getCommentsCountForPost(postId),
+            this.likeService.getLikeStats('post', postId),
+            this.savePostService.getSaveStats(postId),
+          ]);
+          return {
+            ...post.toObject(),
+            commentsCount,
+            likesCount: likeStats.totalLikes,
+            savesCount: saveStats.totalSaves,
+          };
+        }),
+      );
+
+      const totalPages = Math.ceil(total / limit);
+
+      return {
+        posts: postsWithCounts as any,
+        total,
+        page,
+        totalPages,
+      };
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to retrieve saved posts: ${error.message}`,
+      );
+    }
+  }
+
+  /**
+   * Get liked posts for a user
+   */
+  async getLikedPostsForUser(
+    userId: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    posts: PostDocument[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    try {
+      const skip = (page - 1) * limit;
+
+      // Get likes for posts by the user
+      const likes = await this.likeService.getLikesForUser(
+        userId,
+        'post',
+        page,
+        limit,
+      );
+
+      // Extract post IDs from likes
+      const postIds = likes.likes.map((like) => like.targetId);
+
+      // Get posts by IDs with media populated
+      const posts = await this.postModel
+        .find({
+          _id: { $in: postIds },
+          status: 'active',
+        })
+        .populate('media')
+        .populate('userId', 'username avatarImage')
+        .sort({ createdAt: -1 })
+        .exec();
+
+      // Add comments count, likes count, and saves count to each post
+      const postsWithCounts = await Promise.all(
+        posts.map(async (post) => {
+          const [commentsCount, likeStats, saveStats] = await Promise.all([
+            this.commentService.getCommentsCountForPost(
+              (post as any)._id.toString(),
+            ),
+            this.likeService.getLikeStats('post', (post as any)._id.toString()),
+            this.savePostService.getSaveStats((post as any)._id.toString()),
+          ]);
+          return {
+            ...post.toObject(),
+            commentsCount,
+            likesCount: likeStats.totalLikes,
+            savesCount: saveStats.totalSaves,
+          };
+        }),
+      );
+
+      const totalPages = Math.ceil(likes.total / limit);
+
+      return {
+        posts: postsWithCounts as any,
+        total: likes.total,
+        page,
+        totalPages,
+      };
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to retrieve liked posts: ${error.message}`,
+      );
     }
   }
 }

@@ -77,7 +77,19 @@ export class SavePostService {
 
     const saves = await this.savePostModel
       .find({ userId: new Types.ObjectId(userId) })
-      .populate('postId')
+      .populate({
+        path: 'postId',
+        populate: [
+          {
+            path: 'media',
+            model: 'Media',
+          },
+          {
+            path: 'userId',
+            select: 'username avatarImage',
+          },
+        ],
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)

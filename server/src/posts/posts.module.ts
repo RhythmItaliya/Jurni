@@ -4,6 +4,7 @@ import { PostController } from './controllers/post.controller';
 import { PostService } from './services/post.service';
 import { PostMediaService } from './services/post-media.service';
 import { Post, PostSchema } from './models/post.model';
+import { Media, MediaSchema } from '@/media/models/media.model';
 import { UploadModule } from '@/upload/upload.module';
 import { AuthModule } from '@/auth/auth.module';
 import { CommentsModule } from '@/comments/comments.module';
@@ -12,7 +13,10 @@ import { SavePostsModule } from '@/saveposts/saveposts.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+    MongooseModule.forFeature([
+      { name: Post.name, schema: PostSchema },
+      { name: Media.name, schema: MediaSchema },
+    ]),
     UploadModule,
     AuthModule,
     forwardRef(() => CommentsModule),

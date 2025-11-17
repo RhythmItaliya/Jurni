@@ -20,6 +20,9 @@ export const ENDPOINTS = {
   POSTS: {
     CREATE: 'create',
     LIST: 'list',
+    MY_POSTS: 'my-posts',
+    MY_SAVE_POSTS: 'my-save-posts',
+    MY_LIKE_POSTS: 'my-like-posts',
     DETAIL: (id: string) => `detail/${id}`,
     UPDATE: (id: string) => `update/${id}`,
     DELETE: (id: string) => `delete/${id}`,

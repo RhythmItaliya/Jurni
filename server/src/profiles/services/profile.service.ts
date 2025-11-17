@@ -1,8 +1,11 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Profile, ProfileDocument } from '../models/profile.model';
 import { User, UserDocument } from '@users/models/user.schema';
+import { Post, PostDocument } from '@/posts/models/post.model';
+import { Like, LikeDocument } from '@/likes/models/like.model';
+import { SavePost, SavePostDocument } from '@/saveposts/models/savepost.model';
 import { UserService } from '@users/services/user.service';
 import { UploadService } from '@/upload/services/upload.service';
 import {
@@ -18,6 +21,9 @@ export class ProfileService {
   constructor(
     @InjectModel(Profile.name) private profileModel: Model<ProfileDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
+    @InjectModel(SavePost.name) private savePostModel: Model<SavePostDocument>,
     private userService: UserService,
     private uploadService: UploadService,
   ) {}
@@ -43,6 +49,64 @@ export class ProfileService {
   }
 
   /**
+   * Calculate user statistics
+   * Returns total posts, total likes, and total saves
+   */
+  private async calculateUserStatistics(userId: string): Promise<{
+    totalPosts: number;
+    totalLikes: number;
+    totalSaves: number;
+    totalSavedPosts: number;
+    totalLikedPosts: number;
+  }> {
+    const userObjectId = new Types.ObjectId(userId);
+
+    // Get all active posts by this user
+    const userPosts = await this.postModel
+      .find({
+        userId: userObjectId,
+        status: 'active',
+      })
+      .select('_id')
+      .exec();
+
+    const postIds = userPosts.map((post) => post._id);
+
+    // Count total posts
+    const totalPosts = postIds.length;
+
+    // Count total likes on user's posts (received from others)
+    const totalLikes = await this.likeModel.countDocuments({
+      targetType: 'post',
+      targetId: { $in: postIds },
+    });
+
+    // Count total saves on user's posts (received from others)
+    const totalSaves = await this.savePostModel.countDocuments({
+      postId: { $in: postIds },
+    });
+
+    // Count total posts this user has saved
+    const totalSavedPosts = await this.savePostModel.countDocuments({
+      userId: userObjectId,
+    });
+
+    // Count total posts this user has liked
+    const totalLikedPosts = await this.likeModel.countDocuments({
+      userId: userObjectId,
+      targetType: 'post',
+    });
+
+    return {
+      totalPosts,
+      totalLikes,
+      totalSaves,
+      totalSavedPosts,
+      totalLikedPosts,
+    };
+  }
+
+  /**
    * Get complete profile data for current user (for editing)
    * Includes user data and profile data
    */
@@ -54,6 +118,9 @@ export class ProfileService {
       throw new NotFoundException('User not found');
     }
 
+    // Get MongoDB _id from user
+    const userMongoId = (user as any)._id.toString();
+
     // Get profile, create one if it doesn't exist
     let profile = await this.getProfileByUserId(userId);
 
@@ -61,6 +128,9 @@ export class ProfileService {
       // Create a default profile for this user
       profile = await this.createProfile(userId, {});
     }
+
+    // Calculate user statistics using MongoDB _id
+    const stats = await this.calculateUserStatistics(userMongoId);
 
     // Combine user and profile data into a clean response
     return {
@@ -81,6 +151,13 @@ export class ProfileService {
       coverImage: profile?.coverImage ?? null,
       location: profile?.location ?? null,
       isPrivate: profile?.isPrivate ?? false,
+
+      // Statistics
+      totalPosts: stats.totalPosts,
+      totalLikes: stats.totalLikes,
+      totalSaves: stats.totalSaves,
+      totalSavedPosts: stats.totalSavedPosts,
+      totalLikedPosts: stats.totalLikedPosts,
     };
   }
 
@@ -104,6 +181,11 @@ export class ProfileService {
       profile = await this.createProfile((user as any)._id.toString(), {});
     }
 
+    // Calculate user statistics
+    const stats = await this.calculateUserStatistics(
+      (user as any)._id.toString(),
+    );
+
     // Combine user and profile data into a clean response
     return {
       // User table fields
@@ -123,6 +205,13 @@ export class ProfileService {
       coverImage: profile?.coverImage ?? null,
       location: profile?.location ?? null,
       isPrivate: profile?.isPrivate ?? false,
+
+      // Statistics
+      totalPosts: stats.totalPosts,
+      totalLikes: stats.totalLikes,
+      totalSaves: stats.totalSaves,
+      totalSavedPosts: stats.totalSavedPosts,
+      totalLikedPosts: stats.totalLikedPosts,
     };
   }
 

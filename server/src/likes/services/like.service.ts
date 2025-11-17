@@ -215,4 +215,44 @@ export class LikeService {
       targetId: new Types.ObjectId(targetId),
     });
   }
+
+  /**
+   * Get likes for a user
+   */
+  async getLikesForUser(
+    userId: string,
+    targetType: 'post' | 'comment',
+    page: number = 1,
+    limit: number = 20,
+  ): Promise<{
+    likes: LikeDocument[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    const skip = (page - 1) * limit;
+
+    const [likes, total] = await Promise.all([
+      this.likeModel
+        .find({
+          userId: new Types.ObjectId(userId),
+          targetType,
+        })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      this.likeModel.countDocuments({
+        userId: new Types.ObjectId(userId),
+        targetType,
+      }),
+    ]);
+
+    return {
+      likes: likes as LikeDocument[],
+      total,
+      page,
+      limit,
+    };
+  }
 }
