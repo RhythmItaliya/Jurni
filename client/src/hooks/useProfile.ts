@@ -12,46 +12,8 @@ import { extractServerMessage } from '@/lib/errorUtils';
 // Query keys for profile cache
 export const profileKeys = {
   all: ['profiles'] as const,
-  detail: (username: string) =>
-    [...profileKeys.all, 'detail', username] as const,
   me: () => [...profileKeys.all, 'me'] as const,
 };
-
-/**
- * Hook to fetch a public profile by username
- * Retrieves user profile data including bio, location, privacy settings
- *
- * @description
- * - Fetches profile from GET /profiles/:username endpoint
- * - Returns cached data if available
- * - Handles public/private profile visibility
- * - Shows error toast on failure
- *
- * @param username - Username to fetch profile for
- * @param enabled - Whether to enable the query (default: true)
- *
- * @usedIn
- * - Profile page to display user information
- * - User cards and profile previews
- *
- * @returns {UseQueryResult} Query object with profile data and loading state
- */
-export function useGetProfile(username: string, enabled = true) {
-  return useQuery({
-    queryKey: profileKeys.detail(username),
-    queryFn: async () => {
-      const response = await api.get<{
-        success: boolean;
-        message: string;
-        data: PublicProfile;
-      }>(ENDPOINTS.PROFILES.GET_BY_USERNAME(username));
-      return response.data.data;
-    },
-    enabled: enabled && !!username,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 1,
-  });
-}
 
 /**
  * Hook to fetch the current user's complete profile for editing
@@ -101,6 +63,57 @@ export function useGetMyProfile(enabled = true) {
 }
 
 /**
+ * Hook to fetch public profile by username
+ * Retrieves complete user and profile data for any user by username
+ *
+ * @description
+ * - Fetches profile from GET /profiles/public/:username endpoint
+ * - Returns complete profile data (user + profile combined)
+ * - No authentication required
+ * - Shows error toast on failure
+ *
+ * @param username - Username to fetch profile for
+ * @param enabled - Whether to enable the query (default: true)
+ *
+ * @usedIn
+ * - Public profile pages
+ * - User profile views
+ * - Profile preview components
+ *
+ * @returns {UseQueryResult} Query object with complete profile data and loading state
+ */
+export function useGetPublicProfile(username: string, enabled = true) {
+  const { showError } = useReduxToast();
+
+  return useQuery({
+    queryKey: [...profileKeys.all, 'public', username],
+    queryFn: async () => {
+      try {
+        const response = await api.get<{
+          success: boolean;
+          message: string;
+          data: CompleteProfile;
+        }>(ENDPOINTS.PROFILES.PUBLIC(username));
+
+        if (!response.data.data) {
+          throw new Error('No profile data returned');
+        }
+
+        return response.data.data;
+      } catch (error) {
+        const errorMessage =
+          extractServerMessage(error) || 'Failed to fetch profile';
+        showError('Error', errorMessage);
+        throw error; // Re-throw to let React Query handle the error state
+      }
+    },
+    enabled: enabled && !!username,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+  });
+}
+
+/**
  * Hook to update the current user's profile
  * Handles profile updates including bio, cover image, location, privacy settings
  *
@@ -142,10 +155,6 @@ export function useUpdateProfile() {
     onSuccess: data => {
       // Invalidate all profile queries to refetch updated data
       queryClient.invalidateQueries({ queryKey: profileKeys.all });
-      // Optionally update specific profile cache
-      if (data.username) {
-        queryClient.setQueryData(profileKeys.detail(data.username), data);
-      }
       showSuccess(
         'Profile Updated',
         'Your profile has been updated successfully'
@@ -235,10 +244,6 @@ export function useUpdateProfileWithFiles() {
     onSuccess: data => {
       // Invalidate all profile queries
       queryClient.invalidateQueries({ queryKey: profileKeys.all });
-      // Update specific profile cache
-      if (data.username) {
-        queryClient.setQueryData(profileKeys.detail(data.username), data);
-      }
       showSuccess(
         'Profile Updated',
         'Your profile and images have been updated successfully'

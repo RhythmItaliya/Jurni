@@ -11,3 +11,4 @@ export * from './profile';
 export * from './comment';
 export * from './like';
 export * from './savepost';
+export * from './follow';

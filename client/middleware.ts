@@ -1,20 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-// Routes that are open to everyone
-const publicRoutes = [
-  '/auth/login',
-  '/auth/register',
-  '/auth/verify-otp',
-  '/auth/forgot-password',
-  '/auth/reset-password',
-  '/api/auth',
-  '/about',
-  '/contact',
-];
-
-// Routes that require authentication
-const protectedRoutes = ['/@me', '/profile', '/settings', '/upload'];
+import { RouteUtils } from './src/lib/routes';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -22,10 +8,19 @@ export function middleware(request: NextRequest) {
   // Check if user is authenticated (has session token)
   const hasSession =
     request.cookies.has('next-auth.session-token') ||
-    request.cookies.has('__Secure-next-auth.session-token');
+    request.cookies.has('__Secure-next-auth.session-token') ||
+    request.cookies.has('next-auth.session-token.0') ||
+    request.cookies.has('__Secure-next-auth.session-token.0') ||
+    request.cookies.has('next-auth.callback-url') ||
+    request.cookies.has('__Secure-next-auth.callback-url');
 
   // Allow public routes (auth pages and website pages)
-  if (publicRoutes.some(route => pathname.startsWith(route))) {
+  if (RouteUtils.isPublicRoute(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Allow username routes (single segment paths that are not protected)
+  if (RouteUtils.isUsernameRoute(pathname)) {
     return NextResponse.next();
   }
 
@@ -39,12 +34,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
-  // Redirect to website (/) if accessing protected route without session
-  if (
-    protectedRoutes.some(
-      route => pathname === route || pathname.startsWith(route + '/')
-    )
-  ) {
+  // Redirect to auth page if accessing protected route without session
+  if (RouteUtils.isProtectedRoute(pathname)) {
     if (!hasSession) {
       return NextResponse.redirect(new URL('/', request.url));
     }

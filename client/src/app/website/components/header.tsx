@@ -77,7 +77,7 @@ export default function Header() {
             <Link href="/about">About</Link>
           </motion.div>
           <motion.div variants={itemVariants}>
-            <Link href="/website/vision">Our Vision</Link>
+            <Link href="/vision">Our Vision</Link>
           </motion.div>
         </motion.nav>
 
