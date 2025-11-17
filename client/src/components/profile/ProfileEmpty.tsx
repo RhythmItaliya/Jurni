@@ -3,27 +3,39 @@ import { motion } from 'framer-motion';
 import { Grid, Bookmark, Heart, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export default function ProfileEmpty({ type }: { type: string }) {
+export default function ProfileEmpty({
+  type,
+  isPublic = false,
+}: {
+  type: string;
+  isPublic?: boolean;
+}) {
   const router = useRouter();
 
   const config = {
     videos: {
       icon: Grid,
       title: 'No posts yet',
-      message: 'Share your first post with the world',
-      action: 'Create Post',
-      onAction: () => router.push('/upload'),
+      message: isPublic
+        ? "This user hasn't shared any posts yet"
+        : 'Share your first post with the world',
+      action: isPublic ? null : 'Create Post',
+      onAction: isPublic ? undefined : () => router.push('/upload'),
     },
     favourites: {
       icon: Bookmark,
       title: 'No saved posts',
-      message: 'Posts you save will appear here',
+      message: isPublic
+        ? "This user hasn't saved any posts yet"
+        : 'Posts you save will appear here',
       action: null,
     },
     liked: {
       icon: Heart,
       title: 'No liked posts yet',
-      message: 'Posts you like will appear here',
+      message: isPublic
+        ? "This user hasn't liked any posts yet"
+        : 'Posts you like will appear here',
       action: null,
     },
   };

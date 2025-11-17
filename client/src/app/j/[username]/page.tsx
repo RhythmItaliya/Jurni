@@ -1,16 +1,25 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+import {
+  ProfileEmpty,
+  ProfileHeader,
+  ProfileTabs,
+  ProfileNotFound,
+} from '@/components/profile';
+import React from 'react';
 import { useGetPublicProfile } from '@/hooks';
+import { Spinner } from '@/components/ui';
 
 /**
- * Dynamic profile page component - shows any user's profile
- * Route: /[username]
- * @returns {JSX.Element} Profile page content
+ * Public profile page component - shows any user's public profile
+ * Route: /j/[username]
+ * @returns {JSX.Element} Public profile page content
  */
-export default function ProfilePage() {
+export default function PublicProfilePage() {
   const params = useParams();
   const username = params.username as string;
+  const [activeTab, setActiveTab] = React.useState('videos');
 
   const {
     data: profile,
@@ -20,100 +29,65 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="profile-page">
-        <div className="container">
-          <div className="profile-loading">
-            <div className="loading-spinner"></div>
-            <p>Loading profile...</p>
-          </div>
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '60vh',
+        }}
+      >
+        <Spinner size="xl" />
       </div>
     );
   }
 
   if (error || !profile) {
-    return (
-      <div className="profile-page">
-        <div className="container">
-          <div className="error-message">
-            <h2>User not found</h2>
-            <p>The user @{username} could not be found.</p>
-            {error && (
-              <div
-                className="error-details"
-                style={{
-                  marginTop: '20px',
-                  padding: '10px',
-                  background: '#ffebee',
-                  borderRadius: '5px',
-                }}
-              >
-                <h3>Error Details:</h3>
-                <pre style={{ fontSize: '12px', color: '#c62828' }}>
-                  {JSON.stringify(error, null, 2)}
-                </pre>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+    return <ProfileNotFound username={username} />;
   }
 
   return (
-    <div className="profile-page">
-      <div className="container">
-        {/* Profile Header */}
-        <div className="profile-header">
-          <div className="profile-avatar">
-            <div className="avatar-placeholder">
-              {profile.firstName && profile.lastName
-                ? `${profile.firstName.charAt(0)}${profile.lastName.charAt(0)}`
-                : profile.username.charAt(0).toUpperCase()}
-            </div>
-          </div>
+    <div
+      className="profile-page"
+      style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem 0' }}
+    >
+      <div
+        style={{
+          background: 'var(--bg-primary)',
+          borderRadius: '1rem',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          padding: '2rem',
+        }}
+      >
+        <ProfileHeader
+          username={profile.username}
+          bio={profile.bio ?? undefined}
+          coverImage={
+            profile.coverImage?.publicUrl ||
+            'https://placehold.co/1200x300/2d5016/ffffff/png?text=Cover+Image'
+          }
+          avatarImage={
+            profile.avatarImage?.publicUrl ||
+            'https://placehold.co/400x400/4a7c59/ffffff/png?text=Avatar'
+          }
+          location={profile.location}
+          isPrivate={profile.isPrivate}
+          email={profile.email}
+          isEmailVerified={!!profile.otpVerifiedAt}
+          firstName={profile.firstName}
+          lastName={profile.lastName}
+          createdAt={profile.createdAt}
+        />
+      </div>
 
-          <div className="profile-info">
-            <h1 className="profile-name">
-              {profile.firstName && profile.lastName
-                ? `${profile.firstName} ${profile.lastName}`
-                : profile.username}
-            </h1>
-            <p className="profile-username">@{profile.username}</p>
-            {profile.bio && <p className="profile-bio">{profile.bio}</p>}
+      {/* Tabs */}
+      <div style={{ marginTop: '2rem' }}>
+        <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
+      </div>
 
-            <div className="profile-stats">
-              <div className="stat-item">
-                <span className="stat-number">0</span>
-                <span className="stat-label">Posts</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">0</span>
-                <span className="stat-label">Followers</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">0</span>
-                <span className="stat-label">Following</span>
-              </div>
-            </div>
-
-            {/* Debug Info */}
-            <div
-              className="debug-info"
-              style={{
-                marginTop: '20px',
-                padding: '10px',
-                background: '#f5f5f5',
-                borderRadius: '5px',
-              }}
-            >
-              <h3>Debug Information:</h3>
-              <pre style={{ fontSize: '12px', overflow: 'auto' }}>
-                {JSON.stringify(profile, null, 2)}
-              </pre>
-            </div>
-          </div>
-        </div>
+      {/* Tab Content */}
+      <div style={{ marginTop: '2rem' }}>
+        <ProfileEmpty type={activeTab} isPublic={true} />
       </div>
     </div>
   );

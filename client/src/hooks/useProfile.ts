@@ -83,29 +83,20 @@ export function useGetMyProfile(enabled = true) {
  * @returns {UseQueryResult} Query object with complete profile data and loading state
  */
 export function useGetPublicProfile(username: string, enabled = true) {
-  const { showError } = useReduxToast();
-
   return useQuery({
     queryKey: [...profileKeys.all, 'public', username],
     queryFn: async () => {
-      try {
-        const response = await api.get<{
-          success: boolean;
-          message: string;
-          data: CompleteProfile;
-        }>(ENDPOINTS.PROFILES.PUBLIC(username));
+      const response = await api.get<{
+        success: boolean;
+        message: string;
+        data: CompleteProfile;
+      }>(ENDPOINTS.PROFILES.PUBLIC(username));
 
-        if (!response.data.data) {
-          throw new Error('No profile data returned');
-        }
-
-        return response.data.data;
-      } catch (error) {
-        const errorMessage =
-          extractServerMessage(error) || 'Failed to fetch profile';
-        showError('Error', errorMessage);
-        throw error; // Re-throw to let React Query handle the error state
+      if (!response.data.data) {
+        throw new Error('No profile data returned');
       }
+
+      return response.data.data;
     },
     enabled: enabled && !!username,
     staleTime: 5 * 60 * 1000, // 5 minutes

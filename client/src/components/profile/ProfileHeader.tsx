@@ -19,7 +19,7 @@ export default function ProfileHeader({
 }: {
   username: string;
   bio?: string;
-  onEdit: () => void;
+  onEdit?: () => void;
   coverImage?: string;
   avatarImage?: string;
   location?: LocationData | null;
@@ -120,15 +120,17 @@ export default function ProfileHeader({
                 </p>
               </div>
             </div>
-            <motion.button
-              className="profile-edit-btn"
-              onClick={onEdit}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Pencil size={16} />
-              <span>Edit Profile</span>
-            </motion.button>
+            {onEdit && (
+              <motion.button
+                className="profile-edit-btn"
+                onClick={onEdit}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Pencil size={16} />
+                <span>Edit Profile</span>
+              </motion.button>
+            )}
           </div>
 
           {/* Bio */}

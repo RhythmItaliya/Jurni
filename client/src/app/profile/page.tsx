@@ -71,7 +71,7 @@ export default function ProfilePage() {
 
       {/* Tab Content */}
       <div style={{ marginTop: '2rem' }}>
-        <ProfileEmpty type={activeTab} />
+        <ProfileEmpty type={activeTab} isPublic={false} />
       </div>
     </div>
   );
