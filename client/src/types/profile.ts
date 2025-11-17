@@ -79,4 +79,11 @@ export interface CompleteProfile {
   coverImage: MediaObject | null;
   location: LocationData | null;
   isPrivate: boolean;
+
+  // Statistics
+  totalPosts: number;
+  totalLikes: number;
+  totalSaves: number;
+  totalSavedPosts: number;
+  totalLikedPosts: number;
 }

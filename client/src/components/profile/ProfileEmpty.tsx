@@ -13,7 +13,7 @@ export default function ProfileEmpty({
   const router = useRouter();
 
   const config = {
-    videos: {
+    posts: {
       icon: Grid,
       title: 'No posts yet',
       message: isPublic
@@ -22,7 +22,7 @@ export default function ProfileEmpty({
       action: isPublic ? null : 'Create Post',
       onAction: isPublic ? undefined : () => router.push('/upload'),
     },
-    favourites: {
+    saved: {
       icon: Bookmark,
       title: 'No saved posts',
       message: isPublic
@@ -40,7 +40,7 @@ export default function ProfileEmpty({
     },
   };
 
-  const current = config[type as keyof typeof config] || config.videos;
+  const current = config[type as keyof typeof config] || config.posts;
   const Icon = current.icon;
 
   return (

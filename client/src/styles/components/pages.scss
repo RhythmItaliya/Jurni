@@ -191,3 +191,13 @@
     }
   }
 }
+
+// ========================================
+// UTILITY CLASSES
+// ========================================
+
+// Centering utility for page content
+.center-content {
+  @include flex-center;
+  min-height: 60vh;
+}

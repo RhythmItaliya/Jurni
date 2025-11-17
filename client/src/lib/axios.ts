@@ -4,6 +4,7 @@ import { CLIENT_ENV } from '@/config/env';
 // Import NextAuth helpers only for client-side usage inside interceptors
 // we import them at top-level but only call them when `window` is defined.
 import { getSession, signOut } from 'next-auth/react';
+import { RouteUtils } from '@/lib/routes';
 
 const api = axios.create({
   baseURL: CLIENT_ENV.API_URL,
@@ -59,18 +60,35 @@ api.interceptors.response.use(
   async error => {
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
-        try {
-          // Trigger NextAuth sign out to clear cookies and session
-          await signOut({ redirect: false });
-        } catch (e) {
-          console.log('Error during signOut:', e);
-        }
+        const pathname = window.location.pathname || '/';
 
-        // Clear any legacy storage tokens and redirect to login
+        // Clear any legacy storage tokens
         try {
           localStorage.removeItem('next-auth.session-token');
           localStorage.removeItem('__Secure-next-auth.session-token');
           sessionStorage.removeItem('next-auth.session-token');
+        } catch (e) {
+          console.log('Error clearing storage tokens:', e);
+        }
+
+        // If the current route is publicly accessible (for unauthenticated users)
+        // (for example `/p/:id`) then DON'T automatically redirect to the login page.
+        // This prevents pages like post detail from redirecting the user away
+        // if a background request returned 401.
+        try {
+          if (RouteUtils.isAccessibleToUnauthenticated(pathname)) {
+            // Do not redirect; let the calling code handle the error (UI can show a message)
+            return Promise.reject(error);
+          }
+        } catch (e) {
+          // If route util check somehow fails, fallback to previous behavior below
+          console.log('RouteUtils check failed:', e);
+        }
+
+        // For protected routes, keep old behavior: sign out and redirect to login
+        try {
+          // Trigger NextAuth sign out to clear cookies and session
+          await signOut({ redirect: false });
         } catch (e) {
           console.log('Error during signOut:', e);
         }

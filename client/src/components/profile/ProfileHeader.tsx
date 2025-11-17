@@ -16,6 +16,11 @@ export default function ProfileHeader({
   firstName,
   lastName,
   createdAt,
+  totalPosts,
+  totalLikes,
+  totalSaves,
+  totalSavedPosts,
+  totalLikedPosts,
 }: {
   username: string;
   bio?: string;
@@ -29,6 +34,11 @@ export default function ProfileHeader({
   firstName?: string | null;
   lastName?: string | null;
   createdAt?: string;
+  totalPosts?: number;
+  totalLikes?: number;
+  totalSaves?: number;
+  totalSavedPosts?: number;
+  totalLikedPosts?: number;
 }) {
   const displayName =
     firstName || lastName
@@ -195,16 +205,8 @@ export default function ProfileHeader({
               whileHover={{ scale: 1.05, y: -2 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="stat-number">0</div>
+              <div className="stat-number">{totalPosts ?? 0}</div>
               <div className="stat-label">Posts</div>
-            </motion.div>
-            <motion.div
-              className="stat-card"
-              whileHover={{ scale: 1.05, y: -2 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="stat-number">0</div>
-              <div className="stat-label">Following</div>
             </motion.div>
             <motion.div
               className="stat-card"
@@ -220,7 +222,15 @@ export default function ProfileHeader({
               transition={{ duration: 0.2 }}
             >
               <div className="stat-number">0</div>
-              <div className="stat-label">Likes</div>
+              <div className="stat-label">Following</div>
+            </motion.div>
+            <motion.div
+              className="stat-card"
+              whileHover={{ scale: 1.05, y: -2 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="stat-number">{totalLikes ?? 0}</div>
+              <div className="stat-label">Likes Received</div>
             </motion.div>
           </motion.div>
         </motion.div>

@@ -1,26 +1,45 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Video, Heart, Bookmark, Grid } from 'lucide-react';
+import { Heart, Bookmark, Grid } from 'lucide-react';
 
 const tabs = [
-  { label: 'Posts', key: 'videos', icon: Grid },
-  { label: 'Saved', key: 'favourites', icon: Bookmark },
+  { label: 'Posts', key: 'posts', icon: Grid },
+  { label: 'Saved', key: 'saved', icon: Bookmark },
   { label: 'Liked', key: 'liked', icon: Heart },
 ];
 
 export default function ProfileTabs({
   activeTab,
   onTabChange,
+  totalPosts,
+  totalSavedPosts,
+  totalLikedPosts,
 }: {
   activeTab: string;
   onTabChange: (key: string) => void;
+  totalPosts?: number;
+  totalSavedPosts?: number;
+  totalLikedPosts?: number;
 }) {
+  const getCounts = (key: string) => {
+    switch (key) {
+      case 'posts':
+        return totalPosts ?? 0;
+      case 'saved':
+        return totalSavedPosts ?? 0;
+      case 'liked':
+        return totalLikedPosts ?? 0;
+      default:
+        return 0;
+    }
+  };
   return (
     <div className="profile-tabs-modern">
       <div className="tabs-wrapper">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.key;
+          const count = getCounts(tab.key);
 
           return (
             <motion.button
@@ -33,6 +52,7 @@ export default function ProfileTabs({
             >
               <Icon size={20} />
               <span>{tab.label}</span>
+              <span className="tab-count">{count}</span>
               {isActive && (
                 <motion.div
                   className="tab-indicator"

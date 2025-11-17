@@ -29,14 +29,7 @@ export default function PublicProfilePage() {
 
   if (isLoading) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '60vh',
-        }}
-      >
+      <div className="center-content">
         <Spinner size="xl" />
       </div>
     );

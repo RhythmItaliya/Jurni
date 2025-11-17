@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import '@/styles/components/profile/not-found.scss';
 
 interface ProfileNotFoundProps {
   username: string;

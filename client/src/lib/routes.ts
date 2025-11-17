@@ -14,6 +14,7 @@ export const PUBLIC_ROUTES = [
   '/auth/verify-otp',
   '/auth/forgot-password',
   '/auth/reset-password',
+  '/p',
 ] as const;
 
 // API routes that are public
@@ -77,7 +78,8 @@ export const RouteUtils = {
     return (
       RouteUtils.isPublicRoute(pathname) ||
       RouteUtils.isUsernameRoute(pathname) ||
-      pathname.startsWith('/auth/')
+      pathname.startsWith('/auth/') ||
+      pathname.startsWith('/p/')
     );
   },
 

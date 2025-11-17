@@ -19,6 +19,16 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
     showCommentsPanel: true, // Enable comments side panel
     layoutType: 'full',
   },
+
+  '/p/*': {
+    showLeftSidebar: false, // Navigation sidebar
+    showRightSidebar: false, // Layout sidebar (empty, just for layout)
+    showMainContent: true, // Main content area (same size always)
+    showPosts: true, // Show actual posts in main content
+    showCommentsPanel: true, // Enable comments side panel
+    layoutType: 'full',
+  },
+
   '/profile': {
     showLeftSidebar: true, // Navigation sidebar
     showRightSidebar: false, // No right sidebar

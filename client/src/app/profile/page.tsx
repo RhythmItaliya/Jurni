@@ -1,20 +1,70 @@
 'use client';
-import { ProfileEmpty, ProfileHeader, ProfileTabs } from '@/components/profile';
+import {
+  ProfileEmpty,
+  ProfileHeader,
+  ProfileTabs,
+  ProfileTabContent,
+} from '@/components/profile';
 import { Spinner } from '@/components/ui/Spinner';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useGetMyProfile } from '@/hooks/useProfile';
+import {
+  useGetMyPosts,
+  useGetMySavedPosts,
+  useGetMyLikedPosts,
+} from '@/hooks/usePosts';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = React.useState('videos');
-  const { data: profile, isLoading } = useGetMyProfile();
+  const [activeTab, setActiveTab] = React.useState('posts');
+  const { data: profile, isLoading: profileLoading } = useGetMyProfile();
+
+  // Conditionally fetch data based on active tab
+  const { data: myPostsData, isLoading: myPostsLoading } = useGetMyPosts({
+    enabled: activeTab === 'posts',
+  });
+
+  const { data: savedPostsData, isLoading: savedPostsLoading } =
+    useGetMySavedPosts({ enabled: activeTab === 'saved' });
+
+  const { data: likedPostsData, isLoading: likedPostsLoading } =
+    useGetMyLikedPosts({ enabled: activeTab === 'liked' });
 
   const handleEdit = () => {
     router.push('/profile/edit');
   };
 
-  if (isLoading) {
+  // Determine loading state and posts based on active tab
+  const getCurrentTabData = () => {
+    switch (activeTab) {
+      case 'posts':
+        return {
+          posts: myPostsData?.posts || [],
+          isLoading: myPostsLoading,
+        };
+      case 'saved':
+        return {
+          posts: savedPostsData?.posts || [],
+          isLoading: savedPostsLoading,
+        };
+      case 'liked':
+        return {
+          posts: likedPostsData?.posts || [],
+          isLoading: likedPostsLoading,
+        };
+      default:
+        return {
+          posts: [],
+          isLoading: false,
+        };
+    }
+  };
+
+  const { posts: currentPosts, isLoading: currentLoading } =
+    getCurrentTabData();
+
+  if (profileLoading) {
     return (
       <div
         style={{
@@ -61,17 +111,47 @@ export default function ProfilePage() {
           firstName={profile?.firstName}
           lastName={profile?.lastName}
           createdAt={profile?.createdAt}
+          totalPosts={profile?.totalPosts}
+          totalLikes={profile?.totalLikes}
+          totalSaves={profile?.totalSaves}
+          totalSavedPosts={profile?.totalSavedPosts}
+          totalLikedPosts={profile?.totalLikedPosts}
         />
       </div>
 
       {/* Tabs */}
       <div style={{ marginTop: '2rem' }}>
-        <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        <ProfileTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          totalPosts={profile?.totalPosts}
+          totalSavedPosts={profile?.totalSavedPosts}
+          totalLikedPosts={profile?.totalLikedPosts}
+        />
       </div>
 
       {/* Tab Content */}
       <div style={{ marginTop: '2rem' }}>
-        <ProfileEmpty type={activeTab} isPublic={false} />
+        {currentLoading ? (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '40vh',
+            }}
+          >
+            <Spinner size="lg" />
+          </div>
+        ) : currentPosts.length > 0 ? (
+          <ProfileTabContent
+            posts={currentPosts}
+            isLoading={currentLoading}
+            type={activeTab as 'posts' | 'saved' | 'liked'}
+          />
+        ) : (
+          <ProfileEmpty type={activeTab} isPublic={false} />
+        )}
       </div>
     </div>
   );

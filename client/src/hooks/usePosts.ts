@@ -16,6 +16,8 @@ export const postsKeys = {
   list: () => [...postsKeys.all, 'list'] as const,
   userPosts: (userId: string) => [...postsKeys.all, 'user', userId] as const,
   detail: (id: string) => [...postsKeys.all, 'detail', id] as const,
+  savedPosts: () => [...postsKeys.all, 'saved'] as const,
+  likedPosts: () => [...postsKeys.all, 'liked'] as const,
 };
 
 /**
@@ -174,20 +176,147 @@ export function useGetUserPosts(
 }
 
 /**
- * Hook to fetch posts with infinite scrolling
- * Fetches posts page by page for infinite scroll implementation
+ * Hook to fetch authenticated user's own posts
+ * Fetches posts created by the current authenticated user
  *
  * @description
- * - Uses infinite query to load posts in pages
- * - Automatically fetches next page when needed
- * - Returns flattened posts array and pagination info
- * - Handles loading and error states
+ * - Requires authentication (JWT token)
+ * - Fetches posts uploaded by the current user
+ * - Supports pagination and filtering
+ * - Returns posts list with metadata
+ *
+ * @param options - Optional query parameters and enabled flag
+ * @returns {UseQueryResult} Query object with user's posts list and metadata
+ */
+export function useGetMyPosts(options?: {
+  enabled?: boolean;
+  query?: Record<string, unknown>;
+}) {
+  const { enabled = true, query = {} } = options || {};
+
+  return useQuery({
+    queryKey: [...postsKeys.list(), 'my-posts', JSON.stringify(query)],
+    queryFn: async () => {
+      const response = await api.get(ENDPOINTS.POSTS.MY_POSTS, {
+        params: query,
+      });
+      if (response.data && response.data.success && response.data.data) {
+        return {
+          posts: Array.isArray(response.data.data) ? response.data.data : [],
+          meta: response.data.meta || {
+            page: 1,
+            limit: 2,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+      return {
+        posts: [] as PostData[],
+        meta: { page: 1, limit: 2, total: 0, totalPages: 0 },
+      };
+    },
+    enabled,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Hook to fetch user's saved posts
+ * Retrieves posts that the authenticated user has saved
+ *
+ * @description
+ * - Fetches saved posts from my-save-posts endpoint
+ * - Returns posts with pagination metadata
+ * - Cached for 5 minutes
  *
  * @usedIn
- * - MainContent component for infinite scrolling posts feed
+ * - Profile page saved posts tab
  *
- * @returns {UseInfiniteQueryResult} Infinite query object with posts data
+ * @param options - Optional query parameters and enabled flag
+ * @returns {UseQueryResult} Query object with saved posts list and metadata
  */
+export function useGetMySavedPosts(options?: {
+  enabled?: boolean;
+  query?: Record<string, unknown>;
+}) {
+  const { enabled = true, query = {} } = options || {};
+
+  return useQuery({
+    queryKey: [...postsKeys.savedPosts(), JSON.stringify(query)],
+    queryFn: async () => {
+      const response = await api.get(ENDPOINTS.POSTS.MY_SAVE_POSTS, {
+        params: query,
+      });
+      if (response.data && response.data.success && response.data.data) {
+        return {
+          posts: Array.isArray(response.data.data) ? response.data.data : [],
+          meta: response.data.meta || {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+      return {
+        posts: [] as PostData[],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      };
+    },
+    enabled,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Hook to fetch user's liked posts
+ * Retrieves posts that the authenticated user has liked
+ *
+ * @description
+ * - Fetches liked posts from my-like-posts endpoint
+ * - Returns posts with pagination metadata
+ * - Cached for 5 minutes
+ *
+ * @usedIn
+ * - Profile page liked posts tab
+ *
+ * @param options - Optional query parameters and enabled flag
+ * @returns {UseQueryResult} Query object with liked posts list and metadata
+ */
+export function useGetMyLikedPosts(options?: {
+  enabled?: boolean;
+  query?: Record<string, unknown>;
+}) {
+  const { enabled = true, query = {} } = options || {};
+
+  return useQuery({
+    queryKey: [...postsKeys.likedPosts(), JSON.stringify(query)],
+    queryFn: async () => {
+      const response = await api.get(ENDPOINTS.POSTS.MY_LIKE_POSTS, {
+        params: query,
+      });
+      if (response.data && response.data.success && response.data.data) {
+        return {
+          posts: Array.isArray(response.data.data) ? response.data.data : [],
+          meta: response.data.meta || {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+      return {
+        posts: [] as PostData[],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      };
+    },
+    enabled,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function useInfinitePosts(query?: Record<string, unknown>) {
   return useInfiniteQuery({
     queryKey: [...postsKeys.list(), 'infinite', JSON.stringify(query || {})],

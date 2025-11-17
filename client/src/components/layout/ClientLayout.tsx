@@ -34,7 +34,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     if (status === 'authenticated') {
       const redirectPath = RouteUtils.getAuthenticatedRedirect(pathname);
       if (redirectPath) {
-        router.push(redirectPath);
+        window.location.href = redirectPath;
         return;
       }
     }
@@ -42,7 +42,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     if (status === 'unauthenticated') {
       const redirectPath = RouteUtils.getUnauthenticatedRedirect(pathname);
       if (redirectPath) {
-        router.push(redirectPath);
+        window.location.href = redirectPath;
         return;
       }
     }
