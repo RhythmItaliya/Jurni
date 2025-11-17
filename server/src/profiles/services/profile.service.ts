@@ -8,7 +8,6 @@ import { UploadService } from '@/upload/services/upload.service';
 import {
   CreateProfileDto,
   UpdateProfileDto,
-  PublicProfileResponseDto,
   CompleteProfileResponseDto,
 } from '../dto/profile.dto';
 
@@ -41,52 +40,6 @@ export class ProfileService {
   }
   async getProfileByUserId(userId: string): Promise<Profile | null> {
     return this.profileModel.findOne({ user: userId }).exec();
-  }
-  async getProfileByUsername(
-    username: string,
-    viewerId?: string,
-  ): Promise<PublicProfileResponseDto> {
-    const user = await this.userService.findByUsername(username);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    const profile = await this.getProfileByUserId((user as any)._id.toString());
-    if (!profile) {
-      return {
-        username: user.username,
-        firstName: undefined,
-        lastName: undefined,
-        bio: undefined,
-        coverImage: undefined,
-        location: undefined,
-        isPrivate: false,
-        avatarImage: user.avatarImage,
-      };
-    }
-
-    if (profile.isPrivate && viewerId !== (user as any)._id.toString()) {
-      return {
-        username: user.username,
-        firstName: undefined,
-        lastName: undefined,
-        bio: undefined,
-        coverImage: undefined,
-        location: undefined,
-        isPrivate: true,
-        avatarImage: user.avatarImage,
-      };
-    }
-
-    return {
-      username: user.username,
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      bio: profile.bio,
-      coverImage: profile.coverImage,
-      location: profile.location,
-      isPrivate: profile.isPrivate,
-      avatarImage: user.avatarImage,
-    };
   }
 
   /**
@@ -130,6 +83,49 @@ export class ProfileService {
       isPrivate: profile?.isPrivate ?? false,
     };
   }
+
+  /**
+   * Get public profile data by username
+   * Returns full user and profile data for public access
+   */
+  async getPublicProfileByUsername(
+    username: string,
+  ): Promise<CompleteProfileResponseDto> {
+    const user = await this.userService.findByUsername(username);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Get profile, create one if it doesn't exist
+    let profile = await this.getProfileByUserId((user as any)._id.toString());
+
+    if (!profile) {
+      // Create a default profile for this user
+      profile = await this.createProfile((user as any)._id.toString(), {});
+    }
+
+    // Combine user and profile data into a clean response
+    return {
+      // User table fields
+      uuid: (user as any).uuid,
+      username: user.username,
+      email: user.email,
+      avatarImage: user.avatarImage ?? null,
+      isActive: user.isActive,
+      otpVerifiedAt: (user as any).otpVerifiedAt?.toISOString() ?? null,
+      createdAt: (user as any).createdAt?.toISOString(),
+      updatedAt: (user as any).updatedAt?.toISOString(),
+
+      // Profile table fields
+      firstName: profile?.firstName ?? null,
+      lastName: profile?.lastName ?? null,
+      bio: profile?.bio ?? null,
+      coverImage: profile?.coverImage ?? null,
+      location: profile?.location ?? null,
+      isPrivate: profile?.isPrivate ?? false,
+    };
+  }
+
   async updateProfile(
     userId: string,
     updateProfileDto: UpdateProfileDto,

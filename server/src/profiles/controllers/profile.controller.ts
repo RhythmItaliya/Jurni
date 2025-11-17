@@ -79,37 +79,32 @@ export class ProfileController {
 
   /**
    * Get public profile by username
-   * Endpoint: GET /profiles/:username
-   * @param username - Username
-   * @param req - Request object with user info (optional)
-   * @returns Public profile data
+   * Endpoint: GET /profiles/public/:username
+   * @param username - Username to get profile for
+   * @returns Complete profile data (user + profile) for public access
    */
-  @Get(ENDPOINTS.PROFILES.GET_BY_USERNAME(':username'))
+  @Get(ENDPOINTS.PROFILES.PUBLIC(':username'))
   @ApiOperation({ summary: 'Get public profile by username' })
   @ApiParam({
     name: 'username',
-    description: 'Username',
+    description: 'Username to get profile for',
     example: 'johndoe',
   })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Profile retrieved successfully',
-    type: PublicProfileResponseDto,
+    type: CompleteProfileResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'User not found',
   })
-  async getProfile(
+  async getPublicProfile(
     @Param('username') username: string,
-    @Request() req: any,
   ): Promise<BaseResponseDto> {
     try {
-      const viewerId = req.user?.id;
-      const profile = await this.profileService.getProfileByUsername(
-        username,
-        viewerId,
-      );
+      const profile =
+        await this.profileService.getPublicProfileByUsername(username);
       return {
         success: true,
         message: 'Profile retrieved successfully',

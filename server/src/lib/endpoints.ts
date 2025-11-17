@@ -47,9 +47,16 @@ export const ENDPOINTS = {
     LIST: 'list',
   },
   PROFILES: {
-    GET_BY_USERNAME: (username: string) => `${username}`,
     GET_ME: 'me',
     UPDATE: 'update',
+    PUBLIC: (username: string) => `public/${username}`,
+  },
+  FOLLOWS: {
+    FOLLOW: (userId: string) => `follow/${userId}`,
+    UNFOLLOW: (userId: string) => `unfollow/${userId}`,
+    FOLLOWERS: (userId: string) => `followers/${userId}`,
+    FOLLOWING: (userId: string) => `following/${userId}`,
+    STATUS: (userId: string) => `status/${userId}`,
   },
 } as const;
 
@@ -66,3 +73,4 @@ export type CommentsEndpointKey = keyof typeof ENDPOINTS.COMMENTS;
 export type LikesEndpointKey = keyof typeof ENDPOINTS.LIKES;
 export type SavePostsEndpointKey = keyof typeof ENDPOINTS.SAVEPOSTS;
 export type ProfilesEndpointKey = keyof typeof ENDPOINTS.PROFILES;
+export type FollowsEndpointKey = keyof typeof ENDPOINTS.FOLLOWS;

@@ -12,6 +12,7 @@ import { CommentsModule } from '@/comments/comments.module';
 import { LikesModule } from '@/likes/likes.module';
 import { SavePostsModule } from '@/saveposts/saveposts.module';
 import { ProfileModule } from '@/profiles/profile.module';
+import { FollowsModule } from '@/follows/follows.module';
 import { ENV_VARS } from '@config/env';
 
 /**
@@ -38,6 +39,7 @@ import { ENV_VARS } from '@config/env';
     LikesModule,
     SavePostsModule,
     ProfileModule,
+    FollowsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
