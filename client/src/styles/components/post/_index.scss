@@ -1,6 +1,7 @@
 @use '../../variables' as *;
 @use '../../mixins' as *;
 @use 'post-creation';
+@use 'sass:color';
 
 .post-card-body {
   padding: 0;
@@ -408,7 +409,8 @@
       color: white;
 
       &:hover {
-        background-color: darken($primary, 10%);
+        background-color: color.adjust($primary, $lightness: -10%);
+        color: white;
         transform: translateY(-1px);
       }
     }
