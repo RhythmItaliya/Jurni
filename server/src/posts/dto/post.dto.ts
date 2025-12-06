@@ -358,6 +358,18 @@ export class UpdatePostDto {
   description?: string;
 
   @ApiProperty({
+    description: 'Post status',
+    example: 'active',
+    enum: ['active', 'deleted', 'archived', 'draft'],
+    required: false,
+  })
+  @IsOptional()
+  @IsEnum(['active', 'deleted', 'archived', 'draft'], {
+    message: 'Status must be one of: active, deleted, archived, draft',
+  })
+  status?: 'active' | 'deleted' | 'archived' | 'draft';
+
+  @ApiProperty({
     description: 'Post visibility',
     example: 'public',
     enum: ['public', 'private', 'friends', 'followers'],
