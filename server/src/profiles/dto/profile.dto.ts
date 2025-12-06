@@ -403,4 +403,16 @@ export class CompleteProfileResponseDto {
     example: 127,
   })
   totalLikedPosts: number;
+
+  @ApiProperty({
+    description: 'Total followers of this user',
+    example: 150,
+  })
+  followersCount: number;
+
+  @ApiProperty({
+    description: 'Total users this user is following',
+    example: 89,
+  })
+  followingCount: number;
 }

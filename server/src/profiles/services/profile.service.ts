@@ -6,6 +6,7 @@ import { User, UserDocument } from '@users/models/user.schema';
 import { Post, PostDocument } from '@/posts/models/post.model';
 import { Like, LikeDocument } from '@/likes/models/like.model';
 import { SavePost, SavePostDocument } from '@/saveposts/models/savepost.model';
+import { Follow, FollowDocument } from '@/follows/models/follow.model';
 import { UserService } from '@users/services/user.service';
 import { UploadService } from '@/upload/services/upload.service';
 import {
@@ -24,6 +25,7 @@ export class ProfileService {
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
     @InjectModel(SavePost.name) private savePostModel: Model<SavePostDocument>,
+    @InjectModel(Follow.name) private followModel: Model<FollowDocument>,
     private userService: UserService,
     private uploadService: UploadService,
   ) {}
@@ -52,12 +54,17 @@ export class ProfileService {
    * Calculate user statistics
    * Returns total posts, total likes, and total saves
    */
-  private async calculateUserStatistics(userId: string): Promise<{
+  private async calculateUserStatistics(
+    userId: string,
+    uuid: string,
+  ): Promise<{
     totalPosts: number;
     totalLikes: number;
     totalSaves: number;
     totalSavedPosts: number;
     totalLikedPosts: number;
+    followersCount: number;
+    followingCount: number;
   }> {
     const userObjectId = new Types.ObjectId(userId);
 
@@ -97,12 +104,24 @@ export class ProfileService {
       targetType: 'post',
     });
 
+    // Count followers (users following this user)
+    const followersCount = await this.followModel.countDocuments({
+      following: uuid,
+    });
+
+    // Count following (users this user is following)
+    const followingCount = await this.followModel.countDocuments({
+      follower: uuid,
+    });
+
     return {
       totalPosts,
       totalLikes,
       totalSaves,
       totalSavedPosts,
       totalLikedPosts,
+      followersCount,
+      followingCount,
     };
   }
 
@@ -130,7 +149,7 @@ export class ProfileService {
     }
 
     // Calculate user statistics using MongoDB _id
-    const stats = await this.calculateUserStatistics(userMongoId);
+    const stats = await this.calculateUserStatistics(userMongoId, userId);
 
     // Combine user and profile data into a clean response
     return {
@@ -158,6 +177,8 @@ export class ProfileService {
       totalSaves: stats.totalSaves,
       totalSavedPosts: stats.totalSavedPosts,
       totalLikedPosts: stats.totalLikedPosts,
+      followersCount: stats.followersCount,
+      followingCount: stats.followingCount,
     };
   }
 
@@ -184,6 +205,7 @@ export class ProfileService {
     // Calculate user statistics
     const stats = await this.calculateUserStatistics(
       (user as any)._id.toString(),
+      (user as any).uuid,
     );
 
     // Combine user and profile data into a clean response
@@ -212,6 +234,8 @@ export class ProfileService {
       totalSaves: stats.totalSaves,
       totalSavedPosts: stats.totalSavedPosts,
       totalLikedPosts: stats.totalLikedPosts,
+      followersCount: stats.followersCount,
+      followingCount: stats.followingCount,
     };
   }
 

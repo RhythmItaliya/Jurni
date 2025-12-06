@@ -7,8 +7,10 @@ import { User, UserSchema } from '@users/models/user.schema';
 import { Post, PostSchema } from '@/posts/models/post.model';
 import { Like, LikeSchema } from '@/likes/models/like.model';
 import { SavePost, SavePostSchema } from '@/saveposts/models/savepost.model';
+import { Follow, FollowSchema } from '@/follows/models/follow.model';
 import { UserModule } from '@users/user.module';
 import { UploadModule } from '@/upload/upload.module';
+import { FollowsModule } from '@/follows/follows.module';
 
 @Module({
   imports: [
@@ -18,9 +20,11 @@ import { UploadModule } from '@/upload/upload.module';
       { name: Post.name, schema: PostSchema },
       { name: Like.name, schema: LikeSchema },
       { name: SavePost.name, schema: SavePostSchema },
+      { name: Follow.name, schema: FollowSchema },
     ]),
     UserModule,
     UploadModule,
+    FollowsModule,
   ],
   controllers: [ProfileController],
   providers: [ProfileService],
