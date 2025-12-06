@@ -82,9 +82,5 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   }
 
   // Authenticated users
-  return (
-    <>
-      <DynamicLayout>{children}</DynamicLayout>
-    </>
-  );
+  return <DynamicLayout>{children}</DynamicLayout>;
 }

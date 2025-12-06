@@ -86,4 +86,6 @@ export interface CompleteProfile {
   totalSaves: number;
   totalSavedPosts: number;
   totalLikedPosts: number;
+  followersCount: number;
+  followingCount: number;
 }

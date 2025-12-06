@@ -8,6 +8,14 @@ import { CardFooter } from '../Card';
 import { IconButton } from '../IconButton';
 import { Spinner } from '../Spinner';
 import Avatar from '@/components/ui/Avatar';
+import { useSession } from 'next-auth/react';
+import {
+  useFollowStatus,
+  useFollowUser,
+  useUnfollowUser,
+} from '@/hooks/useFollow';
+import { UserPlus, UserCheck } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import { PostCardProps } from '@/types/post';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, EffectFade, Mousewheel, Keyboard } from 'swiper/modules';
@@ -62,6 +70,17 @@ export default function PostCard({
 
   const likeMutation = useLikeTarget();
   const unlikeMutation = useUnlikeTarget();
+
+  // Follow functionality
+  const { data: session, status: sessionStatus } = useSession();
+  const { data: followStatus } = useFollowStatus(
+    post.userId?.uuid,
+    !!post.userId?.uuid && sessionStatus === 'authenticated'
+  );
+  const followUser = useFollowUser();
+  const unfollowUser = useUnfollowUser();
+
+  const isOwnPost = session?.user?.uuid === post.userId?.uuid;
 
   const handleLike = React.useCallback(() => {
     const wasLiked = localLikeStats.isLikedByUser;
@@ -199,6 +218,31 @@ export default function PostCard({
                   {post?.userId?.username || 'Unknown'}
                 </div>
               </div>
+              {!isOwnPost && sessionStatus === 'authenticated' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`author-follow-btn ${followStatus?.isFollowing ? 'following' : ''}`}
+                  onClick={() => {
+                    if (followStatus?.isFollowing) {
+                      unfollowUser.mutate(post.userId.uuid);
+                    } else {
+                      followUser.mutate(post.userId.uuid);
+                    }
+                  }}
+                  disabled={followUser.isPending || unfollowUser.isPending}
+                  icon={
+                    followStatus?.isFollowing ? (
+                      <UserCheck size={14} />
+                    ) : (
+                      <UserPlus size={14} />
+                    )
+                  }
+                  iconPosition="left"
+                >
+                  {followStatus?.isFollowing ? 'Following' : 'Follow'}
+                </Button>
+              )}
             </div>
 
             <div className="post-header-right">

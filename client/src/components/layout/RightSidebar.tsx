@@ -9,8 +9,6 @@
 export default function RightSidebar() {
   return (
     <div className="right-sidebar">
-      {/* This is a pure layout component */}
-      {/* No posts, no content - just layout structure */}
       <div className="sidebar-placeholder">
         {/* You can add layout-only elements here if needed */}
         {/* Like suggested users, trends, etc. - but NO posts */}

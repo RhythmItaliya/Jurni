@@ -21,12 +21,13 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
   },
 
   '/p/*': {
-    showLeftSidebar: false, // Navigation sidebar
-    showRightSidebar: false, // Layout sidebar (empty, just for layout)
+    showLeftSidebar: true, // Navigation sidebar
+    showRightSidebar: true, // No right sidebar
     showMainContent: true, // Main content area (same size always)
-    showPosts: true, // Show actual posts in main content
+    showPosts: false, // Show page content, not posts feed
     showCommentsPanel: true, // Enable comments side panel
-    layoutType: 'full',
+    layoutType: 'sidebar-only',
+    mainContentFullWidth: false, // Use default width for centering
   },
 
   '/profile': {
@@ -37,13 +38,16 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
     layoutType: 'sidebar-only',
     mainContentFullWidth: true, // Allow full width in main content area
   },
+
   '/trending': {
     showLeftSidebar: true, // Navigation sidebar
-    showRightSidebar: false, // Layout sidebar (empty, just for layout)
-    showMainContent: true, // Main content area (same size, but empty)
-    showPosts: false, // No posts, just blank area
+    showRightSidebar: false, // No right sidebar
+    showMainContent: true, // Use main content area for full width layout
+    showPosts: false, // No posts, just page content inside main area
     layoutType: 'sidebar-only',
+    mainContentFullWidth: true, // Allow full width in main content area
   },
+
   '/upload': {
     showLeftSidebar: true, // Navigation sidebar
     showRightSidebar: false, // No right sidebar

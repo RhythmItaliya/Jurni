@@ -368,10 +368,26 @@ export function useGetPostById(postId: string) {
   return useQuery({
     queryKey: postsKeys.detail(postId),
     queryFn: async () => {
-      const response = await api.get(ENDPOINTS.POSTS.DETAIL(postId));
-      const data = response.data;
-      if (data.success && data.data) return data.data as PostData;
-      throw new Error(data.error || 'Post not found');
+      try {
+        const response = await api.get(ENDPOINTS.POSTS.DETAIL(postId));
+        const data = response.data;
+        if (data.success && data.data) return data.data as PostData;
+        throw new Error(data.error || 'Post not found');
+      } catch (error: any) {
+        // Check HTTP status code
+        if (error.response?.status === 404) {
+          const notFoundError = new Error('Post not found');
+          (notFoundError as any).isNotFound = true;
+          throw notFoundError;
+        }
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          const authError = new Error('Authentication required');
+          (authError as any).isAuthError = true;
+          throw authError;
+        }
+        // Re-throw other errors
+        throw error;
+      }
     },
     enabled: !!postId,
   });

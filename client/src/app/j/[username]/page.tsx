@@ -10,6 +10,7 @@ import {
 import React from 'react';
 import { useGetPublicProfile } from '@/hooks';
 import { Spinner } from '@/components/ui';
+import { useSession } from 'next-auth/react';
 
 /**
  * Public profile page component - shows any user's public profile
@@ -19,6 +20,7 @@ import { Spinner } from '@/components/ui';
 export default function PublicProfilePage() {
   const params = useParams();
   const username = params.username as string;
+  const { data: session } = useSession();
   const [activeTab, setActiveTab] = React.useState('videos');
 
   const {
@@ -27,9 +29,11 @@ export default function PublicProfilePage() {
     error,
   } = useGetPublicProfile(username, !!username);
 
+  const isOwnProfile = session?.user?.uuid === profile?.uuid;
+
   if (isLoading) {
     return (
-      <div className="center-content">
+      <div className="flex justify-center items-center min-h-screen">
         <Spinner size="xl" />
       </div>
     );
@@ -53,6 +57,7 @@ export default function PublicProfilePage() {
         }}
       >
         <ProfileHeader
+          key={profile.uuid}
           username={profile.username}
           bio={profile.bio ?? undefined}
           coverImage={
@@ -70,6 +75,14 @@ export default function PublicProfilePage() {
           firstName={profile.firstName}
           lastName={profile.lastName}
           createdAt={profile.createdAt}
+          totalPosts={profile.totalPosts}
+          totalLikes={profile.totalLikes}
+          totalSaves={profile.totalSaves}
+          totalSavedPosts={profile.totalSavedPosts}
+          totalLikedPosts={profile.totalLikedPosts}
+          followersCount={profile.followersCount}
+          followingCount={profile.followingCount}
+          isOwnProfile={false}
         />
       </div>
 

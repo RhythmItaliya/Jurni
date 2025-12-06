@@ -7,5 +7,6 @@
 @use 'components/auth' as auth;
 @use 'components/post';
 @use 'components/profile/_index' as profileIndex;
+@use 'components/trending/_index' as trendingIndex;
 @use 'components/comments';
 @use 'website/_index' as websiteIndex;

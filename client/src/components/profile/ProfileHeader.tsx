@@ -21,6 +21,11 @@ export default function ProfileHeader({
   totalSaves,
   totalSavedPosts,
   totalLikedPosts,
+  followersCount,
+  followingCount,
+  isOwnProfile,
+  onFollowersClick,
+  onFollowingClick,
 }: {
   username: string;
   bio?: string;
@@ -39,6 +44,11 @@ export default function ProfileHeader({
   totalSaves?: number;
   totalSavedPosts?: number;
   totalLikedPosts?: number;
+  followersCount?: number;
+  followingCount?: number;
+  isOwnProfile?: boolean;
+  onFollowersClick?: () => void;
+  onFollowingClick?: () => void;
 }) {
   const displayName =
     firstName || lastName
@@ -212,16 +222,20 @@ export default function ProfileHeader({
               className="stat-card"
               whileHover={{ scale: 1.05, y: -2 }}
               transition={{ duration: 0.2 }}
+              onClick={onFollowersClick}
+              style={{ cursor: onFollowersClick ? 'pointer' : 'default' }}
             >
-              <div className="stat-number">0</div>
+              <div className="stat-number">{followersCount ?? 0}</div>
               <div className="stat-label">Followers</div>
             </motion.div>
             <motion.div
               className="stat-card"
               whileHover={{ scale: 1.05, y: -2 }}
               transition={{ duration: 0.2 }}
+              onClick={onFollowingClick}
+              style={{ cursor: onFollowingClick ? 'pointer' : 'default' }}
             >
-              <div className="stat-number">0</div>
+              <div className="stat-number">{followingCount ?? 0}</div>
               <div className="stat-label">Following</div>
             </motion.div>
             <motion.div

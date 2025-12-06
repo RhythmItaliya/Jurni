@@ -93,6 +93,7 @@ export default function ProfilePage() {
         }}
       >
         <ProfileHeader
+          key={profile?.uuid}
           username={profile?.username || ''}
           bio={profile?.bio || ''}
           onEdit={handleEdit}
@@ -116,6 +117,9 @@ export default function ProfilePage() {
           totalSaves={profile?.totalSaves}
           totalSavedPosts={profile?.totalSavedPosts}
           totalLikedPosts={profile?.totalLikedPosts}
+          followersCount={profile?.followersCount}
+          followingCount={profile?.followingCount}
+          isOwnProfile={true}
         />
       </div>
 

@@ -49,6 +49,7 @@ export interface PostData {
   userId: {
     _id: string;
     username: string;
+    uuid: string;
     avatarImage?: {
       key: string;
       url: string;

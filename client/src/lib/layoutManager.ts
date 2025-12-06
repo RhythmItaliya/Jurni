@@ -31,6 +31,13 @@ export class LayoutManager {
       return this.routeConfigs[pathname];
     }
 
+    // Handle wildcard route matches
+    for (const route in this.routeConfigs) {
+      if (route.endsWith('/*') && pathname.startsWith(route.slice(0, -1))) {
+        return this.routeConfigs[route];
+      }
+    }
+
     // Handle dynamic profile routes
     if (this.isProfileRoute(pathname)) {
       return this.getProfileLayoutConfig(pathname);
@@ -52,6 +59,7 @@ export class LayoutManager {
       '/upload',
       '/auth',
       '/api',
+      '/p',
     ];
 
     return (

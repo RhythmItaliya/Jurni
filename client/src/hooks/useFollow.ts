@@ -4,6 +4,7 @@ import { FollowUser, FollowStatus } from '@/types/follow';
 import api from '@/lib/axios';
 import { ENDPOINTS } from '@/lib/endpoints';
 import { extractServerMessage } from '@/lib/errorUtils';
+import { profileKeys } from '@/hooks/useProfile';
 
 // Query keys for follow cache
 export const followKeys = {
@@ -40,6 +41,8 @@ export function useFollowUser(onSuccess?: () => void) {
     onSuccess: (data, userId) => {
       // Invalidate follow-related queries
       queryClient.invalidateQueries({ queryKey: followKeys.all });
+      // Invalidate profile queries to update follower/following counts
+      queryClient.invalidateQueries({ queryKey: profileKeys.all });
 
       if (onSuccess) {
         onSuccess();
@@ -79,6 +82,8 @@ export function useUnfollowUser(onSuccess?: () => void) {
     onSuccess: (data, userId) => {
       // Invalidate follow-related queries
       queryClient.invalidateQueries({ queryKey: followKeys.all });
+      // Invalidate profile queries to update follower/following counts
+      queryClient.invalidateQueries({ queryKey: profileKeys.all });
 
       if (onSuccess) {
         onSuccess();
