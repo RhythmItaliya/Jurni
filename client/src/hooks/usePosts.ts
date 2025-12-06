@@ -434,6 +434,58 @@ export function useUpdatePost() {
 }
 
 /**
+ * Hook to fetch posts by hashtag
+ * Retrieves posts that contain a specific hashtag
+ *
+ * @description
+ * - Fetches posts filtered by hashtag from hashtag endpoint
+ * - Returns posts with pagination metadata
+ * - Cached for 5 minutes
+ *
+ * @usedIn
+ * - Hashtag pages and hashtag filtering
+ *
+ * @param hashtag - The hashtag to filter posts by
+ * @param options - Optional query parameters and enabled flag
+ * @returns {UseQueryResult} Query object with hashtag posts list and metadata
+ */
+export function useGetPostsByHashtag(
+  hashtag: string,
+  options?: {
+    enabled?: boolean;
+    query?: Record<string, unknown>;
+  }
+) {
+  const { enabled = true, query = {} } = options || {};
+
+  return useQuery({
+    queryKey: [...postsKeys.list(), 'hashtag', hashtag, JSON.stringify(query)],
+    queryFn: async () => {
+      const response = await api.get(ENDPOINTS.POSTS.HASHTAG_POSTS(hashtag), {
+        params: query,
+      });
+      if (response.data && response.data.success && response.data.data) {
+        return {
+          posts: Array.isArray(response.data.data) ? response.data.data : [],
+          meta: response.data.meta || {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+      return {
+        posts: [] as PostData[],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      };
+    },
+    enabled: enabled && !!hashtag,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
  * Hook to delete a post
  * Handles post deletion with confirmation and cache cleanup
  *

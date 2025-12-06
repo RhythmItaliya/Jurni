@@ -229,17 +229,35 @@
   margin-bottom: $spacing-sm;
 
   .hashtag {
-    color: $text-primary;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--primary-color);
     font-family: $font-family-content;
     font-size: $text-sm;
     line-height: $leading-normal;
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+    border-radius: $radius-sm;
 
     &:hover {
       color: var(--primary-color);
-      text-decoration: underline;
+      text-decoration: $button-underline;
+      background-color: rgba(var(--primary-color-rgb), 0.1);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 2px;
+    }
+
+    &:focus {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+
+    &:active {
+      transform: scale(0.98);
     }
   }
 }
@@ -426,4 +444,32 @@
   background: $bg-surface;
   border-radius: $radius-lg;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// ========================================
+// HASHTAG PAGE TITLE STYLES
+// ========================================
+
+.hashtag-page-title {
+  text-align: center;
+  padding: $spacing-lg;
+
+  h1 {
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+    color: $text-primary;
+    margin: 0;
+
+    @media (max-width: $breakpoint-mobile) {
+      font-size: $text-xl;
+    }
+  }
+
+  .hashtag-title-highlight {
+    color: var(--primary-color);
+    text-decoration: $button-underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+    font-weight: $font-bold;
+  }
 }

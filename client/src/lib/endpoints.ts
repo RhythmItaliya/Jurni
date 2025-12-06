@@ -19,6 +19,7 @@ export const ENDPOINTS = {
   POSTS: {
     CREATE: '/posts/create',
     LIST: '/posts/list',
+    HASHTAG_POSTS: (hashtag: string) => `/posts/hashtag/${hashtag}`,
     MY_POSTS: '/posts/my-posts',
     MY_SAVE_POSTS: '/posts/my-save-posts',
     MY_LIKE_POSTS: '/posts/my-like-posts',

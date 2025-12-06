@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import type { Swiper as SwiperType } from 'swiper';
 import { Card, CardBody } from '../Card';
 import { CardHeader } from '../Card';
@@ -46,6 +47,7 @@ export default function PostCard({
   onComment,
 }: Pick<PostCardProps, 'post' | 'onComment'>) {
   const postId = React.useId();
+  const router = useRouter();
   const swiperRef = React.useRef<SwiperType | null>(null);
   const [currentMediaIndex, setCurrentMediaIndex] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -168,6 +170,10 @@ export default function PostCard({
     if (swiperRef.current) {
       swiperRef.current.slideNext();
     }
+  };
+
+  const handleHashtagClick = (hashtag: string) => {
+    router.push(`/p/h/${hashtag}`);
   };
 
   const playVideoAtIndex = (index: number) => {
@@ -411,9 +417,13 @@ export default function PostCard({
             {post.hashtags && post.hashtags.length > 0 && (
               <div className="post-hashtags">
                 {post.hashtags.map((hashtag, idx) => (
-                  <span key={idx} className="hashtag">
+                  <button
+                    key={idx}
+                    className="hashtag"
+                    onClick={() => handleHashtagClick(hashtag)}
+                  >
                     #{hashtag}
-                  </span>
+                  </button>
                 ))}
               </div>
             )}
