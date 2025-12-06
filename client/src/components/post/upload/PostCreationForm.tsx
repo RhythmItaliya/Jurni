@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { IconButton } from '@/components/ui/IconButton';
 import { Button } from '@/components/ui/Button';
 import { Input, TextArea, Select, Checkbox } from '@/components/ui';
-import { CreatePostData } from '@/types/post';
+import { CreatePostData, PostData } from '@/types/post';
 import { useReduxToast } from '@/hooks/useReduxToast';
 import {
   getCurrentLocation,
@@ -28,12 +28,16 @@ interface PostCreationFormProps {
   onSubmit: (postData: CreatePostData, mediaFiles?: File[]) => Promise<void>;
   loading?: boolean;
   error?: string | null;
+  initialData?: Partial<PostData>;
+  isEdit?: boolean;
 }
 
 const PostCreationForm: React.FC<PostCreationFormProps> = ({
   onSubmit: _onSubmit,
   loading: _loading,
   error: _error,
+  initialData,
+  isEdit = false,
 }) => {
   const router = useRouter();
   const { showError, showWarning } = useReduxToast();
@@ -45,8 +49,8 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Step state for multi-step form
-  const [currentStep, setCurrentStep] = useState(0);
-  const totalSteps = 8; // 0: media, 1: title, 2: desc, 3: hashtags, 4: status, 5: visibility, 6: location, 7: permissions
+  const [currentStep, setCurrentStep] = useState(isEdit ? 1 : 0);
+  const totalSteps = isEdit ? 7 : 8; // Edit mode skips media step (0), so 7 steps total
 
   // Form state
   const [title, setTitle] = useState('');
@@ -64,6 +68,22 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
   const [allowShares, setAllowShares] = useState(true);
   const [allowSaves, setAllowSaves] = useState(true);
   const [location, setLocation] = useState<LocationData | undefined>();
+
+  // Initialize form with initial data for editing
+  useEffect(() => {
+    if (isEdit && initialData) {
+      setTitle(initialData.title || '');
+      setDescription(initialData.description || '');
+      setHashtags(initialData.hashtags || []);
+      setStatus(initialData.status || 'active');
+      setVisibility(initialData.visibility || 'public');
+      setAllowComments(initialData.allowComments ?? true);
+      setAllowLikes(initialData.allowLikes ?? true);
+      setAllowShares(initialData.allowShares ?? true);
+      setAllowSaves(initialData.allowSaves ?? true);
+      setLocation(initialData.location);
+    }
+  }, [isEdit, initialData]);
 
   // Keyboard navigation for preview mode
   useEffect(() => {
@@ -93,7 +113,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
 
   // Step navigation handlers
   const handleNext = () => {
-    if (currentStep === 0 && selectedFiles.length === 0) {
+    if (currentStep === 0 && selectedFiles.length === 0 && !isEdit) {
       showWarning(
         'Media Required',
         'Please select at least one media file to continue'
@@ -106,7 +126,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
   };
 
   const handlePrevious = () => {
-    if (currentStep > 0) {
+    if (currentStep > (isEdit ? 1 : 0)) {
       setCurrentStep(currentStep - 1);
     }
   };
@@ -198,24 +218,27 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
 
     try {
       await _onSubmit(postData, selectedFiles);
-      // Reset form after successful submission
-      setSelectedFiles([]);
-      setPreviews([]);
-      setTitle('');
-      setDescription('');
-      setHashtags([]);
-      setCurrentHashtag('');
-      setStatus('active');
-      setVisibility('public');
-      setAllowComments(true);
-      setAllowLikes(true);
-      setAllowShares(true);
-      setAllowSaves(true);
-      setLocation(undefined);
-      setCurrentStep(0);
 
-      // Redirect to profile page after successful post creation
-      router.push('/profile');
+      if (!isEdit) {
+        // Reset form after successful submission (only for create mode)
+        setSelectedFiles([]);
+        setPreviews([]);
+        setTitle('');
+        setDescription('');
+        setHashtags([]);
+        setCurrentHashtag('');
+        setStatus('active');
+        setVisibility('public');
+        setAllowComments(true);
+        setAllowLikes(true);
+        setAllowShares(true);
+        setAllowSaves(true);
+        setLocation(undefined);
+        setCurrentStep(0);
+
+        // Redirect to profile page after successful post creation
+        router.push('/profile');
+      }
     } catch (error) {
       // Error handling is done in the parent component
       console.error('Error submitting post:', error);
@@ -223,7 +246,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
   };
 
   return (
-    <div className="post-creation-container">
+    <div className={`post-creation-container ${isEdit ? 'edit-mode' : ''}`}>
       <div
         className="post-creation-card-wrapper"
         style={
@@ -237,17 +260,31 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
           <div className="step-indicator">
             <div className="step-info">
               <span className="step-number">
-                Step {currentStep + 1} of {totalSteps}
+                Step {isEdit ? currentStep : currentStep + 1} of {totalSteps}
               </span>
               <span className="step-title">
-                {currentStep === 0 && 'Media Selection'}
-                {currentStep === 1 && 'Post Title'}
-                {currentStep === 2 && 'Description'}
-                {currentStep === 3 && 'Hashtags'}
-                {currentStep === 4 && 'Post Status'}
-                {currentStep === 5 && 'Visibility'}
-                {currentStep === 6 && 'Location'}
-                {currentStep === 7 && 'Permissions'}
+                {isEdit ? (
+                  <>
+                    {currentStep === 1 && 'Post Title'}
+                    {currentStep === 2 && 'Description'}
+                    {currentStep === 3 && 'Hashtags'}
+                    {currentStep === 4 && 'Post Status'}
+                    {currentStep === 5 && 'Visibility'}
+                    {currentStep === 6 && 'Location'}
+                    {currentStep === 7 && 'Permissions'}
+                  </>
+                ) : (
+                  <>
+                    {currentStep === 0 && 'Media Selection'}
+                    {currentStep === 1 && 'Post Title'}
+                    {currentStep === 2 && 'Description'}
+                    {currentStep === 3 && 'Hashtags'}
+                    {currentStep === 4 && 'Post Status'}
+                    {currentStep === 5 && 'Visibility'}
+                    {currentStep === 6 && 'Location'}
+                    {currentStep === 7 && 'Permissions'}
+                  </>
+                )}
               </span>
             </div>
           </div>
@@ -985,7 +1022,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
           </AnimatePresence>
 
           <div className="step-navigation">
-            {currentStep > 0 && (
+            {currentStep > (isEdit ? 1 : 0) && (
               <Button
                 variant="secondary"
                 onClick={handlePrevious}
@@ -1010,7 +1047,7 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
                 loading={_loading}
                 disabled={_loading}
               >
-                Create Post
+                {isEdit ? 'Update Post' : 'Create Post'}
               </Button>
             )}
           </div>

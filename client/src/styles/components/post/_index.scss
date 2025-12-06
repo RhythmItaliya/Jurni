@@ -416,3 +416,14 @@
     }
   }
 }
+
+.post-owner-actions {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+  background: $bg-surface;
+  border-radius: $radius-lg;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

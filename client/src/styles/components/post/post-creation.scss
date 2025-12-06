@@ -11,6 +11,13 @@
   padding: 1rem;
   overflow: hidden;
 
+  &.edit-mode {
+    height: auto;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    background: transparent;
+  }
+
   .post-creation-card-wrapper {
     width: 100%;
     max-width: 700px;

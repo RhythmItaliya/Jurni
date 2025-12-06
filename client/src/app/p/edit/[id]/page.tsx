@@ -4,39 +4,26 @@ import { useParams } from 'next/navigation';
 import React from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { PostCard } from '@/components/ui';
-import { useGetPostById, useDeletePost } from '@/hooks/usePosts';
+import PostCreationForm from '@/components/post/upload/PostCreationForm';
+import { CreatePostData } from '@/types/post';
+import { useGetPostById, useUpdatePost } from '@/hooks/usePosts';
 import { PostNotFound, PostMessage } from '@/components/post/PostNotFound';
 import SkeletonPost from '@/components/ui/post/SkeletonPost';
-import { Button } from '@/components/ui/Button';
-import { Edit, Trash2 } from 'lucide-react';
 
 /**
- * Post detail page component
- * Route: /p/[id]
- * Displays a single post with full details
- * @returns {JSX.Element} Post detail page content
+ * Edit post page component
+ * Route: /edit/[id]
+ * Allows users to edit their own posts
+ * @returns {JSX.Element} Edit post page content
  */
-export default function PostDetailPage() {
+export default function EditPostPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
   const { data: session, status } = useSession();
 
   const { data: post, isLoading, error } = useGetPostById(id);
-  const deletePost = useDeletePost();
-
-  const isOwnPost = session?.user?.uuid === post?.userId?.uuid;
-
-  const handleEdit = () => {
-    router.push(`/p/edit/${id}`);
-  };
-
-  const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
-      deletePost.mutate(id);
-    }
-  };
+  const updatePost = useUpdatePost();
 
   if (status === 'loading' || isLoading) {
     if (status === 'unauthenticated') {
@@ -80,7 +67,7 @@ export default function PostDetailPage() {
             </svg>
           }
           title="Login Required"
-          description="You need to be logged in to view this post."
+          description="You need to be logged in to edit this post."
           buttonText="Login"
           buttonHref="/auth/login"
         />
@@ -91,37 +78,56 @@ export default function PostDetailPage() {
     return <PostNotFound postId={id} />;
   }
 
-  return (
-    <div>
-      <PostCard
-        post={post}
-        onComment={() => {
-          console.log('Comment clicked for post:', post._id);
-        }}
+  // Check if user owns the post
+  const isOwnPost = session?.user?.uuid === post.userId?.uuid;
+  if (!isOwnPost) {
+    return (
+      <PostMessage
+        icon={
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+            />
+          </svg>
+        }
+        title="Access Denied"
+        description="You can only edit your own posts."
+        buttonText="Go Back"
+        buttonHref={`/p/${id}`}
       />
-      {isOwnPost && (
-        <div className="post-owner-actions">
-          <Button
-            variant="outline"
-            size="md"
-            onClick={handleEdit}
-            icon={<Edit size={16} />}
-            iconPosition="left"
-          >
-            Edit Post
-          </Button>
-          <Button
-            variant="danger"
-            size="md"
-            onClick={handleDelete}
-            disabled={deletePost.isPending}
-            icon={<Trash2 size={16} />}
-            iconPosition="left"
-          >
-            {deletePost.isPending ? 'Deleting...' : 'Delete Post'}
-          </Button>
-        </div>
-      )}
-    </div>
+    );
+  }
+
+  const handleSubmit = async (postData: CreatePostData) => {
+    try {
+      await updatePost.mutateAsync({
+        postId: id,
+        data: postData,
+      });
+
+      // Success is handled by the hook's onSuccess callback
+      router.push(`/p/${id}`);
+    } catch (error) {
+      // Error is handled by the hook's onError callback
+      console.error('Failed to update post:', error);
+    }
+  };
+
+  return (
+    <PostCreationForm
+      onSubmit={handleSubmit}
+      loading={updatePost.isPending}
+      error={updatePost.error?.message || null}
+      initialData={post}
+      isEdit={true}
+    />
   );
 }
