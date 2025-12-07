@@ -136,6 +136,59 @@ export class PostController {
   }
 
   /**
+   * Get posts by hashtag with pagination
+   * Endpoint: GET /posts/hashtag/:hashtag
+   * @param hashtag - Hashtag to filter posts
+   * @param query - Query parameters for pagination
+   * @param req - Request object with user info
+   * @returns Posts list with pagination metadata
+   */
+  @Get(ENDPOINTS.POSTS.HASHTAG_POSTS(':hashtag'))
+  @ApiOperation({ summary: 'Get posts by hashtag with pagination' })
+  @ApiResponse({
+    status: 200,
+    description: 'Hashtag posts retrieved successfully',
+    type: BaseResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Failed to retrieve hashtag posts' })
+  async getPostsByHashtag(
+    @Param('hashtag') hashtag: string,
+    @Query() query: PostQueryDto,
+    @Request() req: any,
+  ): Promise<BaseResponseDto> {
+    try {
+      const requestingUserId = req.user?.id;
+      const hashtagQuery = { ...query, hashtag };
+      const result = await this.postService.getPosts(
+        hashtagQuery,
+        requestingUserId,
+      );
+
+      return {
+        success: true,
+        message: 'Hashtag posts retrieved successfully',
+        data: result.posts,
+        meta: {
+          page: result.page,
+          limit: query.limit || 2,
+          total: result.total,
+          totalPages: result.totalPages,
+        },
+      };
+    } catch (error) {
+      console.error('getPostsByHashtag error:', error);
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Failed to retrieve hashtag posts',
+          error: error.message || 'Unknown error',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  /**
    * Get authenticated user's own posts
    * Endpoint: GET /posts/my-posts
    * @param query - Query parameters for pagination and filtering
