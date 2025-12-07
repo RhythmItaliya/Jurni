@@ -9,6 +9,9 @@ import { useGetPostsByHashtag } from '@/hooks/usePosts';
 import { PostData } from '@/types/post';
 import { PostMessage } from '@/components/post/PostNotFound';
 import SkeletonPost from '@/components/ui/post/SkeletonPost';
+import CommentsPanel from '@/components/layout/CommentsPanel';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useReduxToast } from '@/hooks/useReduxToast';
 
 /**
  * Hashtag posts page component
@@ -21,9 +24,14 @@ export default function HashPostsPage() {
   const hashtag = params.hashtag as string;
   const { data: session, status } = useSession();
 
+  const [openCommentsPostId, setOpenCommentsPostId] = React.useState<
+    string | null
+  >(null);
+
   const { data, isLoading, error } = useGetPostsByHashtag(hashtag, {
     query: { page: 1, limit: 10 },
   });
+  const { showWarning } = useReduxToast();
 
   if (status === 'loading' || isLoading) {
     if (status === 'unauthenticated') {
@@ -89,21 +97,60 @@ export default function HashPostsPage() {
   const posts = data?.posts || [];
 
   return (
-    <>
-      <div className="hashtag-page-title">
-        <h1>
-          Posts tagged with <span className="hashtag-title-highlight">#{hashtag}</span>
-        </h1>
+    <div className="page-content-in-main">
+      <div
+        className={`posts-with-comments-container post-detail-page ${openCommentsPostId ? 'with-comments' : ''}`}
+      >
+        <div className="posts-container">
+          <div className="hashtag-page-title">
+            <h1>
+              Posts tagged with{' '}
+              <span className="hashtag-title-highlight">#{hashtag}</span>
+            </h1>
+          </div>
+          {posts.map((post: PostData) => (
+            <PostCard
+              key={post._id}
+              post={post}
+              onComment={postId => {
+                if (status === 'unauthenticated') {
+                  showWarning(
+                    'Login Required',
+                    'You need to be logged in to view comments.'
+                  );
+                  return;
+                }
+
+                if (openCommentsPostId === postId) {
+                  setOpenCommentsPostId(null);
+                } else {
+                  setOpenCommentsPostId(postId);
+                }
+              }}
+            />
+          ))}
+        </div>
+        <AnimatePresence>
+          {openCommentsPostId && (
+            <motion.div
+              key="comments-panel"
+              className="comments-container"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: '400px', opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              <CommentsPanel
+                post={
+                  posts.find((p: PostData) => p._id === openCommentsPostId) ||
+                  null
+                }
+                onClose={() => setOpenCommentsPostId(null)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-      {posts.map((post: PostData) => (
-        <PostCard
-          key={post._id}
-          post={post}
-          onComment={() => {
-            console.log('Comment clicked for post:', post._id);
-          }}
-        />
-      ))}
-    </>
+    </div>
   );
 }

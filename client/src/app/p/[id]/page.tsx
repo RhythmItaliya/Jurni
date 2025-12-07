@@ -10,6 +10,9 @@ import { PostNotFound, PostMessage } from '@/components/post/PostNotFound';
 import SkeletonPost from '@/components/ui/post/SkeletonPost';
 import { Button } from '@/components/ui/Button';
 import { Edit, Trash2 } from 'lucide-react';
+import CommentsPanel from '@/components/layout/CommentsPanel';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useReduxToast } from '@/hooks/useReduxToast';
 
 /**
  * Post detail page component
@@ -23,8 +26,13 @@ export default function PostDetailPage() {
   const id = params.id as string;
   const { data: session, status } = useSession();
 
+  const [openCommentsPostId, setOpenCommentsPostId] = React.useState<
+    string | null
+  >(null);
+
   const { data: post, isLoading, error } = useGetPostById(id);
   const deletePost = useDeletePost();
+  const { showWarning } = useReduxToast();
 
   const isOwnPost = session?.user?.uuid === post?.userId?.uuid;
 
@@ -92,36 +100,72 @@ export default function PostDetailPage() {
   }
 
   return (
-    <div>
-      <PostCard
-        post={post}
-        onComment={() => {
-          console.log('Comment clicked for post:', post._id);
-        }}
-      />
-      {isOwnPost && (
-        <div className="post-owner-actions">
-          <Button
-            variant="outline"
-            size="md"
-            onClick={handleEdit}
-            icon={<Edit size={16} />}
-            iconPosition="left"
-          >
-            Edit Post
-          </Button>
-          <Button
-            variant="danger"
-            size="md"
-            onClick={handleDelete}
-            disabled={deletePost.isPending}
-            icon={<Trash2 size={16} />}
-            iconPosition="left"
-          >
-            {deletePost.isPending ? 'Deleting...' : 'Delete Post'}
-          </Button>
+    <div className="page-content-in-main">
+      <div
+        className={`posts-with-comments-container post-detail-page ${openCommentsPostId ? 'with-comments' : ''}`}
+      >
+        <div className="posts-container">
+          <PostCard
+            post={post}
+            onComment={postId => {
+              if (status === 'unauthenticated') {
+                showWarning(
+                  'Login Required',
+                  'You need to be logged in to view comments.'
+                );
+                return;
+              }
+
+              // Toggle logic: if same post is clicked, close it; otherwise open the new post
+              if (openCommentsPostId === postId) {
+                setOpenCommentsPostId(null);
+              } else {
+                setOpenCommentsPostId(postId);
+              }
+            }}
+          />
+          {isOwnPost && !openCommentsPostId && (
+            <div className="post-owner-actions">
+              <Button
+                variant="outline"
+                size="md"
+                onClick={handleEdit}
+                icon={<Edit size={16} />}
+                iconPosition="left"
+              >
+                Edit Post
+              </Button>
+              <Button
+                variant="danger"
+                size="md"
+                onClick={handleDelete}
+                disabled={deletePost.isPending}
+                icon={<Trash2 size={16} />}
+                iconPosition="left"
+              >
+                {deletePost.isPending ? 'Deleting...' : 'Delete Post'}
+              </Button>
+            </div>
+          )}
         </div>
-      )}
+        <AnimatePresence>
+          {openCommentsPostId && (
+            <motion.div
+              key="comments-panel"
+              className="comments-container"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: '400px', opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              <CommentsPanel
+                post={post}
+                onClose={() => setOpenCommentsPostId(null)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

@@ -423,6 +423,13 @@
   max-width: 100% !important;
 }
 
+// Hashtag pages should not have max-width restriction
+// Post detail pages should not have max-width restriction
+.page-content-in-main:has(.post-detail-page) {
+  max-width: none;
+  padding: 0;
+}
+
 .right-sidebar {
   width: 20rem;
   height: 100vh;

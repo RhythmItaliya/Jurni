@@ -33,6 +33,7 @@ import {
   useSavePost,
   useUnsavePost,
 } from '@/hooks/useSavePosts';
+import { useReduxToast } from '@/hooks/useReduxToast';
 
 /**
  * PostCard component
@@ -75,6 +76,7 @@ export default function PostCard({
 
   // Follow functionality
   const { data: session, status: sessionStatus } = useSession();
+  const { showWarning } = useReduxToast();
   const { data: followStatus } = useFollowStatus(
     post.userId?.uuid,
     !!post.userId?.uuid && sessionStatus === 'authenticated'
@@ -85,6 +87,11 @@ export default function PostCard({
   const isOwnPost = session?.user?.uuid === post.userId?.uuid;
 
   const handleLike = React.useCallback(() => {
+    if (sessionStatus === 'unauthenticated') {
+      showWarning('Login Required', 'You need to be logged in to like posts.');
+      return;
+    }
+
     const wasLiked = localLikeStats.isLikedByUser;
     const newLikeCount = wasLiked
       ? localLikeStats.totalLikes - 1
@@ -110,7 +117,14 @@ export default function PostCard({
         },
       }
     );
-  }, [localLikeStats, likeMutation, unlikeMutation, post._id]);
+  }, [
+    localLikeStats,
+    likeMutation,
+    unlikeMutation,
+    post._id,
+    sessionStatus,
+    showWarning,
+  ]);
 
   // Save functionality with local state for real-time updates
   const { data: saveStats } = useSavePostStats(post._id);
@@ -131,6 +145,11 @@ export default function PostCard({
   const unsaveMutation = useUnsavePost();
 
   const handleSave = React.useCallback(() => {
+    if (sessionStatus === 'unauthenticated') {
+      showWarning('Login Required', 'You need to be logged in to save posts.');
+      return;
+    }
+
     const wasSaved = localSaveStats.isSavedByUser;
     const newSaveCount = wasSaved
       ? localSaveStats.totalSaves - 1
@@ -156,7 +175,14 @@ export default function PostCard({
         },
       }
     );
-  }, [localSaveStats, saveMutation, unsaveMutation, post._id]);
+  }, [
+    localSaveStats,
+    saveMutation,
+    unsaveMutation,
+    post._id,
+    sessionStatus,
+    showWarning,
+  ]);
   const media = post.media || [];
   const hasMultipleMedia = media.length > 1;
 
