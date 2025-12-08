@@ -33,6 +33,7 @@ export const ENDPOINTS = {
     CREATE: 'create',
     LIST: 'list',
     HASHTAG_POSTS: (hashtag: string) => `hashtag/${hashtag}`,
+    LOCATION_POSTS: (location: string) => `location/${location}`,
     MY_POSTS: 'my-posts',
     MY_SAVE_POSTS: 'my-save-posts',
     MY_LIKE_POSTS: 'my-like-posts',

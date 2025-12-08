@@ -189,6 +189,75 @@ export class PostController {
   }
 
   /**
+   * Get posts by location
+   * Endpoint: GET /posts/location/:location
+   * @param location - Location path (e.g., 'us/california' or 'new-york')
+   * @param query - Query parameters for pagination
+   * @param req - Request object with user info
+   * @returns Posts list with pagination metadata
+   */
+  @Get('location/:location')
+  @ApiOperation({ summary: 'Get posts by location with pagination' })
+  @ApiResponse({
+    status: 200,
+    description: 'Location posts retrieved successfully',
+    type: BaseResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Failed to retrieve location posts',
+  })
+  async getPostsByLocation(
+    @Param('location') location: string,
+    @Query() query: PostQueryDto,
+    @Request() req: any,
+  ): Promise<BaseResponseDto> {
+    try {
+      const requestingUserId = req.user?.id;
+      const decodedLocation = decodeURIComponent(location);
+
+      // Try to parse as JSON to get display_name
+      let filterLocation = decodedLocation;
+      try {
+        const parsed = JSON.parse(decodedLocation);
+        if (parsed.display_name) {
+          filterLocation = parsed.display_name;
+        }
+      } catch {
+        // Not JSON, use as is
+      }
+
+      const locationQuery = { ...query, location: filterLocation };
+      const result = await this.postService.getPosts(
+        locationQuery,
+        requestingUserId,
+      );
+
+      return {
+        success: true,
+        message: 'Location posts retrieved successfully',
+        data: result.posts,
+        meta: {
+          page: result.page,
+          limit: query.limit || 2,
+          total: result.total,
+          totalPages: result.totalPages,
+        },
+      };
+    } catch (error) {
+      console.error('getPostsByLocation error:', error);
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Failed to retrieve location posts',
+          error: error.message || 'Unknown error',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  /**
    * Get authenticated user's own posts
    * Endpoint: GET /posts/my-posts
    * @param query - Query parameters for pagination and filtering

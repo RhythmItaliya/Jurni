@@ -21,6 +21,16 @@ export class Post {
   @Prop({
     type: Object,
     default: null,
+    get: (value: any) => {
+      if (typeof value === 'string') {
+        try {
+          return JSON.parse(value);
+        } catch {
+          return value;
+        }
+      }
+      return value;
+    },
   })
   location?: LocationData;
 

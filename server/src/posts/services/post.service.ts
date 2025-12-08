@@ -82,6 +82,9 @@ export class PostService {
         visibility,
         hashtag,
         location,
+        locationPlaceId,
+        locationLat,
+        locationLon,
         search,
         sortBy = 'recent',
         page = 1,
@@ -112,7 +115,28 @@ export class PostService {
 
       // Location filter
       if (location) {
-        filter['location.name'] = { $regex: location, $options: 'i' };
+        const locationParts = location
+          .split(',')
+          .map((part) => part.trim())
+          .filter((part) => part);
+        if (locationParts.length > 0) {
+          const regexPattern = locationParts.join('|');
+          filter['location.display_name'] = {
+            $regex: regexPattern,
+            $options: 'i',
+          };
+        }
+      }
+
+      // Location place ID filter
+      if (locationPlaceId) {
+        filter['location.place_id'] = locationPlaceId;
+      }
+
+      // Location lat/lon filter
+      if (locationLat !== undefined && locationLon !== undefined) {
+        filter['location.lat'] = locationLat.toString();
+        filter['location.lon'] = locationLon.toString();
       }
 
       // Search filter

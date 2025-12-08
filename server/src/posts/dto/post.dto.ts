@@ -552,6 +552,36 @@ export class PostQueryDto {
   location?: string;
 
   @ApiProperty({
+    description: 'Location place ID filter',
+    example: 227867496,
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'Location place ID must be a number' })
+  locationPlaceId?: number;
+
+  @ApiProperty({
+    description: 'Location latitude filter',
+    example: 23.238822,
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'Location latitude must be a number' })
+  locationLat?: number;
+
+  @ApiProperty({
+    description: 'Location longitude filter',
+    example: 72.6390794,
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'Location longitude must be a number' })
+  locationLon?: number;
+
+  @ApiProperty({
     description: 'Sort by',
     example: 'recent',
     enum: ['recent', 'popular', 'trending', 'oldest'],
