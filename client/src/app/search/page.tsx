@@ -43,7 +43,7 @@ export default function SearchPage() {
       router.push(`/p/${identifier}`);
     } else if (type === 'hashtag') {
       // Navigate to hashtag posts
-      router.push(`/h/${identifier}`);
+      router.push(`/p/h/${identifier}`);
     }
   };
 
