@@ -151,7 +151,7 @@ export function useUpdateProfile() {
         'Your profile has been updated successfully'
       );
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message = extractServerMessage(error);
       showError('Update Failed', message || 'Failed to update profile');
     },
@@ -240,7 +240,7 @@ export function useUpdateProfileWithFiles() {
         'Your profile and images have been updated successfully'
       );
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message = extractServerMessage(error);
       showError(
         'Update Failed',

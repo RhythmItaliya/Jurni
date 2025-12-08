@@ -104,7 +104,7 @@ export interface LocationData {
     country_code?: string;
 
     /** Additional address fields */
-    [key: string]: any;
+    [key: string]: unknown;
   };
 
   /** Bounding box coordinates [min_lat, max_lat, min_lon, max_lon] */

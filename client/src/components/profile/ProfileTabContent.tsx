@@ -4,11 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import { MediaObject } from '@/types/profile';
+
 interface Post {
   _id: string;
   title: string;
   description: string;
-  media?: any[];
+  media?: MediaObject[];
   userId?: {
     username?: string;
     _id?: string;

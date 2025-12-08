@@ -15,7 +15,7 @@ import {
   useFollowUser,
   useUnfollowUser,
 } from '@/hooks/useFollow';
-import { UserPlus, UserCheck, MoreVertical, MapPin } from 'lucide-react';
+import { UserPlus, UserCheck, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PostCardProps } from '@/types/post';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -34,6 +34,8 @@ import {
   useSavePost,
   useUnsavePost,
 } from '@/hooks/useSavePosts';
+import { formatLocation } from '@/lib/locationUtils';
+import { useReportPost } from '@/hooks/useReport';
 import { useReduxToast } from '@/hooks/useReduxToast';
 import ReportModal from '../ReportModal';
 
@@ -86,6 +88,9 @@ export default function PostCard({
   );
   const followUser = useFollowUser();
   const unfollowUser = useUnfollowUser();
+
+  // Report functionality
+  const reportMutation = useReportPost();
 
   const isOwnPost = session?.user?.uuid === post.userId?.uuid;
 
@@ -302,6 +307,31 @@ export default function PostCard({
                   className="location-icon-btn"
                   icon={<MapPin size={16} />}
                   aria-label="Post location"
+                  onClick={() => {
+                    if (post.location) {
+                      let locationData = post.location;
+                      if (typeof post.location === 'string') {
+                        try {
+                          locationData = JSON.parse(post.location);
+                        } catch {
+                          showWarning(
+                            'Location Error',
+                            'Unable to load location data.'
+                          );
+                          return;
+                        }
+                      }
+                      const locationSlug = encodeURIComponent(
+                        formatLocation(locationData)
+                      );
+                      router.push(`/p/l/${locationSlug}`);
+                    } else {
+                      showWarning(
+                        'Location Not Found',
+                        'This post does not have a location.'
+                      );
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -533,9 +563,30 @@ export default function PostCard({
       <ReportModal
         isOpen={isReportModalOpen}
         onClose={() => setIsReportModalOpen(false)}
-        postId={post._id}
-        postAuthor={post.userId?.username}
-        isOwnPost={isOwnPost}
+        reportType="post"
+        reportedId={post._id}
+        reportedName={post.userId?.username}
+        isOwn={isOwnPost}
+        onSubmit={(data: {
+          reportType: 'post' | 'user';
+          reportedId: string;
+          reason: string;
+          description: string;
+        }) => {
+          reportMutation.mutate({
+            reportType: data.reportType,
+            reportedId: data.reportedId,
+            reason: data.reason as
+              | 'spam'
+              | 'harassment'
+              | 'inappropriate_content'
+              | 'copyright_violation'
+              | 'fake_account'
+              | 'other',
+            description: data.description,
+          });
+        }}
+        isSubmitting={reportMutation.isPending}
       />
     </div>
   );

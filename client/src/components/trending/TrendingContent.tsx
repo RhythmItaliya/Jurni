@@ -3,12 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Hash, Star } from 'lucide-react';
+import { MediaObject } from '@/types/profile';
 
 interface Post {
   _id: string;
   title: string;
   description: string;
-  media?: any[];
+  media?: {
+    publicUrl: string;
+    mediaType: string;
+  }[];
   userId?: {
     username?: string;
     _id?: string;
@@ -35,20 +39,12 @@ const PostGridItem = ({ post, index }: { post: Post; index: number }) => {
 
     const media = post.media[mediaIndex];
 
-    // Handle different response structures
+    // Use the API response structure
     const url =
       media?.publicUrl ||
-      media?.url ||
-      media?.thumbnailUrl ||
       'https://placehold.co/400x400/2d5016/ffffff/png?text=No+Media';
-
-    // Check mediaType field (from API response) or contentType or URL extension
-    const mediaType = media?.mediaType || '';
-    const contentType = media?.contentType || '';
-    const isVideo =
-      mediaType === 'video' ||
-      contentType.startsWith('video/') ||
-      url.match(/\.(mp4|webm|ogg|mov)$/i);
+    const mediaType = media?.mediaType || 'image';
+    const isVideo = mediaType === 'video';
 
     return {
       url,

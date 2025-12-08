@@ -49,7 +49,7 @@ export function useSearchUsers(
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
     meta: {
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         const message = extractServerMessage(error);
         showError('Search Error', message || 'Failed to search users');
       },
@@ -85,7 +85,7 @@ export function useSearchPosts(
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
     meta: {
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         const message = extractServerMessage(error);
         showError('Search Error', message || 'Failed to search posts');
       },
@@ -119,7 +119,7 @@ export function useSearchHashtags(
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
     meta: {
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         const message = extractServerMessage(error);
         showError('Search Error', message || 'Failed to search hashtags');
       },
@@ -157,7 +157,7 @@ export function useSearch(
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
     meta: {
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         const message = extractServerMessage(error);
         showError('Search Error', message || 'Failed to perform search');
       },

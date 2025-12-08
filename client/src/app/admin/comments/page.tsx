@@ -44,7 +44,7 @@ export default function AdminComments() {
             </div>
             <div className="comment-footer">
               <span className="comment-meta">
-                On post: "My hiking adventure"
+                On post: &quot;My hiking adventure&quot;
               </span>
               <div className="action-buttons">
                 <button className="admin-btn-icon" title="View Post">
@@ -117,10 +117,12 @@ export default function AdminComments() {
               <span className="status-badge status-warning">Pending</span>
             </div>
             <div className="comment-content">
-              <p>I disagree with this point. Here's why...</p>
+              <p>I disagree with this point. Here&apos;s why...</p>
             </div>
             <div className="comment-footer">
-              <span className="comment-meta">On post: "Tech trends 2024"</span>
+              <span className="comment-meta">
+                On post: &quot;Tech trends 2024&quot;
+              </span>
               <div className="action-buttons">
                 <button className="admin-btn-icon" title="Approve">
                   <svg
@@ -196,7 +198,7 @@ export default function AdminComments() {
             </div>
             <div className="comment-footer">
               <span className="comment-meta">
-                On post: "Community guidelines" • Reported by 3 users
+                On post: &quot;Community guidelines&quot; • Reported by 3 users
               </span>
               <div className="action-buttons">
                 <button className="admin-btn-icon" title="View Reports">

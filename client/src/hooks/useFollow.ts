@@ -50,7 +50,7 @@ export function useFollowUser(onSuccess?: () => void) {
 
       showSuccess('Followed', 'You are now following this user');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message = extractServerMessage(error);
       showError('Follow Failed', message || 'Failed to follow user');
     },
@@ -91,7 +91,7 @@ export function useUnfollowUser(onSuccess?: () => void) {
 
       showSuccess('Unfollowed', 'You have unfollowed this user');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message = extractServerMessage(error);
       showError('Unfollow Failed', message || 'Failed to unfollow user');
     },
@@ -129,7 +129,7 @@ export function useGetFollowers(userId: string, enabled = true) {
     staleTime: 2 * 60 * 1000, // 2 minutes
     retry: 1,
     meta: {
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         const message = extractServerMessage(error);
         showError('Error', message || 'Failed to load followers');
       },
@@ -168,7 +168,7 @@ export function useGetFollowing(userId: string, enabled = true) {
     staleTime: 2 * 60 * 1000, // 2 minutes
     retry: 1,
     meta: {
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         const message = extractServerMessage(error);
         showError('Error', message || 'Failed to load following');
       },
@@ -207,7 +207,7 @@ export function useFollowStatus(targetUserId: string, enabled = true) {
     staleTime: 30 * 1000, // 30 seconds
     retry: 1,
     meta: {
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         const message = extractServerMessage(error);
         showError('Error', message || 'Failed to load follow status');
       },

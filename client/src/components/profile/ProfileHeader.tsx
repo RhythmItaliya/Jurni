@@ -12,12 +12,13 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { formatLocation, type LocationData } from '@/lib/locationUtils';
-import { Button, UserReportModal } from '@/components/ui';
+import { Button, ReportModal } from '@/components/ui';
 import {
   useFollowUser,
   useUnfollowUser,
   useFollowStatus,
 } from '@/hooks/useFollow';
+import { useReportUser } from '@/hooks/useReport';
 import { useReduxToast } from '@/hooks/useReduxToast';
 
 export default function ProfileHeader({
@@ -85,6 +86,7 @@ export default function ProfileHeader({
 
   const followUserMutation = useFollowUser();
   const unfollowUserMutation = useUnfollowUser();
+  const reportUserMutation = useReportUser();
   const displayName =
     firstName || lastName
       ? `${firstName || ''} ${lastName || ''}`.trim()
@@ -329,12 +331,28 @@ export default function ProfileHeader({
 
       {/* User Report Modal */}
       {userId && (
-        <UserReportModal
+        <ReportModal
           isOpen={isUserReportModalOpen}
           onClose={() => setIsUserReportModalOpen(false)}
-          userId={userId}
-          username={username}
-          isOwnProfile={isOwnProfile || false}
+          reportType="user"
+          reportedId={userId}
+          reportedName={username}
+          isOwn={isOwnProfile || false}
+          onSubmit={data => {
+            reportUserMutation.mutate({
+              reportType: data.reportType,
+              reportedId: data.reportedId,
+              reason: data.reason as
+                | 'spam'
+                | 'harassment'
+                | 'inappropriate_content'
+                | 'copyright_violation'
+                | 'fake_account'
+                | 'other',
+              description: data.description,
+            });
+          }}
+          isSubmitting={reportUserMutation.isPending}
         />
       )}
     </motion.div>

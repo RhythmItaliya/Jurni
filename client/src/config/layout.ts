@@ -41,6 +41,16 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
     mainContentFullWidth: false, // Use default width for centering
   },
 
+  '/p/l/*': {
+    showLeftSidebar: true, // Navigation sidebar
+    showRightSidebar: true, // Layout sidebar (empty, just for layout)
+    showMainContent: true, // Main content area (same size always)
+    showCommentsPanel: true, // Enable comments side panel
+    layoutType: 'sidebar-only',
+    showPosts: false, // Show page content, not posts feed
+    mainContentFullWidth: false, // Use default width for centering
+  },
+
   '/j/*': {
     showLeftSidebar: true, // Navigation sidebar
     showRightSidebar: false, // No right sidebar

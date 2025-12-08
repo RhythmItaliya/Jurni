@@ -9,7 +9,8 @@ import {
   useUpdateAdmin,
   useDeleteAdmin,
   useAdminSession,
-} from '@/hooks';
+  Admin,
+} from '@/hooks/useAdmin';
 import Loading from '@/app/loading';
 
 export default function AdminManagement() {
@@ -22,8 +23,8 @@ export default function AdminManagement() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedAdmin, setSelectedAdmin] = useState<any>(null);
-  const [adminToDelete, setAdminToDelete] = useState<any>(null);
+  const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
+  const [adminToDelete, setAdminToDelete] = useState<Admin | null>(null);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -42,7 +43,7 @@ export default function AdminManagement() {
     });
   };
 
-  const handleEdit = (admin: any) => {
+  const handleEdit = (admin: Admin) => {
     setSelectedAdmin(admin);
     setShowEditModal(true);
   };
@@ -72,7 +73,7 @@ export default function AdminManagement() {
     }
   };
 
-  const handleDelete = (uuid: string, role: string, admin: any) => {
+  const handleDelete = (uuid: string, role: string, admin: Admin) => {
     if (role === 'super_admin') {
       alert('Super admin accounts cannot be deleted');
       return;
@@ -146,7 +147,7 @@ export default function AdminManagement() {
               </tr>
             </thead>
             <tbody>
-              {admins?.map((admin: any) => (
+              {admins?.map((admin: Admin) => (
                 <motion.tr
                   key={admin.uuid}
                   initial={{ opacity: 0 }}
@@ -292,7 +293,10 @@ export default function AdminManagement() {
               className="admin-select"
               value={formData.role}
               onChange={e =>
-                setFormData({ ...formData, role: e.target.value as any })
+                setFormData({
+                  ...formData,
+                  role: e.target.value as 'super_admin' | 'admin',
+                })
               }
             >
               <option value="admin">Admin</option>
@@ -333,7 +337,10 @@ export default function AdminManagement() {
               className="admin-select"
               value={formData.role || selectedAdmin?.role}
               onChange={e =>
-                setFormData({ ...formData, role: e.target.value as any })
+                setFormData({
+                  ...formData,
+                  role: e.target.value as 'super_admin' | 'admin',
+                })
               }
             >
               <option value="admin">Admin</option>

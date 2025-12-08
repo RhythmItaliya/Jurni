@@ -5,12 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import {
-  useSearch,
-  useSearchUsers,
-  useSearchPosts,
-  useSearchHashtags,
-} from '@/hooks';
+import { useSearchUsers, useSearchPosts, useSearchHashtags } from '@/hooks';
 import '@/styles/components/search.scss';
 
 /**
@@ -28,31 +23,47 @@ export default function SearchResultsPage() {
     | null;
   const query = searchParams.get('q') || '';
 
-  // Fetch appropriate data based on type
+  // Fetch data for all types (hooks must be called unconditionally)
+  const usersResult = useSearchUsers(
+    query,
+    1,
+    50,
+    type === 'username' && !!query
+  );
+  const hashtagsResult = useSearchHashtags(
+    query,
+    50,
+    type === 'hashtag' && !!query
+  );
+  const postsResult = useSearchPosts(query, 1, 50, type === 'post' && !!query);
+
+  // Select appropriate data based on type
   let data;
   let isLoading;
 
-  if (type === 'username' && query) {
-    const result = useSearchUsers(query, 1, 50, true);
-    data = result.data?.users || [];
-    isLoading = result.isLoading;
-  } else if (type === 'hashtag' && query) {
-    const result = useSearchHashtags(query, 50, true);
-    data = result.data?.hashtags || [];
-    isLoading = result.isLoading;
-  } else if (type === 'post' && query) {
-    const result = useSearchPosts(query, 1, 50, true);
-    data = result.data?.posts || [];
-    isLoading = result.isLoading;
+  if (type === 'username') {
+    data = usersResult.data?.users || [];
+    isLoading = usersResult.isLoading;
+  } else if (type === 'hashtag') {
+    data = hashtagsResult.data?.hashtags || [];
+    isLoading = hashtagsResult.isLoading;
+  } else if (type === 'post') {
+    data = postsResult.data?.posts || [];
+    isLoading = postsResult.isLoading;
+  } else {
+    data = [];
+    isLoading = false;
   }
 
-  const handleResultClick = (item: any) => {
+  const handleResultClick = (item: unknown) => {
     if (type === 'username') {
-      router.push(`/profile/${item.username}`);
+      router.push(`/profile/${(item as { username: string }).username}`);
     } else if (type === 'post') {
-      router.push(`/p/${item._id}`);
+      router.push(`/p/${(item as { _id: string })._id}`);
     } else if (type === 'hashtag') {
-      router.push(`/search?type=hashtag&q=${encodeURIComponent(item)}`);
+      router.push(
+        `/search?type=hashtag&q=${encodeURIComponent(item as string)}`
+      );
     }
   };
 

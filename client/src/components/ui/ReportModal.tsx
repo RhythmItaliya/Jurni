@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Modal } from './Modal';
-import { useReportPost } from '@/hooks/useReport';
 import { Button } from './Button';
 import TextArea from './TextArea';
 import Select from './Select';
@@ -10,9 +9,17 @@ import Select from './Select';
 interface ReportModalProps {
   isOpen: boolean;
   onClose: () => void;
-  postId: string;
-  postAuthor?: string;
-  isOwnPost?: boolean;
+  reportType: 'post' | 'user';
+  reportedId: string;
+  reportedName?: string; // postAuthor or username
+  isOwn?: boolean; // isOwnPost or isOwnProfile
+  onSubmit: (data: {
+    reportType: 'post' | 'user';
+    reportedId: string;
+    reason: string;
+    description: string;
+  }) => void;
+  isSubmitting?: boolean;
 }
 
 const reportReasons = [
@@ -27,45 +34,50 @@ const reportReasons = [
 export default function ReportModal({
   isOpen,
   onClose,
-  postId,
-  postAuthor,
-  isOwnPost = false,
+  reportType,
+  reportedId,
+  reportedName,
+  isOwn = false,
+  onSubmit,
+  isSubmitting = false,
 }: ReportModalProps) {
-  // Don't show report modal for own posts
-  if (isOwnPost) {
-    return null;
-  }
   const [reason, setReason] = React.useState('spam');
   const [description, setDescription] = React.useState('');
-  const reportMutation = useReportPost();
+
+  // Don't show report modal for own content
+  if (isOwn) {
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    reportMutation.mutate(
-      {
-        reportType: 'post',
-        reportedId: postId,
-        reason: reason as any,
-        description,
-      },
-      {
-        onSuccess: () => {
-          setReason('spam');
-          setDescription('');
-          onClose();
-        },
-      }
-    );
+    onSubmit({
+      reportType,
+      reportedId,
+      reason,
+      description,
+    });
+    setReason('spam');
+    setDescription('');
+    onClose();
   };
 
+  const title = reportType === 'post' ? 'Report Post' : 'Report User';
+  const infoText =
+    reportType === 'post'
+      ? `Reporting a post by ${reportedName ? `@${reportedName}` : 'this user'}`
+      : `Reporting user ${reportedName ? `@${reportedName}` : ''}`;
+  const placeholder =
+    reportType === 'post'
+      ? "Tell us more about why you're reporting this post..."
+      : "Tell us more about why you're reporting this user...";
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Report Post" size="medium">
+    <Modal isOpen={isOpen} onClose={onClose} title={title} size="medium">
       <form onSubmit={handleSubmit} className="report-form">
-        {postAuthor && (
+        {reportedName && (
           <div className="report-info">
-            <p className="info-text">
-              Reporting a post by <strong>@{postAuthor}</strong>
-            </p>
+            <p className="info-text">{infoText}</p>
           </div>
         )}
 
@@ -90,7 +102,7 @@ export default function ReportModal({
             id="description"
             value={description}
             onChange={e => setDescription(e.target.value)}
-            placeholder="Tell us more about why you're reporting this post..."
+            placeholder={placeholder}
             rows={4}
             maxLength={500}
           />
@@ -98,17 +110,13 @@ export default function ReportModal({
         </div>
 
         <div className="form-actions">
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            disabled={reportMutation.isPending}
-          >
+          <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>
           <Button
             variant="primary"
             type="submit"
-            loading={reportMutation.isPending}
+            loading={isSubmitting}
             loadingText="Submitting..."
             disabled={!reason}
           >

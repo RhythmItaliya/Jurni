@@ -48,9 +48,10 @@ export const useReportPost = () => {
         'Thank you for helping us keep the platform safe.'
       );
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message =
-        error?.response?.data?.message || 'Failed to submit report';
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || 'Failed to submit report';
       showError('Report Failed', message);
     },
   });
@@ -73,9 +74,10 @@ export const useReportUser = () => {
         'Thank you for helping us keep the platform safe.'
       );
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message =
-        error?.response?.data?.message || 'Failed to submit report';
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || 'Failed to submit report';
       showError('Report Failed', message);
     },
   });

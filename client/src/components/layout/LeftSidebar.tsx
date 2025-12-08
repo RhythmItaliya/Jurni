@@ -4,8 +4,6 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useTheme } from '@/contexts/ThemeContext';
-import ThemeToggle from '@/components/ui/ThemeToggle';
 import {
   ChevronRight,
   ChevronLeft,
@@ -27,7 +25,6 @@ export default function LeftSidebar({
   const logoutMutation = useLogout();
   const pathname = usePathname();
   const { data: session } = useSession();
-  const { theme, toggleTheme } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = () => {
@@ -131,16 +128,6 @@ export default function LeftSidebar({
             <MoreHorizontal size={20} />
           </span>
           {!isCollapsed && <span className="nav-text">More</span>}
-        </div>
-        <div className="nav-item theme-item" onClick={toggleTheme}>
-          <span className="nav-icon">
-            <ThemeToggle />
-          </span>
-          {!isCollapsed && (
-            <span className="nav-text">
-              {theme === 'light' ? 'Dark' : 'Light'}
-            </span>
-          )}
         </div>
         <div className="nav-item logout-item" onClick={handleLogout}>
           <span className="nav-icon">

@@ -17,6 +17,8 @@ export interface MediaObject {
   size?: number;
   contentType?: string;
   mediaId?: string;
+  mediaType?: string;
+  thumbnailUrl?: string;
 }
 
 /**

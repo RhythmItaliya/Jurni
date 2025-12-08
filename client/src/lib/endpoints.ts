@@ -20,6 +20,7 @@ export const ENDPOINTS = {
     CREATE: '/posts/create',
     LIST: '/posts/list',
     HASHTAG_POSTS: (hashtag: string) => `/posts/hashtag/${hashtag}`,
+    LOCATION_POSTS: (location: string) => `/posts/location/${location}`,
     MY_POSTS: '/posts/my-posts',
     MY_SAVE_POSTS: '/posts/my-save-posts',
     MY_LIKE_POSTS: '/posts/my-like-posts',
@@ -72,6 +73,14 @@ export const ENDPOINTS = {
       GET_BY_UUID: (uuid: string) => `/admin/users/${uuid}`,
       UPDATE: (uuid: string) => `/admin/users/${uuid}`,
       DELETE: (uuid: string) => `/admin/users/${uuid}`,
+    },
+    ADMINS: {
+      GET_ALL: '/admin/admins/list',
+      GET_BY_UUID: (uuid: string) => `/admin/admins/${uuid}`,
+      UPDATE: (uuid: string) => `/admin/admins/${uuid}`,
+      DELETE: (uuid: string) => `/admin/admins/${uuid}`,
+      CHANGE_PASSWORD: (uuid: string) =>
+        `/admin/admins/${uuid}/change-password`,
     },
   },
   USERS: {

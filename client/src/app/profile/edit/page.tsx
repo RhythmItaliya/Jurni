@@ -6,6 +6,19 @@ import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useUpdateProfileWithFiles } from '@/hooks/useProfile';
 import { UpdateProfileData } from '@/types/profile';
+import { LocationData } from '@/types/location';
+
+interface ProfileEditData {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  email?: string;
+  bio?: string;
+  location?: LocationData;
+  isPrivate?: boolean;
+  coverImage?: File | null;
+  avatarImage?: File | null;
+}
 
 /**
  * Profile Edit page - allows users to edit their profile
@@ -19,9 +32,9 @@ export default function ProfileEditPage() {
     router.push('/profile');
   };
 
-  const handleSave = (data: any) => {
+  const handleSave = (data: ProfileEditData) => {
     // Extract profile data and files
-    const { coverImage, avatarImage, username, email, ...profileData } = data;
+    const { coverImage, avatarImage, ...profileData } = data;
 
     const updateData: UpdateProfileData = {
       firstName: profileData.firstName,

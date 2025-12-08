@@ -14,6 +14,18 @@ export const adminKeys = {
 };
 
 // Types
+export interface Admin {
+  _id: string;
+  uuid: string;
+  username: string;
+  email: string;
+  role: 'super_admin' | 'admin';
+  isActive: boolean;
+  permissions?: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AdminLoginData {
   usernameOrEmail: string;
   password: string;
@@ -149,7 +161,7 @@ export function useGetAdmins() {
   return useQuery({
     queryKey: adminKeys.list(),
     queryFn: async () => {
-      const response = await api.get(ENDPOINTS.ADMIN.GET_ALL);
+      const response = await api.get(ENDPOINTS.ADMIN.USERS.GET_ALL);
       return response.data.data.admins;
     },
   });
@@ -166,7 +178,7 @@ export function useGetAdmin(uuid: string) {
   return useQuery({
     queryKey: adminKeys.detail(uuid),
     queryFn: async () => {
-      const response = await api.get(ENDPOINTS.ADMIN.GET_BY_UUID(uuid));
+      const response = await api.get(ENDPOINTS.ADMIN.USERS.GET_BY_UUID(uuid));
       return response.data.data.admin;
     },
     enabled: !!uuid,
@@ -191,7 +203,10 @@ export function useUpdateAdmin() {
       uuid: string;
       data: UpdateAdminData;
     }) => {
-      const response = await api.patch(ENDPOINTS.ADMIN.UPDATE(uuid), data);
+      const response = await api.patch(
+        ENDPOINTS.ADMIN.USERS.UPDATE(uuid),
+        data
+      );
       return response.data.data;
     },
     onSuccess: (data, variables) => {
@@ -226,7 +241,7 @@ export function useChangeAdminPassword() {
       data: ChangePasswordData;
     }) => {
       const response = await api.patch(
-        ENDPOINTS.ADMIN.CHANGE_PASSWORD(uuid),
+        ENDPOINTS.ADMIN.ADMINS.CHANGE_PASSWORD(uuid),
         data
       );
       return response.data;
@@ -259,7 +274,7 @@ export function useDeleteAdmin() {
 
   return useMutation({
     mutationFn: async (uuid: string) => {
-      const response = await api.delete(ENDPOINTS.ADMIN.DELETE(uuid));
+      const response = await api.delete(ENDPOINTS.ADMIN.ADMINS.DELETE(uuid));
       return response.data;
     },
     onSuccess: () => {
@@ -307,3 +322,20 @@ export function useIsAdminAuthenticated() {
     staleTime: 1000 * 60, // 1 minute
   });
 }
+
+// /**
+//  * Hook to get current admin session data
+//  * Returns parsed admin data from localStorage
+//  *
+//  * @returns {UseQueryResult} Query object with current admin data
+//  */
+// export function useAdminSession() {
+//   return useQuery({
+//     queryKey: adminKeys.session(),
+//     queryFn: () => {
+//       const adminData = localStorage.getItem('adminData');
+//       return adminData ? JSON.parse(adminData) : null;
+//     },
+//     staleTime: 1000 * 60 * 5, // 5 minutes
+//   });
+// }

@@ -41,8 +41,8 @@ export const ProfileNotFound: React.FC<ProfileNotFoundProps> = ({
 
           {/* Description */}
           <p className="profile-not-found__description">
-            Sorry, we couldn't find the user you're looking for. This profile
-            may have been removed or the username might be incorrect.
+            Sorry, we couldn&apos;t find the user you&apos;re looking for. This
+            profile may have been removed or the username might be incorrect.
           </p>
 
           {/* Actions */}

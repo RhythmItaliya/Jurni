@@ -373,16 +373,24 @@ export function useGetPostById(postId: string) {
         const data = response.data;
         if (data.success && data.data) return data.data as PostData;
         throw new Error(data.error || 'Post not found');
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Check HTTP status code
-        if (error.response?.status === 404) {
-          const notFoundError = new Error('Post not found');
-          (notFoundError as any).isNotFound = true;
+        const axiosError = error as { response?: { status?: number } };
+        if (axiosError.response?.status === 404) {
+          const notFoundError = new Error('Post not found') as Error & {
+            isNotFound?: boolean;
+          };
+          notFoundError.isNotFound = true;
           throw notFoundError;
         }
-        if (error.response?.status === 401 || error.response?.status === 403) {
-          const authError = new Error('Authentication required');
-          (authError as any).isAuthError = true;
+        if (
+          axiosError.response?.status === 401 ||
+          axiosError.response?.status === 403
+        ) {
+          const authError = new Error('Authentication required') as Error & {
+            isAuthError?: boolean;
+          };
+          authError.isAuthError = true;
           throw authError;
         }
         // Re-throw other errors
@@ -481,6 +489,63 @@ export function useGetPostsByHashtag(
       };
     },
     enabled: enabled && !!hashtag,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Hook to get posts by location
+ * Handles fetching posts filtered by location with pagination
+ *
+ * @description
+ * - Fetches posts by location via API call
+ * - Supports pagination and query parameters
+ * - Caches results for performance
+ *
+ * @usedIn
+ * - Location posts pages
+ *
+ * @param location - Location string (e.g., 'new-york' or 'us/california')
+ * @param options - Query options including enabled state and additional query params
+ * @returns {UseQueryResult} Query object with location posts list and metadata
+ */
+export function useGetPostsByLocation(
+  location: string,
+  options?: {
+    enabled?: boolean;
+    query?: Record<string, unknown>;
+  }
+) {
+  const { enabled = true, query = {} } = options || {};
+
+  return useQuery({
+    queryKey: [
+      ...postsKeys.list(),
+      'location',
+      location,
+      JSON.stringify(query),
+    ],
+    queryFn: async () => {
+      const response = await api.get(ENDPOINTS.POSTS.LOCATION_POSTS(location), {
+        params: query,
+      });
+      if (response.data && response.data.success && response.data.data) {
+        return {
+          posts: Array.isArray(response.data.data) ? response.data.data : [],
+          meta: response.data.meta || {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+      return {
+        posts: [] as PostData[],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      };
+    },
+    enabled: enabled && !!location,
     staleTime: 5 * 60 * 1000,
   });
 }

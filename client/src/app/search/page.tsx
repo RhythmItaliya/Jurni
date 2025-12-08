@@ -1,11 +1,24 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search as SearchIcon, Loader2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSearch } from '@/hooks';
 import '@/styles/components/search.scss';
+
+interface SearchUser {
+  _id: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+interface SearchPost {
+  _id: string;
+  title: string;
+  description?: string;
+}
 
 /**
  * Search page component
@@ -106,7 +119,7 @@ export default function SearchPage() {
                 <div className="result-section">
                   <h3 className="result-section-title">Users</h3>
                   <div className="result-list">
-                    {displayData.users.map((user: any) => (
+                    {displayData.users.map((user: SearchUser) => (
                       <motion.button
                         key={user._id}
                         className="result-item user-result"
@@ -135,7 +148,7 @@ export default function SearchPage() {
                 <div className="result-section">
                   <h3 className="result-section-title">Posts</h3>
                   <div className="result-list">
-                    {displayData.posts.map((post: any) => (
+                    {displayData.posts.map((post: SearchPost) => (
                       <motion.button
                         key={post._id}
                         className="result-item post-result"
@@ -184,7 +197,7 @@ export default function SearchPage() {
                   displayData.hashtags.length === 0) && (
                   <div className="search-empty">
                     <SearchIcon size={48} />
-                    <p>No results found for "{searchQuery}"</p>
+                    <p>No results found for &quot;{searchQuery}&quot;</p>
                   </div>
                 )}
             </div>
