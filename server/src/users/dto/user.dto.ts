@@ -43,6 +43,15 @@ export class UpdateUserDto {
   })
   @IsOptional()
   isActive?: boolean;
+
+  @ApiProperty({
+    description: 'User account suspended status',
+    example: false,
+    type: Boolean,
+    required: false,
+  })
+  @IsOptional()
+  isSuspended?: boolean;
 }
 
 export class UserResponseDto {

@@ -17,6 +17,18 @@ export const ENDPOINTS = {
     RESET_PASSWORD: 'reset-password',
     VERIFY_RESET_TOKEN: 'verify-reset-token',
   },
+  ADMIN: {
+    AUTH: {
+      LOGIN: 'login',
+      REGISTER: 'register',
+    },
+    USERS: {
+      GET_ALL: 'list',
+      GET_BY_UUID: (uuid: string) => `${uuid}`,
+      UPDATE: (uuid: string) => `${uuid}`,
+      DELETE: (uuid: string) => `${uuid}`,
+    },
+  },
   POSTS: {
     CREATE: 'create',
     LIST: 'list',
@@ -72,6 +84,8 @@ export const buildUrl = (endpoint: string, baseUrl?: string) => {
 // Type for endpoint keys
 export type EndpointKey = keyof typeof ENDPOINTS;
 export type AuthEndpointKey = keyof typeof ENDPOINTS.AUTH;
+export type AdminEndpointKey = keyof typeof ENDPOINTS.ADMIN;
+export type AdminAuthEndpointKey = keyof typeof ENDPOINTS.ADMIN.AUTH;
 export type PostsEndpointKey = keyof typeof ENDPOINTS.POSTS;
 export type CommentsEndpointKey = keyof typeof ENDPOINTS.COMMENTS;
 export type LikesEndpointKey = keyof typeof ENDPOINTS.LIKES;

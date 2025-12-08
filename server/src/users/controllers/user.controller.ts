@@ -156,4 +156,76 @@ export class UserController {
         error: error.message,
       }));
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':uuid/suspend')
+  @ApiOperation({ summary: 'Suspend user by UUID' })
+  @ApiParam({
+    name: 'uuid',
+    description: 'User UUID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User suspended successfully',
+    type: BaseResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  suspendUser(@Param('uuid') uuid: string): Promise<BaseResponseDto> {
+    return this.userService
+      .update(uuid, { isSuspended: true })
+      .then((user) => ({
+        success: true,
+        message: 'User suspended successfully',
+        data: user,
+      }))
+      .catch((error) => ({
+        success: false,
+        message: 'Failed to suspend user',
+        error: error.message,
+      }));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':uuid/unsuspend')
+  @ApiOperation({ summary: 'Unsuspend user by UUID' })
+  @ApiParam({
+    name: 'uuid',
+    description: 'User UUID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User unsuspended successfully',
+    type: BaseResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  unsuspendUser(@Param('uuid') uuid: string): Promise<BaseResponseDto> {
+    return this.userService
+      .update(uuid, { isSuspended: false })
+      .then((user) => ({
+        success: true,
+        message: 'User unsuspended successfully',
+        data: user,
+      }))
+      .catch((error) => ({
+        success: false,
+        message: 'Failed to unsuspend user',
+        error: error.message,
+      }));
+  }
 }

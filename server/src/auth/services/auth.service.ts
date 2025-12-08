@@ -60,6 +60,13 @@ export class AuthService {
       );
     }
 
+    // Check if user is suspended
+    if (user.isSuspended) {
+      throw new UnauthorizedException(
+        'Your account has been suspended. Please contact support for assistance.',
+      );
+    }
+
     const payload = { email: user.email, sub: user.uuid };
     return createSuccessResponse('Login successful', {
       accessToken: this.jwtService.sign(payload),

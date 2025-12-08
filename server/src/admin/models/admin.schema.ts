@@ -2,16 +2,16 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 
-export type UserDocument = User &
+export type AdminDocument = Admin &
   Document & {
     createdAt: Date;
     updatedAt: Date;
   };
 
 @Schema({ timestamps: true })
-export class User {
+export class Admin {
   @ApiProperty({
-    description: 'User UUID',
+    description: 'Admin UUID',
     example: '123e4567-e89b-12d3-a456-426614174000',
     type: String,
   })
@@ -19,43 +19,16 @@ export class User {
   uuid: string;
 
   @ApiProperty({
-    description: 'Username',
-    example: 'johndoe',
+    description: 'Admin username',
+    example: 'admin',
     type: String,
   })
   @Prop({ required: true, unique: true })
   username: string;
 
   @ApiProperty({
-    description: 'User avatar image media object',
-    required: false,
-    example: {
-      key: 'profiles/avatars/image/2025/11/16/user-123/avatar.jpg',
-      url: 'https://r2-url.com/avatar.jpg',
-      publicUrl: 'https://pub-r2-url.com/avatar.jpg',
-      bucket: 'jurni-bucket',
-      size: 512000,
-      contentType: 'image/jpeg',
-      mediaId: '507f1f77bcf86cd799439011',
-    },
-  })
-  @Prop({
-    type: Object,
-    required: false,
-  })
-  avatarImage?: {
-    key: string;
-    url: string;
-    publicUrl: string;
-    bucket: string;
-    size?: number;
-    contentType?: string;
-    mediaId?: string;
-  };
-
-  @ApiProperty({
-    description: 'User email address',
-    example: 'john@example.com',
+    description: 'Admin email address',
+    example: 'admin@jurni.com',
     type: String,
   })
   @Prop({ required: true, unique: true })
@@ -70,31 +43,43 @@ export class User {
   password: string;
 
   @ApiProperty({
-    description: 'User active status',
+    description: 'Admin role',
+    example: 'super_admin',
+    enum: ['super_admin', 'admin'],
+    type: String,
+  })
+  @Prop({
+    required: true,
+    enum: ['super_admin', 'admin'],
+    default: 'admin',
+  })
+  role: string;
+
+  @ApiProperty({
+    description: 'Admin active status',
     example: true,
     type: Boolean,
-    default: false,
+    default: true,
   })
-  @Prop({ default: false })
+  @Prop({ default: true })
   isActive: boolean;
 
   @ApiProperty({
-    description: 'User suspended status',
-    example: false,
-    type: Boolean,
-    default: false,
+    description: 'Admin permissions',
+    example: ['users.read', 'posts.read', 'posts.delete'],
+    type: [String],
   })
-  @Prop({ default: false })
-  isSuspended: boolean;
+  @Prop({ type: [String], default: [] })
+  permissions: string[];
 
   @ApiProperty({
-    description: 'OTP verification timestamp',
+    description: 'Last login timestamp',
     example: '2024-01-01T00:00:00.000Z',
     type: Date,
     required: false,
   })
   @Prop({ required: false })
-  otpVerifiedAt?: Date;
+  lastLoginAt?: Date;
 
   @ApiProperty({
     description: 'Password reset token',
@@ -106,18 +91,27 @@ export class User {
   resetToken?: string;
 
   @ApiProperty({
-    description: 'User creation timestamp',
+    description: 'Reset token expiry',
+    example: '2024-01-01T00:00:00.000Z',
+    type: Date,
+    required: false,
+  })
+  @Prop({ required: false })
+  resetTokenExpiry?: Date;
+
+  @ApiProperty({
+    description: 'Admin creation timestamp',
     example: '2024-01-01T00:00:00.000Z',
     type: Date,
   })
   createdAt: Date;
 
   @ApiProperty({
-    description: 'User last update timestamp',
+    description: 'Admin last update timestamp',
     example: '2024-01-01T00:00:00.000Z',
     type: Date,
   })
   updatedAt: Date;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const AdminSchema = SchemaFactory.createForClass(Admin);

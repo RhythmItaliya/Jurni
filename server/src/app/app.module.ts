@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from '@users/user.module';
 import { AuthModule } from '@auth/auth.module';
+import { AdminModule } from '@/admin/admin.module';
 import { EmailModule } from '@/email/email.module';
 import { UploadModule } from '@/upload/upload.module';
 import { PostsModule } from '@/posts/posts.module';
@@ -13,6 +14,8 @@ import { LikesModule } from '@/likes/likes.module';
 import { SavePostsModule } from '@/saveposts/saveposts.module';
 import { ProfileModule } from '@/profiles/profile.module';
 import { FollowsModule } from '@/follows/follows.module';
+import { ReportsModule } from '@/reports/reports.module';
+import { SearchModule } from '@/search/search.module';
 import { ENV_VARS } from '@config/env';
 
 /**
@@ -32,6 +35,7 @@ import { ENV_VARS } from '@config/env';
     // Feature modules
     UserModule,
     AuthModule,
+    AdminModule,
     EmailModule,
     UploadModule,
     PostsModule,
@@ -40,6 +44,8 @@ import { ENV_VARS } from '@config/env';
     SavePostsModule,
     ProfileModule,
     FollowsModule,
+    ReportsModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
