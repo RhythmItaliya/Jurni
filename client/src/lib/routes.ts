@@ -165,15 +165,20 @@ export const RouteUtils = {
     if (pathname === '/') {
       return '/@me';
     }
-    return null;
-  },
 
-  /**
+    // // Don't redirect for public routes like /j/[username], /p/[id], /h/[hashtag]
+    // // Or for protected authenticated routes like /s/j/[username]
+    // if (pathname.startsWith('/j/') || pathname.startsWith('/p/') || pathname.startsWith('/h/')) {
+    //   return null;
+    // }
+
+    return null;
+  } /**
    * Get redirect path for unauthenticated users
    * Returns null if no redirect needed
    * @param pathname - The current URL path
    * @returns redirect path string or null if no redirect is needed
-   */
+   */,
   getUnauthenticatedRedirect: (pathname: string): string | null => {
     // Redirect unauthenticated users from /@me to /
     if (pathname.startsWith('/@me')) {

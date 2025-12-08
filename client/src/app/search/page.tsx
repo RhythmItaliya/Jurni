@@ -37,7 +37,7 @@ export default function SearchPage() {
     // Navigate to appropriate page based on type
     if (type === 'username') {
       // Navigate to user profile
-      router.push(`/j/${identifier}`);
+      router.push(`/s/j/${identifier}`);
     } else if (type === 'post') {
       // Navigate to post detail
       router.push(`/p/${identifier}`);
