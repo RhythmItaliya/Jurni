@@ -12,7 +12,7 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { formatLocation, type LocationData } from '@/lib/locationUtils';
-import { UserReportModal } from '@/components/ui';
+import { Button, UserReportModal } from '@/components/ui';
 import {
   useFollowUser,
   useUnfollowUser,
@@ -176,42 +176,26 @@ export default function ProfileHeader({
               </div>
             </div>
             {onEdit && (
-              <motion.button
-                className="profile-edit-btn"
+              <Button
+                variant="outline"
+                icon={<Pencil size={16} />}
                 onClick={onEdit}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
-                <Pencil size={16} />
-                <span>Edit Profile</span>
-              </motion.button>
+                Edit Profile
+              </Button>
             )}
             {!isOwnProfile && (
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <motion.button
-                  className="profile-action-btn"
+                <Button
+                  variant="outline"
+                  icon={<Heart size={16} />}
                   onClick={() => setIsUserReportModalOpen(true)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.5rem 1rem',
-                    background: 'var(--bg-secondary)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '0.5rem',
-                    cursor: 'pointer',
-                    fontSize: '0.875rem',
-                    color: 'var(--text-secondary)',
-                    transition: 'all 0.2s ease',
-                  }}
                 >
-                  <Heart size={16} />
-                  <span>Report</span>
-                </motion.button>
-                <motion.button
-                  className="profile-follow-btn"
+                  Report
+                </Button>
+                <Button
+                  variant={isFollowing ? 'outline' : 'primary'}
+                  icon={<UserPlus size={16} />}
                   onClick={() => {
                     if (!session) {
                       showInfo(
@@ -228,51 +212,20 @@ export default function ProfileHeader({
                       }
                     }
                   }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  loading={
+                    followUserMutation.isPending ||
+                    unfollowUserMutation.isPending
+                  }
+                  loadingText="Loading..."
                   disabled={
                     session
                       ? followUserMutation.isPending ||
                         unfollowUserMutation.isPending
                       : false
                   }
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.5rem 1rem',
-                    background: isFollowing
-                      ? 'var(--bg-secondary)'
-                      : 'var(--primary-color, #4a7c59)',
-                    border: isFollowing
-                      ? '1px solid var(--border-color)'
-                      : 'none',
-                    borderRadius: '0.5rem',
-                    cursor:
-                      followUserMutation.isPending ||
-                      unfollowUserMutation.isPending
-                        ? 'not-allowed'
-                        : 'pointer',
-                    fontSize: '0.875rem',
-                    color: isFollowing ? 'var(--text-secondary)' : 'white',
-                    transition: 'all 0.2s ease',
-                    opacity:
-                      followUserMutation.isPending ||
-                      unfollowUserMutation.isPending
-                        ? 0.7
-                        : 1,
-                  }}
                 >
-                  <UserPlus size={16} />
-                  <span>
-                    {followUserMutation.isPending ||
-                    unfollowUserMutation.isPending
-                      ? 'Loading...'
-                      : isFollowing
-                        ? 'Following'
-                        : 'Follow'}
-                  </span>
-                </motion.button>
+                  {isFollowing ? 'Following' : 'Follow'}
+                </Button>
               </div>
             )}
           </div>

@@ -4,6 +4,19 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTheme } from '@/contexts/ThemeContext';
+import ThemeToggle from '@/components/ui/ThemeToggle';
+import {
+  ChevronRight,
+  ChevronLeft,
+  Home,
+  User,
+  TrendingUp,
+  Upload,
+  Search,
+  MoreHorizontal,
+  LogOut,
+} from 'lucide-react';
 import { useLogout } from '@/hooks/useAuth';
 
 export default function LeftSidebar({
@@ -14,6 +27,7 @@ export default function LeftSidebar({
   const logoutMutation = useLogout();
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { theme, toggleTheme } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = () => {
@@ -44,13 +58,9 @@ export default function LeftSidebar({
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? (
-              <svg width="20" height="20">
-                <use href="/icons.svg#icon-arrow-right" />
-              </svg>
+              <ChevronRight size={20} />
             ) : (
-              <svg width="20" height="20">
-                <use href="/icons.svg#icon-arrow-left" />
-              </svg>
+              <ChevronLeft size={20} />
             )}
           </button>
         </div>
@@ -62,9 +72,7 @@ export default function LeftSidebar({
           className={`nav-item ${isActive('/') ? 'nav-item-active' : ''}`}
         >
           <span className="nav-icon">
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-home" />
-            </svg>
+            <Home size={20} />
           </span>
           {!isCollapsed && <span className="nav-text">Home</span>}
         </Link>
@@ -73,9 +81,7 @@ export default function LeftSidebar({
           className={`nav-item ${isActive('/profile') ? 'nav-item-active' : ''}`}
         >
           <span className="nav-icon">
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-profile" />
-            </svg>
+            <User size={20} />
           </span>
           {!isCollapsed && <span className="nav-text">Profile</span>}
         </Link>
@@ -84,9 +90,7 @@ export default function LeftSidebar({
           className={`nav-item ${isActive('/trending') ? 'nav-item-active' : ''}`}
         >
           <span className="nav-icon">
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-trending" />
-            </svg>
+            <TrendingUp size={20} />
           </span>
           {!isCollapsed && <span className="nav-text">Trending</span>}
         </Link>
@@ -95,9 +99,7 @@ export default function LeftSidebar({
           className={`nav-item ${isActive('/upload') ? 'nav-item-active' : ''}`}
         >
           <span className="nav-icon">
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-upload" />
-            </svg>
+            <Upload size={20} />
           </span>
           {!isCollapsed && <span className="nav-text">Upload</span>}
         </Link>
@@ -106,9 +108,7 @@ export default function LeftSidebar({
           className={`nav-item ${isActive('/search') ? 'nav-item-active' : ''}`}
         >
           <span className="nav-icon">
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-search" />
-            </svg>
+            <Search size={20} />
           </span>
           {!isCollapsed && <span className="nav-text">Search</span>}
         </Link>
@@ -121,26 +121,30 @@ export default function LeftSidebar({
             className={`nav-item profile-item ${isProfileActive(session.user.username) ? 'nav-item-active' : ''}`}
           >
             <span className="nav-icon">
-              <svg width="20" height="20">
-                <use href="/icons.svg#icon-profile" />
-              </svg>
+              <User size={20} />
             </span>
             {!isCollapsed && <span className="nav-text">My Profile</span>}
           </Link>
         )}
         <div className="nav-item" onClick={onMoreToggle}>
           <span className="nav-icon">
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-dots" />
-            </svg>
+            <MoreHorizontal size={20} />
           </span>
           {!isCollapsed && <span className="nav-text">More</span>}
         </div>
+        <div className="nav-item theme-item" onClick={toggleTheme}>
+          <span className="nav-icon">
+            <ThemeToggle />
+          </span>
+          {!isCollapsed && (
+            <span className="nav-text">
+              {theme === 'light' ? 'Dark' : 'Light'}
+            </span>
+          )}
+        </div>
         <div className="nav-item logout-item" onClick={handleLogout}>
           <span className="nav-icon">
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-logout" />
-            </svg>
+            <LogOut size={20} />
           </span>
           {!isCollapsed && (
             <span className="nav-text">

@@ -2,6 +2,7 @@
 import React from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import ThemeToggle from '@/components/ui/ThemeToggle';
+import { X, User, Upload, Heart } from 'lucide-react';
 
 interface MoreSidebarProps {
   onClose?: () => void;
@@ -18,9 +19,7 @@ export default function MoreSidebar({ onClose }: MoreSidebarProps) {
             onClick={onClose}
             aria-label="Close more sidebar"
           >
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-close" />
-            </svg>
+            <X size={20} />
           </button>
         </div>
       </div>
@@ -28,25 +27,19 @@ export default function MoreSidebar({ onClose }: MoreSidebarProps) {
       <div className="sidebar-nav">
         <div className="nav-item">
           <span className="nav-icon">
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-profile" />
-            </svg>
+            <User size={20} />
           </span>
           <span className="nav-text">Privacy</span>
         </div>
         <div className="nav-item">
           <span className="nav-icon">
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-upload" />
-            </svg>
+            <Upload size={20} />
           </span>
           <span className="nav-text">Terms</span>
         </div>
         <div className="nav-item">
           <span className="nav-icon">
-            <svg width="20" height="20">
-              <use href="/icons.svg#icon-heart" />
-            </svg>
+            <Heart size={20} />
           </span>
           <span className="nav-text">Notifications</span>
         </div>
