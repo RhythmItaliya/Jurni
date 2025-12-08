@@ -1,6 +1,7 @@
 @forward 'ui';
 @forward 'layout';
 @forward 'auth';
+@forward 'admin';
 @forward 'post';
 @forward 'pages';
 @forward 'profile';
@@ -8,3 +9,5 @@
 @forward 'upload';
 @forward 'post-creation';
 @forward 'trending';
+@forward 'report-modal';
+@forward 'search';

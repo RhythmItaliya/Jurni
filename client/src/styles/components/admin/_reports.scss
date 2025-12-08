@@ -1,0 +1,82 @@
+@use '../../variables' as *;
+
+// Reports
+.admin-reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.admin-report-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-lg;
+  padding: 1.5rem;
+
+  &.resolved {
+    opacity: 0.7;
+  }
+
+  .report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .report-type {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+  }
+
+  .report-content {
+    margin-bottom: 1.5rem;
+
+    .report-info,
+    .report-details {
+      margin-bottom: 1rem;
+
+      p {
+        margin: 0.5rem 0;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+    }
+
+    .reported-content-preview {
+      background: var(--bg-tertiary);
+      border-left: 3px solid $accent;
+      padding: 1rem;
+      border-radius: $radius-md;
+      margin-top: 0.5rem;
+
+      p {
+        margin: 0.25rem 0;
+      }
+
+      .content-author {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+    }
+
+    .report-resolution {
+      background: rgba($secondary, 0.1);
+      border-left: 3px solid $secondary;
+      padding: 1rem;
+      border-radius: $radius-md;
+      margin-top: 0.5rem;
+
+      p {
+        margin: 0.25rem 0;
+      }
+    }
+  }
+
+  .report-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+}

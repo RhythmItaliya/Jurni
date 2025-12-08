@@ -58,6 +58,7 @@ export default function PublicProfilePage() {
       >
         <ProfileHeader
           key={profile.uuid}
+          userId={profile.uuid}
           username={profile.username}
           bio={profile.bio ?? undefined}
           coverImage={
@@ -82,7 +83,7 @@ export default function PublicProfilePage() {
           totalLikedPosts={profile.totalLikedPosts}
           followersCount={profile.followersCount}
           followingCount={profile.followingCount}
-          isOwnProfile={false}
+          isOwnProfile={isOwnProfile}
         />
       </div>
 

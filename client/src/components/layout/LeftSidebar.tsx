@@ -101,6 +101,17 @@ export default function LeftSidebar({
           </span>
           {!isCollapsed && <span className="nav-text">Upload</span>}
         </Link>
+        <Link
+          href="/search"
+          className={`nav-item ${isActive('/search') ? 'nav-item-active' : ''}`}
+        >
+          <span className="nav-icon">
+            <svg width="20" height="20">
+              <use href="/icons.svg#icon-search" />
+            </svg>
+          </span>
+          {!isCollapsed && <span className="nav-text">Search</span>}
+        </Link>
       </div>
 
       <div className="sidebar-bottom">

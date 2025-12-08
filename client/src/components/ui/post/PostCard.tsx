@@ -15,7 +15,7 @@ import {
   useFollowUser,
   useUnfollowUser,
 } from '@/hooks/useFollow';
-import { UserPlus, UserCheck } from 'lucide-react';
+import { UserPlus, UserCheck, MoreVertical, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PostCardProps } from '@/types/post';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -27,6 +27,7 @@ import 'swiper/css/mousewheel';
 import 'swiper/css/keyboard';
 import '@/styles/components/post/swiper.scss';
 import PostActions from './PostActions';
+import PostHeaderActions from './PostHeaderActions';
 import { useLikeStats, useLikeTarget, useUnlikeTarget } from '@/hooks/useLikes';
 import {
   useSavePostStats,
@@ -34,6 +35,7 @@ import {
   useUnsavePost,
 } from '@/hooks/useSavePosts';
 import { useReduxToast } from '@/hooks/useReduxToast';
+import ReportModal from '../ReportModal';
 
 /**
  * PostCard component
@@ -55,6 +57,7 @@ export default function PostCard({
   const [playingIndex, setPlayingIndex] = React.useState<number | null>(null);
   const [isDescriptionExpanded, setIsDescriptionExpanded] =
     React.useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = React.useState(false);
 
   // Like functionality with local state for real-time updates
   const { data: likeStats } = useLikeStats('post', post._id);
@@ -278,20 +281,27 @@ export default function PostCard({
             </div>
 
             <div className="post-header-right">
+              <PostHeaderActions
+                isOwnPost={isOwnPost}
+                onReport={() => {
+                  setIsReportModalOpen(true);
+                }}
+                onDelete={() => {
+                  console.log('Delete post:', post._id);
+                  // TODO: Implement delete functionality
+                }}
+                onShare={() => {
+                  console.log('Share post:', post._id);
+                  // TODO: Implement share functionality
+                }}
+              />
               <div className="author-location">
                 <IconButton
                   variant="ghost"
                   size="sm"
                   className="location-icon-btn"
-                  icon={
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src="/img/location.png"
-                      alt="location"
-                      width={16}
-                      height={16}
-                    />
-                  }
+                  icon={<MapPin size={16} />}
+                  aria-label="Post location"
                 />
               </div>
             </div>
@@ -453,7 +463,7 @@ export default function PostCard({
                 ))}
               </div>
             )}
-            <div className="post-footer-left">
+            <div className="post-footer-actions">
               <PostActions
                 isLiked={localLikeStats.isLikedByUser}
                 likeCount={localLikeStats.totalLikes}
@@ -469,7 +479,6 @@ export default function PostCard({
                       post._id
                     );
                   } catch {}
-                  // ensure we pass a string id to the handler
                   onComment?.(post._id ?? '');
                 }}
               />
@@ -520,6 +529,14 @@ export default function PostCard({
           )}
         </div>
       )}
+
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        postId={post._id}
+        postAuthor={post.userId?.username}
+        isOwnPost={isOwnPost}
+      />
     </div>
   );
 }

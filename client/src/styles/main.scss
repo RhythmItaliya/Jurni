@@ -5,6 +5,7 @@
 @use 'components/ui';
 @use 'components/layout';
 @use 'components/auth' as auth;
+@use 'components/admin' as admin;
 @use 'components/post';
 @use 'components/profile/_index' as profileIndex;
 @use 'components/trending/_index' as trendingIndex;

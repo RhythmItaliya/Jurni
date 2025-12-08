@@ -20,32 +20,44 @@ api.interceptors.request.use(
     // Only attempt to read client-side session/token in browser
     if (typeof window !== 'undefined') {
       try {
-        // Try using NextAuth session first (recommended)
-        const session = await getSession();
-        const tokenFromSession = (() => {
-          if (!session) return undefined;
-          const s = session as unknown;
-          if (typeof s === 'object' && s !== null) {
-            const record = s as Record<string, unknown>;
-            const t = record['accessToken'];
-            return typeof t === 'string' ? t : undefined;
+        // Check if this is an admin route request
+        const isAdminRequest = config.url?.startsWith('/admin');
+
+        if (isAdminRequest) {
+          // For admin routes, use admin token from localStorage
+          const adminToken = localStorage.getItem('adminToken');
+          if (adminToken) {
+            config.headers = config.headers || {};
+            config.headers.Authorization = `Bearer ${adminToken}`;
           }
-          return undefined;
-        })();
+        } else {
+          // For user routes, try using NextAuth session first (recommended)
+          const session = await getSession();
+          const tokenFromSession = (() => {
+            if (!session) return undefined;
+            const s = session as unknown;
+            if (typeof s === 'object' && s !== null) {
+              const record = s as Record<string, unknown>;
+              const t = record['accessToken'];
+              return typeof t === 'string' ? t : undefined;
+            }
+            return undefined;
+          })();
 
-        const tokenFallback =
-          localStorage.getItem('next-auth.session-token') ||
-          localStorage.getItem('__Secure-next-auth.session-token') ||
-          sessionStorage.getItem('next-auth.session-token');
+          const tokenFallback =
+            localStorage.getItem('next-auth.session-token') ||
+            localStorage.getItem('__Secure-next-auth.session-token') ||
+            sessionStorage.getItem('next-auth.session-token');
 
-        const token = tokenFromSession || tokenFallback;
+          const token = tokenFromSession || tokenFallback;
 
-        if (token) {
-          config.headers = config.headers || {};
-          config.headers.Authorization = `Bearer ${token}`;
+          if (token) {
+            config.headers = config.headers || {};
+            config.headers.Authorization = `Bearer ${token}`;
+          }
         }
       } catch (e) {
-        console.log('Error during signOut:', e);
+        console.log('Error during token retrieval:', e);
       }
     }
 
@@ -62,7 +74,22 @@ api.interceptors.response.use(
       if (typeof window !== 'undefined') {
         const pathname = window.location.pathname || '/';
 
-        // Clear any legacy storage tokens
+        // Check if this is an admin route
+        if (pathname.startsWith('/admin')) {
+          // Clear admin tokens
+          localStorage.removeItem('adminToken');
+          localStorage.removeItem('adminData');
+          document.cookie =
+            'adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
+          // Redirect to admin login
+          if (!pathname.includes('/admin/login')) {
+            window.location.href = '/admin/login';
+          }
+          return Promise.reject(error);
+        }
+
+        // Clear any legacy storage tokens for user routes
         try {
           localStorage.removeItem('next-auth.session-token');
           localStorage.removeItem('__Secure-next-auth.session-token');

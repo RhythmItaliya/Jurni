@@ -1,9 +1,27 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Pencil, MapPin, Calendar, Lock, Globe, Mail } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import {
+  Pencil,
+  MapPin,
+  Calendar,
+  Lock,
+  Globe,
+  Mail,
+  Heart,
+  UserPlus,
+} from 'lucide-react';
 import { formatLocation, type LocationData } from '@/lib/locationUtils';
+import { UserReportModal } from '@/components/ui';
+import {
+  useFollowUser,
+  useUnfollowUser,
+  useFollowStatus,
+} from '@/hooks/useFollow';
+import { useReduxToast } from '@/hooks/useReduxToast';
 
 export default function ProfileHeader({
+  userId,
   username,
   bio,
   onEdit,
@@ -27,6 +45,7 @@ export default function ProfileHeader({
   onFollowersClick,
   onFollowingClick,
 }: {
+  userId?: string;
   username: string;
   bio?: string;
   onEdit?: () => void;
@@ -50,6 +69,22 @@ export default function ProfileHeader({
   onFollowersClick?: () => void;
   onFollowingClick?: () => void;
 }) {
+  const { data: session } = useSession();
+  const { showInfo } = useReduxToast();
+  const [isUserReportModalOpen, setIsUserReportModalOpen] =
+    React.useState(false);
+
+  // Fetch follow status if user is authenticated and not viewing own profile
+  const { data: followStatus } = useFollowStatus(
+    userId || '',
+    !!(userId && session && !isOwnProfile)
+  );
+
+  // For unauthenticated users, assume not following
+  const isFollowing = session ? followStatus?.isFollowing || false : false;
+
+  const followUserMutation = useFollowUser();
+  const unfollowUserMutation = useUnfollowUser();
   const displayName =
     firstName || lastName
       ? `${firstName || ''} ${lastName || ''}`.trim()
@@ -151,6 +186,95 @@ export default function ProfileHeader({
                 <span>Edit Profile</span>
               </motion.button>
             )}
+            {!isOwnProfile && (
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <motion.button
+                  className="profile-action-btn"
+                  onClick={() => setIsUserReportModalOpen(true)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem 1rem',
+                    background: 'var(--bg-secondary)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '0.5rem',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem',
+                    color: 'var(--text-secondary)',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <Heart size={16} />
+                  <span>Report</span>
+                </motion.button>
+                <motion.button
+                  className="profile-follow-btn"
+                  onClick={() => {
+                    if (!session) {
+                      showInfo(
+                        'Login Required',
+                        'Please log in to follow users'
+                      );
+                      return;
+                    }
+                    if (userId) {
+                      if (isFollowing) {
+                        unfollowUserMutation.mutate(userId);
+                      } else {
+                        followUserMutation.mutate(userId);
+                      }
+                    }
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  disabled={
+                    session
+                      ? followUserMutation.isPending ||
+                        unfollowUserMutation.isPending
+                      : false
+                  }
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem 1rem',
+                    background: isFollowing
+                      ? 'var(--bg-secondary)'
+                      : 'var(--primary-color, #4a7c59)',
+                    border: isFollowing
+                      ? '1px solid var(--border-color)'
+                      : 'none',
+                    borderRadius: '0.5rem',
+                    cursor:
+                      followUserMutation.isPending ||
+                      unfollowUserMutation.isPending
+                        ? 'not-allowed'
+                        : 'pointer',
+                    fontSize: '0.875rem',
+                    color: isFollowing ? 'var(--text-secondary)' : 'white',
+                    transition: 'all 0.2s ease',
+                    opacity:
+                      followUserMutation.isPending ||
+                      unfollowUserMutation.isPending
+                        ? 0.7
+                        : 1,
+                  }}
+                >
+                  <UserPlus size={16} />
+                  <span>
+                    {followUserMutation.isPending ||
+                    unfollowUserMutation.isPending
+                      ? 'Loading...'
+                      : isFollowing
+                        ? 'Following'
+                        : 'Follow'}
+                  </span>
+                </motion.button>
+              </div>
+            )}
           </div>
 
           {/* Bio */}
@@ -249,6 +373,17 @@ export default function ProfileHeader({
           </motion.div>
         </motion.div>
       </div>
+
+      {/* User Report Modal */}
+      {userId && (
+        <UserReportModal
+          isOpen={isUserReportModalOpen}
+          onClose={() => setIsUserReportModalOpen(false)}
+          userId={userId}
+          username={username}
+          isOwnProfile={isOwnProfile || false}
+        />
+      )}
     </motion.div>
   );
 }

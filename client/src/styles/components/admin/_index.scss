@@ -1,0 +1,17 @@
+// Admin Panel Styles
+// All styles are modular and organized by component type
+// No CSS animations - using Framer Motion for smooth transitions
+
+@use './layout';
+@use './sidebar';
+@use './filters';
+@use './stats';
+@use './tables';
+@use './buttons';
+@use './cards';
+@use './media';
+@use './reports';
+@use './settings';
+@use './pagination';
+@use './auth';
+@use './modal';

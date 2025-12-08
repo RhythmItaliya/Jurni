@@ -1,6 +1,8 @@
 @use '../../variables' as *;
 @use '../../mixins' as *;
 @use 'post-creation';
+@use 'actions';
+@use 'header-actions';
 @use 'sass:color';
 
 .post-card-body {
@@ -269,6 +271,11 @@
   width: 100%;
 }
 
+.post-footer-actions {
+  width: 100%;
+  margin-top: $spacing-sm;
+}
+
 .post-header {
   display: flex;
   align-items: center;
@@ -304,6 +311,12 @@
     gap: $spacing-sm;
     margin: 0;
     padding: 0;
+
+    .post-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
 
     .author-location {
       display: inline-flex;

@@ -62,6 +62,41 @@ export const ENDPOINTS = {
     FOLLOWING: (userId: string) => `/follows/following/${userId}`,
     STATUS: (userId: string) => `/follows/status/${userId}`,
   },
+  ADMIN: {
+    AUTH: {
+      LOGIN: '/admin/auth/login',
+      REGISTER: '/admin/auth/register',
+    },
+    USERS: {
+      GET_ALL: '/admin/users/list',
+      GET_BY_UUID: (uuid: string) => `/admin/users/${uuid}`,
+      UPDATE: (uuid: string) => `/admin/users/${uuid}`,
+      DELETE: (uuid: string) => `/admin/users/${uuid}`,
+    },
+  },
+  USERS: {
+    GET_ALL: '/users',
+    GET_BY_UUID: (uuid: string) => `/users/${uuid}`,
+    UPDATE: (uuid: string) => `/users/${uuid}`,
+    DELETE: (uuid: string) => `/users/${uuid}`,
+    SUSPEND: (uuid: string) => `/users/${uuid}/suspend`,
+    UNSUSPEND: (uuid: string) => `/users/${uuid}/unsuspend`,
+  },
+  REPORTS: {
+    CREATE: '/reports',
+    GET_ALL: '/reports',
+    GET_BY_TYPE: (type: 'post' | 'user') => `/reports/type/${type}`,
+    GET_BY_STATUS: (status: string) => `/reports/status/${status}`,
+    GET_BY_ID: (id: string) => `/reports/${id}`,
+    UPDATE: (id: string) => `/reports/${id}`,
+    DELETE: (id: string) => `/reports/${id}`,
+  },
+  SEARCH: {
+    ALL: '/search',
+    USERS: '/search/users',
+    POSTS: '/search/posts',
+    HASHTAGS: '/search/hashtags',
+  },
 } as const;
 
 // Helper function to build full URL
@@ -78,3 +113,7 @@ export type LikesEndpointKey = keyof typeof ENDPOINTS.LIKES;
 export type SavePostsEndpointKey = keyof typeof ENDPOINTS.SAVEPOSTS;
 export type ProfilesEndpointKey = keyof typeof ENDPOINTS.PROFILES;
 export type FollowsEndpointKey = keyof typeof ENDPOINTS.FOLLOWS;
+export type AdminEndpointKey = keyof typeof ENDPOINTS.ADMIN;
+export type AdminAuthEndpointKey = keyof typeof ENDPOINTS.ADMIN.AUTH;
+export type ReportsEndpointKey = keyof typeof ENDPOINTS.REPORTS;
+export type SearchEndpointKey = keyof typeof ENDPOINTS.SEARCH;

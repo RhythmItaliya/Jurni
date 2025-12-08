@@ -14,7 +14,14 @@ export const PUBLIC_ROUTES = [
   '/auth/verify-otp',
   '/auth/forgot-password',
   '/auth/reset-password',
+
+  '/admin/login',
+  '/admin/register',
+  '/admin',
+
   '/p',
+  '/h',
+  '/j',
 ] as const;
 
 // API routes that are public
@@ -27,6 +34,7 @@ export const PROTECTED_ROUTES = [
   '/settings',
   '/upload',
   '/trending',
+  '/search',
 ] as const;
 
 // Route type checkers
@@ -117,7 +125,11 @@ export const RouteUtils = {
    * @returns true if the path is an authentication-related page
    */
   shouldShowAuthLayout: (pathname: string): boolean => {
-    return pathname.startsWith('/auth/');
+    return (
+      pathname.startsWith('/auth/') ||
+      pathname.startsWith('/admin/login') ||
+      pathname.startsWith('/admin/register')
+    );
   },
 
   /**

@@ -1,0 +1,57 @@
+@use '../../variables' as *;
+
+// Filters
+.admin-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.admin-search {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  font-size: 1rem;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+  }
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+.admin-select {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  font-size: 1rem;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .admin-filters {
+    flex-direction: column;
+
+    .admin-search {
+      width: 100%;
+    }
+  }
+}

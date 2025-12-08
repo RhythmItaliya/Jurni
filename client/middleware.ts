@@ -5,6 +5,28 @@ import { RouteUtils } from './src/lib/routes';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Check if admin is authenticated
+  const hasAdminToken = request.cookies.has('adminToken');
+
+  // Admin route protection
+  if (pathname.startsWith('/admin')) {
+    // Allow access to login page only
+    if (pathname === '/admin/login') {
+      // If already authenticated, redirect to admin dashboard
+      if (hasAdminToken) {
+        return NextResponse.redirect(new URL('/admin', request.url));
+      }
+      return NextResponse.next();
+    }
+
+    // Protect all other admin routes
+    if (!hasAdminToken) {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+
+    return NextResponse.next();
+  }
+
   // Check if user is authenticated (has session token)
   const hasSession =
     request.cookies.has('next-auth.session-token') ||

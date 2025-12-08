@@ -78,6 +78,15 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
     mainContentFullWidth: true, // Allow full width in main content area
   },
 
+  '/search': {
+    showLeftSidebar: true, // Navigation sidebar
+    showRightSidebar: false, // No right sidebar
+    showMainContent: true, // Use main content area for full width layout
+    showPosts: false, // No posts, just page content inside main area
+    layoutType: 'sidebar-only',
+    mainContentFullWidth: true, // Allow full width in main content area
+  },
+
   '/profile/edit': {
     showLeftSidebar: true, // Navigation sidebar
     showRightSidebar: false, // No right sidebar
