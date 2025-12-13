@@ -16,6 +16,7 @@ import { ProfileModule } from '@/profiles/profile.module';
 import { FollowsModule } from '@/follows/follows.module';
 import { ReportsModule } from '@/reports/reports.module';
 import { SearchModule } from '@/search/search.module';
+import { SuggestionsModule } from '@/suggestions/suggestions.module';
 import { ENV_VARS } from '@config/env';
 
 /**
@@ -46,6 +47,7 @@ import { ENV_VARS } from '@config/env';
     FollowsModule,
     ReportsModule,
     SearchModule,
+    SuggestionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

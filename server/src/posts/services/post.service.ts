@@ -110,7 +110,8 @@ export class PostService {
 
       // Hashtag filter
       if (hashtag) {
-        filter.hashtags = { $in: [hashtag.toLowerCase()] };
+        // Case-insensitive hashtag matching using regex
+        filter.hashtags = { $in: [new RegExp(`^${hashtag}$`, 'i')] };
       }
 
       // Location filter

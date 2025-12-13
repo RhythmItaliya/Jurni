@@ -266,7 +266,12 @@ export class CreatePostDto {
   @Transform(({ value }) =>
     value?.map((tag: string) => {
       const cleanedTag = tag.startsWith('#') ? tag.slice(1) : tag;
-      return cleanedTag.replace(/[^a-zA-Z0-9]/g, '');
+      // Convert spaces to underscores and remove other special characters except underscores
+      // Normalize to lowercase for case-insensitive queries
+      return cleanedTag
+        .replace(/\s+/g, '_')
+        .replace(/[^a-zA-Z0-9_]/g, '')
+        .toLowerCase();
     }),
   )
   hashtags?: string[];
@@ -395,7 +400,12 @@ export class UpdatePostDto {
   @Transform(({ value }) =>
     value?.map((tag: string) => {
       const cleanedTag = tag.startsWith('#') ? tag.slice(1) : tag;
-      return cleanedTag.replace(/[^a-zA-Z0-9]/g, '');
+      // Convert spaces to underscores and remove other special characters except underscores
+      // Normalize to lowercase for case-insensitive queries
+      return cleanedTag
+        .replace(/\s+/g, '_')
+        .replace(/[^a-zA-Z0-9_]/g, '')
+        .toLowerCase();
     }),
   )
   hashtags?: string[];

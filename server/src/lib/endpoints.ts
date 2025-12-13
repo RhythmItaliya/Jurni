@@ -75,6 +75,10 @@ export const ENDPOINTS = {
     FOLLOWING: (userId: string) => `following/${userId}`,
     STATUS: (userId: string) => `status/${userId}`,
   },
+  SUGGESTIONS: {
+    USERS: 'suggestions/users',
+    HASHTAGS: 'suggestions/hashtags',
+  },
 } as const;
 
 // Helper function to build full URL
