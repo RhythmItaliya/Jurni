@@ -107,7 +107,13 @@ function RegisterForm() {
   return (
     <div className="auth-layout">
       {/* Left side - Colorful background only */}
-      <div className="auth-promo"></div>
+      <div className="auth-promo">
+        <img
+          src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765601872/2.png"
+          alt="Sign up"
+          className="auth-promo-image"
+        />
+      </div>
 
       {/* Right side - Form section with card */}
       <div className="auth-form-section">
@@ -116,7 +122,11 @@ function RegisterForm() {
             <div className="auth-container">
               <div className="auth-header">
                 <Link href="/" className="auth-logo-placeholder">
-                  Jurni
+                  <img
+                    src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
+                    alt="Jurni"
+                    className="auth-logo-image"
+                  />
                 </Link>
                 <h1 className="auth-title">Create Account</h1>
                 <p className="auth-subtitle">

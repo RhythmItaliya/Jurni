@@ -61,7 +61,11 @@ export default function Header() {
         <motion.div className="header-left" variants={itemVariants}>
           <motion.div variants={logoVariants}>
             <Link href="/" className="auth-logo-placeholder">
-              Jurni
+              <img
+                src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765604434/Jurni_-removebg-preview.png"
+                alt="Jurni"
+                className="auth-logo-image"
+              />
             </Link>
           </motion.div>
         </motion.div>

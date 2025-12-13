@@ -101,7 +101,13 @@ function ResetPasswordForm() {
     return (
       <div className="auth-layout">
         {/* Left side - Colorful background only */}
-        <div className="auth-promo"></div>
+        <div className="auth-promo">
+          <img
+            src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765602455/IMGE_1.png"
+            alt="Reset Password"
+            className="auth-promo-image"
+          />
+        </div>
 
         {/* Right side - Form section with card */}
         <div className="auth-form-section">
@@ -110,7 +116,11 @@ function ResetPasswordForm() {
               <div className="auth-container">
                 <div className="auth-header">
                   <Link href="/" className="auth-logo-placeholder">
-                    Jurni
+                    <img
+                      src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
+                      alt="Jurni"
+                      className="auth-logo-image"
+                    />
                   </Link>
                   <h1 className="auth-title">Password Reset Complete</h1>
                   <p className="auth-subtitle">
@@ -142,7 +152,13 @@ function ResetPasswordForm() {
     return (
       <div className="auth-layout">
         {/* Left side - Colorful background only */}
-        <div className="auth-promo"></div>
+        <div className="auth-promo">
+          <img
+            src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765602455/IMGE_1.png"
+            alt="Reset Password"
+            className="auth-promo-image"
+          />
+        </div>
 
         {/* Right side - Form section with card */}
         <div className="auth-form-section">
@@ -151,7 +167,11 @@ function ResetPasswordForm() {
               <div className="auth-container">
                 <div className="auth-header">
                   <Link href="/" className="auth-logo-placeholder">
-                    Jurni
+                    <img
+                      src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
+                      alt="Jurni"
+                      className="auth-logo-image"
+                    />
                   </Link>
                   <h1 className="auth-title">Invalid Reset Link</h1>
                   <p className="auth-subtitle">
@@ -193,7 +213,13 @@ function ResetPasswordForm() {
   return (
     <div className="auth-layout">
       {/* Left side - Colorful background only */}
-      <div className="auth-promo"></div>
+      <div className="auth-promo">
+        <img
+          src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765602455/IMGE_1.png"
+          alt="Reset Password"
+          className="auth-promo-image"
+        />
+      </div>
 
       {/* Right side - Form section with card */}
       <div className="auth-form-section">
@@ -201,7 +227,13 @@ function ResetPasswordForm() {
           <CardBody>
             <div className="auth-container">
               <div className="auth-header">
-                <div className="auth-logo-placeholder"></div>
+                <div className="auth-logo-placeholder">
+                  <img
+                    src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
+                    alt="Jurni"
+                    className="auth-logo-image"
+                  />
+                </div>
                 <h1 className="auth-title">Reset Password</h1>
                 <p className="auth-subtitle">Enter your new password below</p>
               </div>

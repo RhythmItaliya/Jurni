@@ -160,7 +160,13 @@ function VerifyOTPForm() {
   return (
     <div className="auth-layout">
       {/* Left side - Image */}
-      <div className="auth-promo"></div>
+      <div className="auth-promo">
+        <img
+          src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603949/IMGE_1%20%281%29.png"
+          alt="Verify OTP"
+          className="auth-promo-image"
+        />
+      </div>
 
       {/* Right side - OTP form section with card */}
       <div className="auth-form-section">
@@ -169,7 +175,11 @@ function VerifyOTPForm() {
             <div className="auth-container">
               <div className="auth-header">
                 <Link href="/" className="auth-logo-placeholder">
-                  Jurni
+                  <img
+                    src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
+                    alt="Jurni"
+                    className="auth-logo-image"
+                  />
                 </Link>
                 <h1 className="auth-title">Verify Your Registration</h1>
                 <p className="auth-subtitle">
