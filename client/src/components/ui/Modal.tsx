@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ export interface ModalProps {
 /**
  * Reusable Modal Component
  * Used across admin and other sections for consistent UI
+ * Renders using React Portal to escape layout stacking context
  *
  * @param isOpen - Whether modal is visible
  * @param title - Modal title/header
@@ -58,7 +60,7 @@ export const Modal: React.FC<ModalProps> = ({
     large: 'modal-large',
   };
 
-  return (
+  const modalContent = (
     <div className={`modal-overlay ${className}`} onClick={onClose}>
       <div
         className={`modal ${sizeClasses[size]}`}
@@ -92,6 +94,11 @@ export const Modal: React.FC<ModalProps> = ({
       </div>
     </div>
   );
+
+  // Use portal to render modal at document root, outside of any stacking context
+  return typeof document !== 'undefined'
+    ? createPortal(modalContent, document.body)
+    : null;
 };
 
 export default Modal;

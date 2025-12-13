@@ -106,6 +106,10 @@ export const ENDPOINTS = {
     POSTS: '/search/posts',
     HASHTAGS: '/search/hashtags',
   },
+  SUGGESTIONS: {
+    USERS: '/suggestions/users',
+    HASHTAGS: '/suggestions/hashtags',
+  },
 } as const;
 
 // Helper function to build full URL
@@ -126,3 +130,4 @@ export type AdminEndpointKey = keyof typeof ENDPOINTS.ADMIN;
 export type AdminAuthEndpointKey = keyof typeof ENDPOINTS.ADMIN.AUTH;
 export type ReportsEndpointKey = keyof typeof ENDPOINTS.REPORTS;
 export type SearchEndpointKey = keyof typeof ENDPOINTS.SEARCH;
+export type SuggestionsEndpointKey = keyof typeof ENDPOINTS.SUGGESTIONS;

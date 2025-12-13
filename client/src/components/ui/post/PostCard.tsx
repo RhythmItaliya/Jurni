@@ -207,7 +207,11 @@ export default function PostCard({
   };
 
   const handleHashtagClick = (hashtag: string) => {
-    router.push(`/p/h/${hashtag}`);
+    router.push(`/p/h/${encodeURIComponent(hashtag)}`);
+  };
+
+  const handleUsernameClick = (username: string) => {
+    router.push(`/j/${username}`);
   };
 
   const playVideoAtIndex = (index: number) => {
@@ -246,15 +250,24 @@ export default function PostCard({
         <CardHeader>
           <div className="post-header">
             <div className="author">
-              <Avatar
-                src={post?.userId?.avatarImage?.publicUrl || undefined}
-                alt={post?.userId?.username}
-                size="md"
-                className="author-avatar"
-              />
+              <div
+                onClick={() => handleUsernameClick(post?.userId?.username)}
+                style={{ cursor: 'pointer' }}
+              >
+                <Avatar
+                  src={post?.userId?.avatarImage?.publicUrl || undefined}
+                  alt={post?.userId?.username}
+                  size="md"
+                  className="author-avatar"
+                />
+              </div>
 
               <div className="author-meta">
-                <div className="author-username">
+                <div
+                  className="author-username"
+                  onClick={() => handleUsernameClick(post?.userId?.username)}
+                  style={{ cursor: 'pointer' }}
+                >
                   {post?.userId?.username || 'Unknown'}
                 </div>
               </div>

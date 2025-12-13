@@ -1,0 +1,250 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.suggestions-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  padding: $spacing-md;
+  background: var(--bg-primary);
+  border-radius: $radius-lg;
+  border: 1px solid var(--border-color);
+
+  .suggestions-section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    .section-title {
+      font-size: $text-lg;
+      font-weight: $font-semibold;
+      color: var(--text-primary);
+      margin: 0;
+      padding-bottom: $spacing-sm;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .suggestions-list {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+
+      .suggestion-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: $spacing-md;
+        background: var(--bg-secondary);
+        border-radius: $radius-md;
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        &:hover {
+          background: var(--bg-hover);
+          border-color: var(--border-hover);
+        }
+
+        .card-left {
+          display: flex;
+          align-items: center;
+          gap: $spacing-md;
+          flex: 1;
+          min-width: 0;
+          cursor: pointer;
+
+          .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid var(--border-color);
+          }
+
+          .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-xs;
+            min-width: 0;
+
+            .user-name {
+              font-size: $text-sm;
+              font-weight: $font-semibold;
+              color: var(--text-primary);
+              margin: 0;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .user-handle {
+              font-size: $text-xs;
+              color: var(--text-secondary);
+              margin: 0;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .user-bio {
+              font-size: $text-xs;
+              color: var(--text-muted);
+              margin: 0;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+        }
+
+        .follow-btn {
+          padding: $spacing-sm $spacing-md;
+          background: var(--primary-color);
+          color: var(--text-on-green);
+          border: none;
+          border-radius: $radius-md;
+          font-size: $text-sm;
+          font-weight: $font-semibold;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+          flex-shrink: 0;
+          margin-left: $spacing-sm;
+
+          &:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+
+    .hashtags-list {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-sm;
+
+      .hashtag-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: $spacing-sm $spacing-md;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: $radius-md;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: var(--bg-hover);
+          border-color: var(--primary-color);
+        }
+
+        .hashtag-link {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: $spacing-md;
+          text-decoration: none;
+          width: 100%;
+          color: var(--text-primary);
+
+          .hashtag-text {
+            font-size: $text-sm;
+            font-weight: $font-semibold;
+            color: var(--primary-color);
+          }
+
+          .hashtag-count {
+            font-size: $text-xs;
+            color: var(--text-muted);
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+
+    .suggestions-loading,
+    .hashtags-loading {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          var(--bg-secondary) 0%,
+          var(--bg-hover) 50%,
+          var(--bg-secondary) 100%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        border-radius: $radius-md;
+      }
+    }
+
+    .no-suggestions {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: $text-sm;
+      padding: $spacing-lg;
+      margin: 0;
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: $tablet) {
+  .suggestions-panel {
+    padding: $spacing-sm;
+
+    .suggestions-section {
+      .suggestions-list {
+        .suggestion-card {
+          padding: $spacing-sm;
+
+          .card-left {
+            .user-avatar {
+              width: 40px;
+              height: 40px;
+            }
+          }
+
+          .follow-btn {
+            padding: $spacing-xs $spacing-sm;
+            font-size: $text-xs;
+          }
+        }
+      }
+
+      .hashtags-list {
+        .hashtag-chip {
+          padding: $spacing-xs $spacing-sm;
+
+          .hashtag-link {
+            .hashtag-text {
+              font-size: $text-xs;
+            }
+
+            .hashtag-count {
+              font-size: $text-xs;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -67,3 +67,15 @@ export {
   useSearch,
   searchKeys,
 } from './useSearch';
+
+/**
+ * Suggestions Hooks
+ * Export all suggestions-related hooks for easy import
+ */
+export {
+  useSuggestions,
+  useTrendingHashtags,
+  suggestionsKeys,
+  type SuggestedUser,
+  type TrendingHashtag,
+} from './useSuggestions';

@@ -50,13 +50,13 @@ export default function SearchPage() {
     // Navigate to appropriate page based on type
     if (type === 'username') {
       // Navigate to user profile
-      router.push(`/s/j/${identifier}`);
+      router.push(`/j/${identifier}`);
     } else if (type === 'post') {
       // Navigate to post detail
       router.push(`/p/${identifier}`);
     } else if (type === 'hashtag') {
       // Navigate to hashtag posts
-      router.push(`/p/h/${identifier}`);
+      router.push(`/p/h/${encodeURIComponent(identifier)}`);
     }
   };
 
@@ -110,7 +110,6 @@ export default function SearchPage() {
           {isLoadingData ? (
             <div className="search-loading">
               <Loader2 className="spinner" size={40} />
-              <p>Searching...</p>
             </div>
           ) : displayData ? (
             <div className="search-results">

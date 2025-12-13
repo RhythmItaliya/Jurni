@@ -21,7 +21,9 @@ import { useReduxToast } from '@/hooks/useReduxToast';
 export default function HashPostsPage() {
   const params = useParams();
   const router = useRouter();
-  const hashtag = params.hashtag as string;
+  const rawHashtag = params.hashtag as string;
+  // Decode URL-encoded hashtag (e.g., 'lord_buddha' instead of 'lord%20buddha')
+  const hashtag = rawHashtag ? decodeURIComponent(rawHashtag) : '';
   const { data: session, status } = useSession();
 
   const [openCommentsPostId, setOpenCommentsPostId] = React.useState<

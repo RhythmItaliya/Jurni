@@ -167,7 +167,7 @@ export const RouteUtils = {
     }
 
     // // Don't redirect for public routes like /j/[username], /p/[id], /h/[hashtag]
-    // // Or for protected authenticated routes like /s/j/[username]
+    // // Or for protected authenticated routes like /j/[username]
     // if (pathname.startsWith('/j/') || pathname.startsWith('/p/') || pathname.startsWith('/h/')) {
     //   return null;
     // }

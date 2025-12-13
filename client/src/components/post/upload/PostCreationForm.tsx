@@ -163,7 +163,14 @@ const PostCreationForm: React.FC<PostCreationFormProps> = ({
 
   // Hashtag handling
   const addHashtag = () => {
-    const trimmedTag = currentHashtag.trim();
+    let trimmedTag = currentHashtag.trim();
+    // Remove any leading # if present
+    if (trimmedTag.startsWith('#')) {
+      trimmedTag = trimmedTag.slice(1);
+    }
+    // Convert spaces to underscores
+    trimmedTag = trimmedTag.replace(/\s+/g, '_');
+
     if (trimmedTag && !hashtags.includes(trimmedTag) && hashtags.length < 30) {
       setHashtags([...hashtags, trimmedTag]);
       setCurrentHashtag('');
