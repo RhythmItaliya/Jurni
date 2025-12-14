@@ -148,7 +148,7 @@ export class LikeService {
     ]);
 
     return {
-      likes: likes as LikeDocument[],
+      likes: likes as unknown as LikeDocument[],
       total,
       page,
       limit,
@@ -249,7 +249,7 @@ export class LikeService {
     ]);
 
     return {
-      likes: likes as LikeDocument[],
+      likes: likes as unknown as LikeDocument[],
       total,
       page,
       limit,

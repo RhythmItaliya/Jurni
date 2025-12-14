@@ -114,32 +114,6 @@ export class PostService {
         filter.hashtags = { $in: [new RegExp(`^${hashtag}$`, 'i')] };
       }
 
-      // Location filter
-      if (location) {
-        const locationParts = location
-          .split(',')
-          .map((part) => part.trim())
-          .filter((part) => part);
-        if (locationParts.length > 0) {
-          const regexPattern = locationParts.join('|');
-          filter['location.display_name'] = {
-            $regex: regexPattern,
-            $options: 'i',
-          };
-        }
-      }
-
-      // Location place ID filter
-      if (locationPlaceId) {
-        filter['location.place_id'] = locationPlaceId;
-      }
-
-      // Location lat/lon filter
-      if (locationLat !== undefined && locationLon !== undefined) {
-        filter['location.lat'] = locationLat.toString();
-        filter['location.lon'] = locationLon.toString();
-      }
-
       // Search filter
       if (search) {
         filter.$text = { $search: search };

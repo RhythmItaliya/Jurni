@@ -60,7 +60,9 @@ export class CommentUtils {
     ]);
 
     return {
-      comments: this.getFormattedComments(comments as CommentDocument[]),
+      comments: this.getFormattedComments(
+        comments as unknown as CommentDocument[],
+      ),
       total,
       page,
       limit,
