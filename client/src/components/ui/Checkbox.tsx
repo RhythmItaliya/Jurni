@@ -16,8 +16,10 @@ import { useState, useEffect, forwardRef } from 'react';
  * @param {any} [props.ref] - Forwarded ref
  * @returns {JSX.Element} Checkbox element or loading placeholder
  */
-interface CheckboxProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+interface CheckboxProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'type'
+> {
   className?: string;
   label?: string;
 }

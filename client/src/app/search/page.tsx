@@ -20,6 +20,17 @@ interface SearchPost {
   description?: string;
 }
 
+interface SearchLocation {
+  place_id: number;
+  display_name: string;
+  address?: {
+    city?: string;
+    county?: string;
+    state?: string;
+    country?: string;
+  };
+}
+
 /**
  * Search page component
  * Route: /search (Protected - requires authentication)
@@ -30,7 +41,9 @@ interface SearchPost {
 export default function SearchPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchType] = useState<'all' | 'users' | 'posts' | 'hashtags'>('all');
+  const [searchType] = useState<
+    'all' | 'users' | 'posts' | 'hashtags' | 'locations'
+  >('all');
 
   // Enable search when query is at least 2 characters
   const { data: searchResults, isLoading } = useSearch(
@@ -46,7 +59,11 @@ export default function SearchPage() {
     searchResults && searchQuery.length >= 2 ? searchResults : null;
   const isLoadingData = isLoading;
 
-  const handleSelectResult = (type: string, identifier: string) => {
+  const handleSelectResult = (
+    type: string,
+    identifier: string,
+    locationData?: SearchLocation
+  ) => {
     // Navigate to appropriate page based on type
     if (type === 'username') {
       // Navigate to user profile
@@ -57,6 +74,9 @@ export default function SearchPage() {
     } else if (type === 'hashtag') {
       // Navigate to hashtag posts
       router.push(`/p/h/${encodeURIComponent(identifier)}`);
+    } else if (type === 'location' && locationData) {
+      // Navigate to location posts
+      router.push(`/p/l/${encodeURIComponent(JSON.stringify(locationData))}`);
     }
   };
 
@@ -189,11 +209,54 @@ export default function SearchPage() {
                 </div>
               )}
 
+              {/* Locations Results */}
+              {displayData.locations && displayData.locations.length > 0 && (
+                <div className="result-section">
+                  <h3 className="result-section-title">Locations</h3>
+                  <div className="result-list">
+                    {displayData.locations.map((location: SearchLocation) => (
+                      <motion.button
+                        key={location.place_id}
+                        className="result-item location-result"
+                        onClick={() =>
+                          handleSelectResult(
+                            'location',
+                            location.display_name,
+                            location
+                          )
+                        }
+                        whileHover={{ backgroundColor: 'var(--bg-secondary)' }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <div className="result-item-content">
+                          <p className="result-item-title">
+                            {location.display_name}
+                          </p>
+                          {location.address && (
+                            <p className="result-item-subtitle">
+                              {[
+                                location.address.city,
+                                location.address.county,
+                                location.address.state,
+                                location.address.country,
+                              ]
+                                .filter(Boolean)
+                                .join(', ')}
+                            </p>
+                          )}
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* No Results */}
               {(!displayData.users || displayData.users.length === 0) &&
                 (!displayData.posts || displayData.posts.length === 0) &&
-                (!displayData.hashtags ||
-                  displayData.hashtags.length === 0) && (
+                (!displayData.hashtags || displayData.hashtags.length === 0) &&
+                (!displayData.locations ||
+                  displayData.locations.length === 0) && (
                   <div className="search-empty">
                     <SearchIcon size={48} />
                     <p>No results found for &quot;{searchQuery}&quot;</p>
@@ -221,20 +284,21 @@ export default function SearchPage() {
     >
       <motion.div
         className="search-content"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Big Search Icon */}
-        <motion.div className="search-icon-wrapper">
-          <SearchIcon size={120} />
-        </motion.div>
+        {/* Search Title */}
+        <h1 className="search-title">Search</h1>
+        <p className="search-subtitle">
+          Find users, posts, hashtags, and locations
+        </p>
 
         {/* Search Input */}
-        <form className="search-input-wrapper">
+        <form className="search-input-wrapper search-main">
           <motion.input
             type="text"
-            placeholder="Search users, posts, hashtags..."
+            placeholder="Enter your search..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             whileFocus={{ scale: 1.02 }}

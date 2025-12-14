@@ -13,12 +13,16 @@ export const searchKeys = {
     [...searchKeys.all, 'posts', query, page, limit] as const,
   hashtags: (query: string, limit: number = 20) =>
     [...searchKeys.all, 'hashtags', query, limit] as const,
+  locations: (query: string, page: number = 1, limit: number = 20) =>
+    [...searchKeys.all, 'locations', query, page, limit] as const,
   all_search: (
     query: string,
-    type: 'all' | 'users' | 'posts' | 'hashtags' = 'all',
+    type: 'all' | 'users' | 'posts' | 'hashtags' | 'locations' = 'all',
     page: number = 1,
     limit: number = 20
   ) => [...searchKeys.all, 'all', query, type, page, limit] as const,
+  locations_search: (query: string, page: number = 1, limit: number = 20) =>
+    [...searchKeys.all, 'locations_search', query, page, limit] as const,
 };
 
 /**
@@ -138,7 +142,7 @@ export function useSearchHashtags(
  */
 export function useSearch(
   query: string,
-  type: 'all' | 'users' | 'posts' | 'hashtags' = 'all',
+  type: 'all' | 'users' | 'posts' | 'hashtags' | 'locations' = 'all',
   page: number = 1,
   limit: number = 20,
   enabled: boolean = true
@@ -160,6 +164,46 @@ export function useSearch(
       onError: (error: unknown) => {
         const message = extractServerMessage(error);
         showError('Search Error', message || 'Failed to perform search');
+      },
+    },
+  });
+}
+
+/**
+ * Hook to search locations
+ * Searches for locations by city, state, county, etc.
+ * @param query - Search query string
+ * @param page - Page number (default 1)
+ * @param limit - Results per page (default 20)
+ * @param enabled - Whether to enable the query
+ * @returns Query result with locations array
+ */
+export function useSearchLocations(
+  query: string,
+  page: number = 1,
+  limit: number = 20,
+  enabled: boolean = true
+) {
+  const { showError } = useReduxToast();
+
+  return useQuery({
+    queryKey: searchKeys.locations_search(query, page, limit),
+    queryFn: async () => {
+      const response = await api.get(ENDPOINTS.SEARCH.LOCATIONS, {
+        params: { query, page, limit },
+      });
+      return response.data.data || [];
+    },
+    enabled: enabled && !!query && query.trim().length > 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+    meta: {
+      onError: (error: unknown) => {
+        const message = extractServerMessage(error);
+        showError(
+          'Location Search Error',
+          message || 'Failed to search locations'
+        );
       },
     },
   });

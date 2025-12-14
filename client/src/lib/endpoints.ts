@@ -105,6 +105,7 @@ export const ENDPOINTS = {
     USERS: '/search/users',
     POSTS: '/search/posts',
     HASHTAGS: '/search/hashtags',
+    LOCATIONS: '/search/locations',
   },
   SUGGESTIONS: {
     USERS: '/suggestions/users',

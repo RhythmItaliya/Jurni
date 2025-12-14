@@ -8,6 +8,7 @@ import {
   SuggestedUser,
 } from '@/hooks/useSuggestions';
 import { useFollowUser } from '@/hooks/useFollow';
+import { Button } from '@/components/ui/Button';
 import '@/styles/components/suggestions.scss';
 
 /**
@@ -59,7 +60,6 @@ export default function SuggestionsPanel() {
                 className="suggestion-card"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                whileHover={{ backgroundColor: 'var(--bg-hover)' }}
               >
                 {/* Avatar and Info */}
                 <div
@@ -89,15 +89,16 @@ export default function SuggestionsPanel() {
                 </div>
 
                 {/* Follow Button */}
-                <motion.button
-                  className="follow-btn"
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={() => handleFollowClick(user._id)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   disabled={isFollowPending}
+                  loading={isFollowPending}
+                  loadingText="Following..."
                 >
-                  {isFollowPending ? 'Following...' : 'Follow'}
-                </motion.button>
+                  Follow
+                </Button>
               </motion.div>
             ))}
           </div>

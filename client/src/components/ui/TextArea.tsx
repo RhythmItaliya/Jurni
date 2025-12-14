@@ -21,8 +21,7 @@ import { useState, useEffect, forwardRef } from 'react';
  * @param {any} [props.ref] - Forwarded ref
  * @returns {JSX.Element} TextArea element or loading placeholder
  */
-interface TextAreaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   className?: string;
 }
 

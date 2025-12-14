@@ -1,7 +1,6 @@
 import React from 'react';
 
-export interface IconButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon: React.ReactNode;
   size?: 'xxs' | 'xs' | 'sm' | 'md' | 'lg';
   variant?:
