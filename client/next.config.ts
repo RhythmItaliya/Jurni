@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     includePaths: [path.join(__dirname, 'src', 'styles')],
   },
   images: {
+    // unoptimized: true,
     // Allow optimized loading of remote images used in website pages/components
     remotePatterns: [
       {
@@ -29,6 +30,11 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'pub-59fa0a52ffb6430d84afb40afa783b77.r2.dev',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.pinimg.com',
         pathname: '/**',
       },
     ],

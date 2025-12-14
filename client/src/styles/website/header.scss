@@ -36,9 +36,9 @@
 
   .auth-logo-placeholder {
     width: auto;
-    max-width: 160px;
-    height: 56px;
-    background: transparent;
+    max-width: 150px;
+    height: auto;
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
     display: inline-flex;
     align-items: center;
@@ -49,10 +49,6 @@
     text-decoration: none;
     border: none;
     transition: all 0.3s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
   }
 
   .auth-logo-image {
