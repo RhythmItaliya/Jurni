@@ -525,6 +525,9 @@ export default function PostCard({
                   } catch {}
                   onComment?.(post._id ?? '');
                 }}
+                onShare={() => {
+                  setIsShareModalOpen(true);
+                }}
               />
             </div>
           </div>
@@ -606,8 +609,11 @@ export default function PostCard({
       <ShareModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
-        url={`${window.location.origin}/p/${post._id}`}
-        title={post.title || 'Check out this post'}
+        url={
+          typeof window !== 'undefined'
+            ? `${window.location.origin}/p/${post._id}`
+            : `/p/${post._id}`
+        }
       />
     </div>
   );

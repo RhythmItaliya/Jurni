@@ -41,7 +41,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
     {
       name: 'Copy Link',
       icon: copied ? Check : Copy,
-      color: copied ? '#2d5016' : 'var(--primary-color)',
+      color: copied ? '#4caf50' : '#2d5016',
       onClick: handleCopyLink,
     },
     {
