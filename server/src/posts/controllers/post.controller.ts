@@ -418,6 +418,110 @@ export class PostController {
   }
 
   /**
+   * Get saved posts for a specific user (public endpoint)
+   * Endpoint: GET /posts/user-save-posts/:userId
+   * @param userId - User ID whose saved posts to retrieve
+   * @param query - Query parameters including pagination
+   * @returns User's saved posts list with pagination metadata
+   */
+  @Get('user-save-posts/:userId')
+  @ApiOperation({ summary: "Get a user's saved posts" })
+  @ApiResponse({
+    status: 200,
+    description: 'Saved posts retrieved successfully',
+    type: BaseResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Failed to retrieve saved posts' })
+  async getUserSavedPosts(
+    @Param('userId') userId: string,
+    @Query() query: PostQueryDto,
+  ): Promise<BaseResponseDto> {
+    try {
+      const page = query.page || 1;
+      const limit = query.limit || 10;
+      const result = await this.postService.getSavedPostsForUser(
+        userId,
+        page,
+        limit,
+      );
+
+      return {
+        success: true,
+        message: 'Saved posts retrieved successfully',
+        data: result.posts,
+        meta: {
+          page: result.page,
+          limit,
+          total: result.total,
+          totalPages: result.totalPages,
+        },
+      };
+    } catch (error) {
+      console.error('getUserSavedPosts error:', error);
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Failed to retrieve saved posts',
+          error: error.message || 'Unknown error',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  /**
+   * Get liked posts for a specific user (public endpoint)
+   * Endpoint: GET /posts/user-like-posts/:userId
+   * @param userId - User ID whose liked posts to retrieve
+   * @param query - Query parameters including pagination
+   * @returns User's liked posts list with pagination metadata
+   */
+  @Get('user-like-posts/:userId')
+  @ApiOperation({ summary: "Get a user's liked posts" })
+  @ApiResponse({
+    status: 200,
+    description: 'Liked posts retrieved successfully',
+    type: BaseResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Failed to retrieve liked posts' })
+  async getUserLikedPosts(
+    @Param('userId') userId: string,
+    @Query() query: PostQueryDto,
+  ): Promise<BaseResponseDto> {
+    try {
+      const page = query.page || 1;
+      const limit = query.limit || 10;
+      const result = await this.postService.getLikedPostsForUser(
+        userId,
+        page,
+        limit,
+      );
+
+      return {
+        success: true,
+        message: 'Liked posts retrieved successfully',
+        data: result.posts,
+        meta: {
+          page: result.page,
+          limit,
+          total: result.total,
+          totalPages: result.totalPages,
+        },
+      };
+    } catch (error) {
+      console.error('getUserLikedPosts error:', error);
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Failed to retrieve liked posts',
+          error: error.message || 'Unknown error',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  /**
    * Get a single post by ID
    * Endpoint: GET /posts/detail/:id
    * @param postId - Post ID to retrieve

@@ -253,6 +253,12 @@ export class PublicProfileResponseDto {
 export class CompleteProfileResponseDto {
   // User table fields
   @ApiProperty({
+    description: 'MongoDB User ID',
+    example: '507f1f77bcf86cd799439011',
+  })
+  _id: string;
+
+  @ApiProperty({
     description: 'User UUID',
     example: '609a8703-1574-47ea-a0e2-e2c4e7180446',
   })

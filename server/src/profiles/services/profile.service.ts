@@ -47,6 +47,7 @@ export class ProfileService {
     return profile.save();
   }
   async getProfileByUserId(userId: string): Promise<Profile | null> {
+    // Try to query with userId as-is (works for both UUID strings and ObjectId strings)
     return this.profileModel.findOne({ user: userId }).exec();
   }
 
@@ -154,6 +155,7 @@ export class ProfileService {
     // Combine user and profile data into a clean response
     return {
       // User table fields
+      _id: userMongoId,
       uuid: (user as any).uuid,
       username: user.username,
       email: user.email,
@@ -194,24 +196,24 @@ export class ProfileService {
       throw new NotFoundException('User not found');
     }
 
-    // Get profile, create one if it doesn't exist
-    let profile = await this.getProfileByUserId((user as any)._id.toString());
+    const userMongoId = (user as any)._id.toString();
+    const userUuid = (user as any).uuid;
+
+    // Get profile using UUID (same as getCompleteProfile)
+    let profile = await this.getProfileByUserId(userUuid);
 
     if (!profile) {
       // Create a default profile for this user
-      profile = await this.createProfile((user as any)._id.toString(), {});
+      profile = await this.createProfile(userUuid, {});
     }
 
-    // Calculate user statistics
-    const stats = await this.calculateUserStatistics(
-      (user as any)._id.toString(),
-      (user as any).uuid,
-    );
+    // Calculate user statistics using MongoDB _id
+    const stats = await this.calculateUserStatistics(userMongoId, userUuid);
 
-    // Combine user and profile data into a clean response
     return {
       // User table fields
-      uuid: (user as any).uuid,
+      _id: userMongoId,
+      uuid: userUuid,
       username: user.username,
       email: user.email,
       avatarImage: user.avatarImage ?? null,
