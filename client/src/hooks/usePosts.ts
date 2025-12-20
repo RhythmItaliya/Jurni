@@ -317,6 +317,100 @@ export function useGetMyLikedPosts(options?: {
   });
 }
 
+/**
+ * Hook to fetch any user's saved posts (for public profiles)
+ * Retrieves posts that a specific user has saved
+ *
+ * @description
+ * - Fetches saved posts for a specific user by userId
+ * - Returns posts with pagination metadata
+ * - Cached for 5 minutes
+ *
+ * @usedIn
+ * - Public profile page saved posts tab
+ *
+ * @param userId - ID of the user whose saved posts to fetch
+ * @param query - Optional query parameters
+ * @returns {UseQueryResult} Query object with saved posts list and metadata
+ */
+export function useGetUserSavedPosts(
+  userId: string,
+  query?: Record<string, unknown>
+) {
+  return useQuery({
+    queryKey: [...postsKeys.savedPosts(), userId, JSON.stringify(query || {})],
+    queryFn: async () => {
+      const response = await api.get(ENDPOINTS.POSTS.USER_SAVE_POSTS(userId), {
+        params: query,
+      });
+      if (response.data && response.data.success && response.data.data) {
+        return {
+          posts: Array.isArray(response.data.data) ? response.data.data : [],
+          meta: response.data.meta || {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+      return {
+        posts: [] as PostData[],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      };
+    },
+    enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Hook to fetch any user's liked posts (for public profiles)
+ * Retrieves posts that a specific user has liked
+ *
+ * @description
+ * - Fetches liked posts for a specific user by userId
+ * - Returns posts with pagination metadata
+ * - Cached for 5 minutes
+ *
+ * @usedIn
+ * - Public profile page liked posts tab
+ *
+ * @param userId - ID of the user whose liked posts to fetch
+ * @param query - Optional query parameters
+ * @returns {UseQueryResult} Query object with liked posts list and metadata
+ */
+export function useGetUserLikedPosts(
+  userId: string,
+  query?: Record<string, unknown>
+) {
+  return useQuery({
+    queryKey: [...postsKeys.likedPosts(), userId, JSON.stringify(query || {})],
+    queryFn: async () => {
+      const response = await api.get(ENDPOINTS.POSTS.USER_LIKE_POSTS(userId), {
+        params: query,
+      });
+      if (response.data && response.data.success && response.data.data) {
+        return {
+          posts: Array.isArray(response.data.data) ? response.data.data : [],
+          meta: response.data.meta || {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+      return {
+        posts: [] as PostData[],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      };
+    },
+    enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function useInfinitePosts(query?: Record<string, unknown>) {
   return useInfiniteQuery({
     queryKey: [...postsKeys.list(), 'infinite', JSON.stringify(query || {})],

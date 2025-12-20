@@ -6,9 +6,15 @@ import {
   ProfileHeader,
   ProfileTabs,
   ProfileNotFound,
+  ProfileTabContent,
 } from '@/components/profile';
 import React from 'react';
 import { useGetPublicProfile } from '@/hooks';
+import {
+  useGetUserPosts,
+  useGetUserSavedPosts,
+  useGetUserLikedPosts,
+} from '@/hooks/usePosts';
 import { Spinner } from '@/components/ui';
 import { useSession } from 'next-auth/react';
 
@@ -21,7 +27,7 @@ export default function PublicProfilePage() {
   const params = useParams();
   const username = params.username as string;
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = React.useState('videos');
+  const [activeTab, setActiveTab] = React.useState('posts');
 
   const {
     data: profile,
@@ -29,7 +35,50 @@ export default function PublicProfilePage() {
     error,
   } = useGetPublicProfile(username, !!username);
 
+  // Fetch user posts when profile is loaded - use _id for MongoDB queries
+  const { data: userPostsData, isLoading: userPostsLoading } = useGetUserPosts(
+    profile?._id || '',
+    {}
+  );
+
+  // Fetch user saved posts
+  const { data: savedPostsData, isLoading: savedPostsLoading } =
+    useGetUserSavedPosts(profile?._id || '', {});
+
+  // Fetch user liked posts
+  const { data: likedPostsData, isLoading: likedPostsLoading } =
+    useGetUserLikedPosts(profile?._id || '', {});
+
   const isOwnProfile = session?.user?.uuid === profile?.uuid;
+
+  // Get current tab data
+  const getCurrentTabData = () => {
+    switch (activeTab) {
+      case 'posts':
+        return {
+          posts: userPostsData?.posts || [],
+          isLoading: userPostsLoading,
+        };
+      case 'saved':
+        return {
+          posts: savedPostsData?.posts || [],
+          isLoading: savedPostsLoading,
+        };
+      case 'liked':
+        return {
+          posts: likedPostsData?.posts || [],
+          isLoading: likedPostsLoading,
+        };
+      default:
+        return {
+          posts: [],
+          isLoading: false,
+        };
+    }
+  };
+
+  const { posts: currentPosts, isLoading: currentLoading } =
+    getCurrentTabData();
 
   if (isLoading) {
     return (
@@ -101,12 +150,37 @@ export default function PublicProfilePage() {
 
       {/* Tabs */}
       <div style={{ marginTop: '2rem' }}>
-        <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        <ProfileTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          totalPosts={profile.totalPosts}
+          totalSavedPosts={profile.totalSavedPosts}
+          totalLikedPosts={profile.totalLikedPosts}
+        />
       </div>
 
       {/* Tab Content */}
       <div style={{ marginTop: '2rem' }}>
-        <ProfileEmpty type={activeTab} isPublic={true} />
+        {currentLoading ? (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '40vh',
+            }}
+          >
+            <Spinner size="lg" />
+          </div>
+        ) : currentPosts.length > 0 ? (
+          <ProfileTabContent
+            posts={currentPosts}
+            isLoading={currentLoading}
+            type={activeTab as 'posts' | 'saved' | 'liked'}
+          />
+        ) : (
+          <ProfileEmpty type={activeTab} isPublic={true} />
+        )}
       </div>
     </div>
   );

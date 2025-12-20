@@ -65,6 +65,7 @@ export interface ProfileData extends PublicProfile {
  */
 export interface CompleteProfile {
   // User table fields
+  _id: string;
   uuid: string;
   username: string;
   email: string;

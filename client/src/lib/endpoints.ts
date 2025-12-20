@@ -24,6 +24,8 @@ export const ENDPOINTS = {
     MY_POSTS: '/posts/my-posts',
     MY_SAVE_POSTS: '/posts/my-save-posts',
     MY_LIKE_POSTS: '/posts/my-like-posts',
+    USER_SAVE_POSTS: (userId: string) => `/posts/user-save-posts/${userId}`,
+    USER_LIKE_POSTS: (userId: string) => `/posts/user-like-posts/${userId}`,
     DETAIL: (id: string) => `/posts/detail/${id}`,
     UPDATE: (id: string) => `/posts/update/${id}`,
     DELETE: (id: string) => `/posts/delete/${id}`,
