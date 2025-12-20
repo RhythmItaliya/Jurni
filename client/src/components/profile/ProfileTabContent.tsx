@@ -1,8 +1,9 @@
 'use client';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Play, ChevronLeft, ChevronRight, Share2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { ShareModal } from '@/components/ui/ShareModal';
 
 import { MediaObject } from '@/types/profile';
 
@@ -28,6 +29,7 @@ const PostGridItem = ({ post, index }: { post: Post; index: number }) => {
   const router = useRouter();
   const [isHovered, setIsHovered] = React.useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = React.useState(0);
+  const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
 
   // Get all media items for this post
   const mediaItems = post.media || [];
@@ -211,11 +213,36 @@ const PostGridItem = ({ post, index }: { post: Post; index: number }) => {
                     by @{post.userId.username}
                   </motion.div>
                 )}
+
+                <motion.button
+                  className="post-share-btn"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.25 }}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setIsShareModalOpen(true);
+                  }}
+                  aria-label="Share post"
+                >
+                  <Share2 size={18} />
+                </motion.button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        url={
+          typeof window !== 'undefined'
+            ? `${window.location.origin}/p/${post._id}`
+            : `/p/${post._id}`
+        }
+        title={post.title || post.description || 'Check out this post'}
+      />
     </motion.div>
   );
 };
