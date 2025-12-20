@@ -159,7 +159,22 @@ export class FollowController {
     @Request() req: any,
   ): Promise<BaseResponseDto> {
     try {
-      const currentUserId = req.user?.id;
+      // Try to get authenticated user from header
+      let currentUserId: string | undefined;
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.substring(7);
+          const decoded: any = require('jsonwebtoken').verify(
+            token,
+            process.env.JWT_SECRET,
+          );
+          currentUserId = decoded.sub;
+        } catch (err) {
+          // Token invalid or expired, continue as unauthenticated
+        }
+      }
+
       const followers = await this.followService.getFollowers(
         userId,
         currentUserId,
@@ -207,7 +222,22 @@ export class FollowController {
     @Request() req: any,
   ): Promise<BaseResponseDto> {
     try {
-      const currentUserId = req.user?.id;
+      // Try to get authenticated user from header
+      let currentUserId: string | undefined;
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.substring(7);
+          const decoded: any = require('jsonwebtoken').verify(
+            token,
+            process.env.JWT_SECRET,
+          );
+          currentUserId = decoded.sub;
+        } catch (err) {
+          // Token invalid or expired, continue as unauthenticated
+        }
+      }
+
       const following = await this.followService.getFollowing(
         userId,
         currentUserId,

@@ -110,6 +110,12 @@ export class FollowUserInfoDto {
     example: 'https://example.com/avatar.jpg',
   })
   avatarImage?: string;
+
+  @ApiProperty({
+    description: 'Whether current user is following this user',
+    example: true,
+  })
+  isFollowing?: boolean;
 }
 
 /**

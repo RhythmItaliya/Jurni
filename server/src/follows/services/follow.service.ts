@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Follow, FollowDocument } from '../models/follow.model';
 import { User, UserDocument } from '@users/models/user.schema';
+import { Profile, ProfileDocument } from '../../profiles/models/profile.model';
 import { UserService } from '@users/services/user.service';
 import {
   FollowUserInfoDto,
@@ -20,6 +21,7 @@ export class FollowService {
   constructor(
     @InjectModel(Follow.name) private followModel: Model<FollowDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Profile.name) private profileModel: Model<ProfileDocument>,
     private userService: UserService,
   ) {}
 
@@ -98,19 +100,63 @@ export class FollowService {
       throw new NotFoundException('User not found');
     }
 
-    // Get followers
-    const followers = await this.followModel
+    // Get follower UUIDs
+    const followRecords = await this.followModel
       .find({ following: userId })
-      .populate('follower', 'uuid username firstName lastName avatarImage')
+      .select('follower')
+      .lean()
       .exec();
 
-    return followers.map((follow) => ({
-      uuid: (follow.follower as any).uuid,
-      username: (follow.follower as any).username,
-      firstName: (follow.follower as any).firstName,
-      lastName: (follow.follower as any).lastName,
-      avatarImage: (follow.follower as any).avatarImage,
-    }));
+    if (followRecords.length === 0) {
+      return [];
+    }
+
+    // Extract follower UUIDs
+    const followerUuids = followRecords.map((record) => record.follower);
+
+    // Fetch user details by UUID
+    const followers = await this.userModel
+      .find({ uuid: { $in: followerUuids } })
+      .select('uuid username avatarImage')
+      .lean()
+      .exec();
+
+    // Get profiles for all followers
+    const userIds = followers.map((f) => f._id);
+    const profiles = await this.profileModel
+      .find({ user: { $in: userIds } })
+      .select('user firstName lastName')
+      .lean()
+      .exec();
+
+    // Create a map of userId to profile
+    const profileMap = new Map(profiles.map((p) => [p.user.toString(), p]));
+
+    // If currentUserId is provided, check which users current user is following
+    let currentUserFollowing: Set<string> = new Set();
+    if (currentUserId) {
+      const currentFollowing = await this.followModel
+        .find({ follower: currentUserId })
+        .select('following')
+        .lean()
+        .exec();
+      currentUserFollowing = new Set(currentFollowing.map((f) => f.following));
+    }
+
+    return followers.map((follower) => {
+      const profile = profileMap.get(follower._id.toString());
+      const isFollowing = currentUserId
+        ? currentUserFollowing.has(follower.uuid)
+        : false;
+      return {
+        uuid: follower.uuid,
+        username: follower.username,
+        firstName: profile?.firstName,
+        lastName: profile?.lastName,
+        avatarImage: follower.avatarImage?.publicUrl,
+        isFollowing,
+      };
+    });
   }
 
   /**
@@ -128,19 +174,63 @@ export class FollowService {
       throw new NotFoundException('User not found');
     }
 
-    // Get following
-    const following = await this.followModel
+    // Get following UUIDs
+    const followRecords = await this.followModel
       .find({ follower: userId })
-      .populate('following', 'uuid username firstName lastName avatarImage')
+      .select('following')
+      .lean()
       .exec();
 
-    return following.map((follow) => ({
-      uuid: (follow.following as any).uuid,
-      username: (follow.following as any).username,
-      firstName: (follow.following as any).firstName,
-      lastName: (follow.following as any).lastName,
-      avatarImage: (follow.following as any).avatarImage,
-    }));
+    if (followRecords.length === 0) {
+      return [];
+    }
+
+    // Extract following UUIDs
+    const followingUuids = followRecords.map((record) => record.following);
+
+    // Fetch user details by UUID
+    const following = await this.userModel
+      .find({ uuid: { $in: followingUuids } })
+      .select('uuid username avatarImage')
+      .lean()
+      .exec();
+
+    // Get profiles for all following users
+    const userIds = following.map((f) => f._id);
+    const profiles = await this.profileModel
+      .find({ user: { $in: userIds } })
+      .select('user firstName lastName')
+      .lean()
+      .exec();
+
+    // Create a map of userId to profile
+    const profileMap = new Map(profiles.map((p) => [p.user.toString(), p]));
+
+    // If currentUserId is provided, check which users current user is following
+    let currentUserFollowing: Set<string> = new Set();
+    if (currentUserId) {
+      const currentFollowing = await this.followModel
+        .find({ follower: currentUserId })
+        .select('following')
+        .lean()
+        .exec();
+      currentUserFollowing = new Set(currentFollowing.map((f) => f.following));
+    }
+
+    return following.map((user) => {
+      const profile = profileMap.get(user._id.toString());
+      const isFollowing = currentUserId
+        ? currentUserFollowing.has(user.uuid)
+        : false;
+      return {
+        uuid: user.uuid,
+        username: user.username,
+        firstName: profile?.firstName,
+        lastName: profile?.lastName,
+        avatarImage: user.avatarImage?.publicUrl,
+        isFollowing,
+      };
+    });
   }
 
   /**
