@@ -41,7 +41,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
     {
       name: 'Copy Link',
       icon: copied ? Check : Copy,
-      color: copied ? '#2d5016' : '#666',
+      color: copied ? '#2d5016' : 'var(--primary-color)',
       onClick: handleCopyLink,
     },
     {
@@ -91,7 +91,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
     {
       name: 'Email',
       icon: Mail,
-      color: '#666',
+      color: 'var(--text-secondary)',
       onClick: () => {
         window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`;
       },

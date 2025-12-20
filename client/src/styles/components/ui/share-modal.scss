@@ -109,7 +109,8 @@
     align-items: center;
     justify-content: center;
     color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 8px var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 
     svg {
       filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
@@ -157,19 +158,20 @@
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    background: var(--primary-color);
-    border: none;
+    background: #2d5016;
+    border: 1px solid var(--border-color);
     color: white;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 4px var(--shadow);
 
     &:hover {
-      background: var(--primary-hover);
+      background: #4a7c59;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(45, 80, 22, 0.3);
+      box-shadow: 0 4px 12px var(--shadow);
     }
 
     &:active {
@@ -178,6 +180,7 @@
 
     &.copied {
       background: #4caf50;
+      border-color: #4caf50;
     }
   }
 }

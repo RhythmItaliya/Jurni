@@ -38,6 +38,7 @@ import { formatLocation } from '@/lib/locationUtils';
 import { useReportPost } from '@/hooks/useReport';
 import { useReduxToast } from '@/hooks/useReduxToast';
 import ReportModal from '../ReportModal';
+import { ShareModal } from '../ShareModal';
 
 /**
  * PostCard component
@@ -60,6 +61,7 @@ export default function PostCard({
   const [isDescriptionExpanded, setIsDescriptionExpanded] =
     React.useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = React.useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
 
   // Like functionality with local state for real-time updates
   const { data: likeStats } = useLikeStats('post', post._id);
@@ -309,8 +311,7 @@ export default function PostCard({
                   // TODO: Implement delete functionality
                 }}
                 onShare={() => {
-                  console.log('Share post:', post._id);
-                  // TODO: Implement share functionality
+                  setIsShareModalOpen(true);
                 }}
               />
               <div className="author-location">
@@ -600,6 +601,13 @@ export default function PostCard({
           });
         }}
         isSubmitting={reportMutation.isPending}
+      />
+
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        url={`${window.location.origin}/p/${post._id}`}
+        title={post.title || 'Check out this post'}
       />
     </div>
   );
