@@ -53,10 +53,10 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
 
   '/j/*': {
     showLeftSidebar: true, // Navigation sidebar
-    showRightSidebar: false, // No right sidebar
+    showRightSidebar: true, // Show right sidebar for followers/following
     showMainContent: true, // Use main content area for full width layout
     showPosts: false, // No posts, just page content inside main area
-    layoutType: 'sidebar-only',
+    layoutType: 'full',
     mainContentFullWidth: true, // Allow full width in main content area
   },
 
@@ -72,10 +72,10 @@ export const routeLayoutConfig: Record<string, LayoutConfig> = {
 
   '/profile': {
     showLeftSidebar: true, // Navigation sidebar
-    showRightSidebar: false, // No right sidebar
+    showRightSidebar: true, // Show right sidebar for followers/following
     showMainContent: true, // Use main content area for full width layout
     showPosts: false, // No posts, just page content inside main area
-    layoutType: 'sidebar-only',
+    layoutType: 'full',
     mainContentFullWidth: true, // Allow full width in main content area
   },
 

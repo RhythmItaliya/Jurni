@@ -7,25 +7,16 @@ import {
   useTrendingHashtags,
   SuggestedUser,
 } from '@/hooks/useSuggestions';
-import { useFollowUser } from '@/hooks/useFollow';
-import { Button } from '@/components/ui/Button';
-import '@/styles/components/suggestions.scss';
 
 /**
  * Suggestions Panel Component
  * Displays suggested users and trending hashtags in the right sidebar
- * Shows follow buttons for quick actions
  */
 export default function SuggestionsPanel() {
   const router = useRouter();
-  const { data: suggestedUsers, isLoading: usersLoading } = useSuggestions(8);
+  const { data: suggestedUsers, isLoading: usersLoading } = useSuggestions(5);
   const { data: trendingHashtags, isLoading: hashtagsLoading } =
     useTrendingHashtags(8);
-  const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
-
-  const handleFollowClick = (userId: string) => {
-    followUser(userId);
-  };
 
   const handleVisitProfile = (username: string) => {
     router.push(`/j/${username}`);
@@ -60,45 +51,21 @@ export default function SuggestionsPanel() {
                 className="suggestion-card"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                onClick={() => handleVisitProfile(user.username)}
+                style={{ cursor: 'pointer' }}
               >
-                {/* Avatar and Info */}
-                <div
-                  className="card-left"
-                  onClick={() => handleVisitProfile(user.username)}
-                >
-                  <img
-                    src={
-                      user.avatarImage?.publicUrl ||
-                      user.avatarImage?.url ||
-                      '/default-avatar.png'
-                    }
-                    alt={user.username}
-                    className="user-avatar"
-                  />
-                  <div className="user-info">
-                    <p className="user-name">
-                      {user.firstName && user.lastName
-                        ? `${user.firstName} ${user.lastName}`
-                        : user.username}
-                    </p>
-                    <p className="user-handle">@{user.username}</p>
-                    {user.bio && (
-                      <p className="user-bio">{user.bio.substring(0, 40)}...</p>
-                    )}
-                  </div>
+                <img
+                  src={
+                    user.avatarImage?.publicUrl ||
+                    user.avatarImage?.url ||
+                    '/default-avatar.png'
+                  }
+                  alt={user.username}
+                  className="user-avatar"
+                />
+                <div className="user-info">
+                  <p className="user-name">@{user.username}</p>
                 </div>
-
-                {/* Follow Button */}
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => handleFollowClick(user._id)}
-                  disabled={isFollowPending}
-                  loading={isFollowPending}
-                  loadingText="Following..."
-                >
-                  Follow
-                </Button>
               </motion.div>
             ))}
           </div>

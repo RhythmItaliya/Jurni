@@ -118,12 +118,13 @@ export function useGetFollowers(userId: string, enabled = true) {
   return useQuery({
     queryKey: followKeys.followers(userId),
     queryFn: async () => {
+      if (!userId) return [];
       const response = await api.get<{
         success: boolean;
         message: string;
         data: FollowUser[];
       }>(ENDPOINTS.FOLLOWS.FOLLOWERS(userId));
-      return response.data.data;
+      return response.data.data || [];
     },
     enabled: enabled && !!userId,
     staleTime: 2 * 60 * 1000, // 2 minutes
@@ -157,12 +158,13 @@ export function useGetFollowing(userId: string, enabled = true) {
   return useQuery({
     queryKey: followKeys.following(userId),
     queryFn: async () => {
+      if (!userId) return [];
       const response = await api.get<{
         success: boolean;
         message: string;
         data: FollowUser[];
       }>(ENDPOINTS.FOLLOWS.FOLLOWING(userId));
-      return response.data.data;
+      return response.data.data || [];
     },
     enabled: enabled && !!userId,
     staleTime: 2 * 60 * 1000, // 2 minutes

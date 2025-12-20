@@ -42,7 +42,7 @@ export interface TrendingHashtag {
 /**
  * Hook to get user suggestions
  * Fetches suggested users that the current user is not following
- * Refetches every 5 minutes
+ * Randomizes order on each fetch and refetches every 2 minutes
  *
  * @param limit - Number of suggestions to return (default: 10)
  * @param enabled - Whether to enable the query (default: true)
@@ -52,21 +52,26 @@ export function useSuggestions(limit: number = 10, enabled: boolean = true) {
   const { showError } = useReduxToast();
 
   return useQuery({
-    queryKey: suggestionsKeys.users,
+    queryKey: [...suggestionsKeys.users, limit],
     queryFn: async () => {
       try {
         const response = await api.get(ENDPOINTS.SUGGESTIONS.USERS, {
-          params: { limit },
+          params: { limit: limit * 2 }, // Fetch more to randomize
         });
-        return response.data.data as SuggestedUser[];
+        const users = response.data.data as SuggestedUser[];
+
+        // Shuffle the results and return only the requested limit
+        const shuffled = users.sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, limit);
       } catch (error) {
         const message = extractServerMessage(error);
         showError('Failed to load suggestions', message || 'Try again later');
         return [];
       }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 30 * 60 * 1000, // 30 minutes (cache time)
+    staleTime: 2 * 60 * 1000, // 2 minutes (reduced from 5)
+    gcTime: 10 * 60 * 1000, // 10 minutes (reduced from 30)
+    refetchOnMount: 'always', // Always refetch on mount to get new random order
     enabled,
   });
 }

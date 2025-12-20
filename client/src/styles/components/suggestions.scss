@@ -1,5 +1,5 @@
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as *;
+@use '../variables' as *;
+@use '../mixins' as *;
 
 .suggestions-panel {
   display: flex;
@@ -9,7 +9,6 @@
   background: var(--bg-primary);
   border-radius: $radius-lg;
   border: 1px solid var(--border-color);
-  color: var(--text-primary);
 
   .suggestions-section {
     display: flex;
@@ -23,8 +22,6 @@
       margin: 0;
       padding-bottom: $spacing-sm;
       border-bottom: 1px solid var(--border-color);
-      text-decoration-color: var(--primary-color);
-      text-underline-offset: 4px;
     }
 
     .suggestions-list {
@@ -35,18 +32,16 @@
       .suggestion-card {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        gap: 10px;
         padding: $spacing-md;
         background: var(--bg-secondary);
         border-radius: $radius-md;
-        border: 1px solid var(--border-color);
         transition: all 0.2s ease;
         cursor: pointer;
 
         &:hover {
-          background: var(--bg-tertiary);
-          border-color: var(--primary-color);
-          box-shadow: 0 2px 8px var(--shadow);
+          background: var(--bg-hover);
+          border-color: var(--border-hover);
         }
 
         .card-left {

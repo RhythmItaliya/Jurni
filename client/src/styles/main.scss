@@ -4,6 +4,8 @@
 @use 'base';
 @use 'components/ui';
 @use 'components/layout';
+@use 'components/sidebar';
+@use 'components/suggestions';
 @use 'components/auth' as auth;
 @use 'components/admin' as admin;
 @use 'components/post';

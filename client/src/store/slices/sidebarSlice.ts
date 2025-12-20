@@ -39,6 +39,9 @@ const sidebarSlice = createSlice({
       state.isOpen = true;
     },
     closeSidebar: state => {
+      state.contentType = 'suggestions';
+      state.userId = null;
+      state.username = null;
       state.isOpen = false;
     },
     resetSidebar: state => {

@@ -13,6 +13,7 @@ export interface FollowUser {
   firstName?: string;
   lastName?: string;
   avatarImage?: string;
+  isFollowing?: boolean;
 }
 
 /**

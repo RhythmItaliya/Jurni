@@ -14,9 +14,12 @@ import {
   useGetMySavedPosts,
   useGetMyLikedPosts,
 } from '@/hooks/usePosts';
+import { useAppDispatch } from '@/store/hooks';
+import { openSidebar } from '@/store/slices/sidebarSlice';
 
 export default function ProfilePage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = React.useState('posts');
   const { data: profile, isLoading: profileLoading } = useGetMyProfile();
 
@@ -120,6 +123,22 @@ export default function ProfilePage() {
           followersCount={profile?.followersCount}
           followingCount={profile?.followingCount}
           isOwnProfile={true}
+          onFollowersClick={() =>
+            dispatch(
+              openSidebar({
+                contentType: 'followers',
+                userId: profile?.uuid,
+              })
+            )
+          }
+          onFollowingClick={() =>
+            dispatch(
+              openSidebar({
+                contentType: 'following',
+                userId: profile?.uuid,
+              })
+            )
+          }
         />
       </div>
 

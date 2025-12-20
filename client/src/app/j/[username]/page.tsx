@@ -17,6 +17,8 @@ import {
 } from '@/hooks/usePosts';
 import { Spinner } from '@/components/ui';
 import { useSession } from 'next-auth/react';
+import { useAppDispatch } from '@/store/hooks';
+import { openSidebar } from '@/store/slices/sidebarSlice';
 
 /**
  * Public profile page component - shows any user's public profile
@@ -27,6 +29,7 @@ export default function PublicProfilePage() {
   const params = useParams();
   const username = params.username as string;
   const { data: session } = useSession();
+  const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = React.useState('posts');
 
   const {
@@ -145,6 +148,22 @@ export default function PublicProfilePage() {
           followersCount={profile.followersCount}
           followingCount={profile.followingCount}
           isOwnProfile={isOwnProfile}
+          onFollowersClick={() =>
+            dispatch(
+              openSidebar({
+                contentType: 'followers',
+                userId: profile.uuid,
+              })
+            )
+          }
+          onFollowingClick={() =>
+            dispatch(
+              openSidebar({
+                contentType: 'following',
+                userId: profile.uuid,
+              })
+            )
+          }
         />
       </div>
 
