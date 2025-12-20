@@ -15,10 +15,6 @@ export default function TrendingPage() {
         <TrendingHeader
           title="Trending"
           subtitle="Discover what's hot right now"
-          totalPosts={1200}
-          totalTopics={89}
-          totalViews={2100000}
-          totalUsers={450}
         />
 
         <TrendingContent />

@@ -1,22 +1,32 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Hash, Users, Eye } from 'lucide-react';
+import { TrendingUp, Hash, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useGetTrendingHashtags } from '@/hooks/useTrending';
 
 export default function TrendingHeader({
   title = 'Trending',
   subtitle = "Discover what's hot right now",
-  totalPosts = 0,
-  totalTopics = 0,
-  totalViews = 0,
-  totalUsers = 0,
 }: {
   title?: string;
   subtitle?: string;
-  totalPosts?: number;
-  totalTopics?: number;
-  totalViews?: number;
-  totalUsers?: number;
 }) {
+  const router = useRouter();
+  const { data: trendingHashtags, isLoading: hashtagsLoading } =
+    useGetTrendingHashtags(10);
+
+  // Format hashtags for display - limit to top 10
+  const formattedHashtags =
+    trendingHashtags?.slice(0, 10).map(h => ({
+      hashtag: h.hashtag,
+      name: `#${h.hashtag}`,
+      count: `${h.count} post${h.count !== 1 ? 's' : ''}`,
+    })) || [];
+
+  const handleTopicClick = (hashtag: string) => {
+    router.push(`/p/h/${hashtag}`);
+  };
+
   return (
     <motion.div
       className="trending-header-compact"
@@ -41,68 +51,42 @@ export default function TrendingHeader({
           </div>
         </motion.div>
 
-        {/* Stats Grid */}
+        {/* Trending Topics Section */}
         <motion.div
-          className="trending-stats-grid"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+          className="trending-section"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <motion.div
-            className="stat-item"
-            whileHover={{ scale: 1.05, y: -2 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="stat-icon">
-              <Hash size={20} />
+          <h2 className="section-title">
+            <Hash size={24} />
+            Trending Topics
+          </h2>
+          {hashtagsLoading ? (
+            <div className="trending-loading">
+              <Loader2 className="spinner" size={32} />
+              <p>Loading trending topics...</p>
             </div>
-            <div className="stat-content">
-              <div className="stat-number">{totalPosts.toLocaleString()}</div>
-              <div className="stat-label">Posts Today</div>
+          ) : formattedHashtags.length > 0 ? (
+            <div className="trending-topics">
+              {formattedHashtags.map((topic, index) => (
+                <motion.div
+                  key={topic.name}
+                  className="topic-card"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                  onClick={() => handleTopicClick(topic.hashtag)}
+                >
+                  <span className="topic-name">{topic.name}</span>
+                  <span className="topic-count">{topic.count}</span>
+                </motion.div>
+              ))}
             </div>
-          </motion.div>
-
-          <motion.div
-            className="stat-item"
-            whileHover={{ scale: 1.05, y: -2 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="stat-icon">
-              <Users size={20} />
-            </div>
-            <div className="stat-content">
-              <div className="stat-number">{totalUsers.toLocaleString()}</div>
-              <div className="stat-label">Active Users</div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="stat-item"
-            whileHover={{ scale: 1.05, y: -2 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="stat-icon">
-              <TrendingUp size={20} />
-            </div>
-            <div className="stat-content">
-              <div className="stat-number">{totalTopics.toLocaleString()}</div>
-              <div className="stat-label">Trending Topics</div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="stat-item"
-            whileHover={{ scale: 1.05, y: -2 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="stat-icon">
-              <Eye size={20} />
-            </div>
-            <div className="stat-content">
-              <div className="stat-number">{totalViews.toLocaleString()}</div>
-              <div className="stat-label">Total Views</div>
-            </div>
-          </motion.div>
+          ) : (
+            <p className="no-data">No trending topics found</p>
+          )}
         </motion.div>
       </div>
     </motion.div>

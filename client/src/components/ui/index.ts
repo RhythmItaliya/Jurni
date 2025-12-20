@@ -18,3 +18,4 @@ export { default as PostActions } from './post/PostActions';
 export { default as PostHeaderActions } from './post/PostHeaderActions';
 export { default as SkeletonPost } from './post/SkeletonPost';
 export { default as ReportModal } from './ReportModal';
+export { ShareModal } from './ShareModal';
