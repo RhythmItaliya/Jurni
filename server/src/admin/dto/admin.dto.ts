@@ -92,14 +92,6 @@ export class UpdateAdminDto {
   })
   @IsString()
   role?: string;
-
-  @ApiProperty({
-    description: 'Admin permissions',
-    example: ['users.read', 'posts.delete'],
-    type: [String],
-    required: false,
-  })
-  permissions?: string[];
 }
 
 export class ChangeAdminPasswordDto {

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '@/users/models';
-import { UpdateUserDto } from '@/admin/dto';
+import { AdminUpdateUserDto } from '@/admin/dto';
 
 @Injectable()
 export class AdminUsersService {
@@ -55,7 +55,7 @@ export class AdminUsersService {
    */
   async updateUser(
     uuid: string,
-    updateDto: UpdateUserDto,
+    updateDto: AdminUpdateUserDto,
   ): Promise<Partial<UserDocument>> {
     const user = await this.userModel.findOne({ uuid }).exec();
 

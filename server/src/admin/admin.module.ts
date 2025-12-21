@@ -5,16 +5,23 @@ import { PassportModule } from '@nestjs/passport';
 import { ENV_VARS } from '@config/env';
 import { Admin, AdminSchema } from './models';
 import { User, UserSchema } from '@/users/models';
+import { Post, PostSchema } from '@/posts/models/post.model';
+import { Report, ReportSchema } from '@/reports/models/report.model';
+import { Comment, CommentSchema } from '@/comments/models/comment.model';
 import {
   AdminService,
   AdminAuthService,
   AdminSeedService,
   AdminUsersService,
+  AdminCommentsService,
+  AdminReportsService,
 } from './services';
 import {
   AdminAuthController,
   AdminController,
   AdminUsersController,
+  AdminCommentsController,
+  AdminReportsController,
 } from './controllers';
 import { AdminJwtStrategy } from './strategies';
 
@@ -23,6 +30,9 @@ import { AdminJwtStrategy } from './strategies';
     MongooseModule.forFeature([
       { name: Admin.name, schema: AdminSchema },
       { name: User.name, schema: UserSchema },
+      { name: Post.name, schema: PostSchema },
+      { name: Report.name, schema: ReportSchema },
+      { name: Comment.name, schema: CommentSchema },
     ]),
     PassportModule,
     JwtModule.register({
@@ -30,14 +40,28 @@ import { AdminJwtStrategy } from './strategies';
       signOptions: { expiresIn: '24h' },
     }),
   ],
-  controllers: [AdminAuthController, AdminController, AdminUsersController],
+  controllers: [
+    AdminAuthController,
+    AdminController,
+    AdminUsersController,
+    AdminCommentsController,
+    AdminReportsController,
+  ],
   providers: [
     AdminService,
     AdminAuthService,
     AdminSeedService,
     AdminUsersService,
+    AdminCommentsService,
+    AdminReportsService,
     AdminJwtStrategy,
   ],
-  exports: [AdminService, AdminAuthService, AdminUsersService],
+  exports: [
+    AdminService,
+    AdminAuthService,
+    AdminUsersService,
+    AdminCommentsService,
+    AdminReportsService,
+  ],
 })
 export class AdminModule {}

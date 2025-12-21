@@ -6,9 +6,13 @@ import {
   Patch,
   Delete,
   Param,
+  Query,
   HttpCode,
   HttpStatus,
   UseGuards,
+  Req,
+  ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -105,9 +109,51 @@ export class AdminController {
     status: 401,
     description: 'Unauthorized - Admin JWT token required',
   })
-  async getAllAdmins(): Promise<BaseResponseDto> {
-    const admins = await this.adminService.getAllAdmins();
-    return createSuccessResponse('Admins retrieved successfully', { admins });
+  async getAllAdmins(@Req() req: any): Promise<BaseResponseDto> {
+    // Check if requesting admin is super_admin
+    try {
+      const requestingAdmin = await this.adminService.findByUuid(req.user.sub);
+      if (requestingAdmin.role !== 'super_admin') {
+        throw new ForbiddenException(
+          'You do not have permission to view admins',
+        );
+      }
+
+      const admins = await this.adminService.getAllAdmins();
+      return createSuccessResponse('Admins retrieved successfully', { admins });
+    } catch (error) {
+      if (error instanceof ForbiddenException) {
+        throw error;
+      }
+      throw new NotFoundException('Admin not found');
+    }
+  }
+
+  /**
+   * Get recent activity
+   * Endpoint: GET /admin/activity
+   * @param limit - Number of items to return
+   * @param type - Type of activity (all, users, posts)
+   * @returns Recent activity data
+   */
+  @Get('activity')
+  @ApiOperation({ summary: 'Get recent activity' })
+  @ApiResponse({
+    status: 200,
+    description: 'Recent activity retrieved successfully',
+    type: BaseResponseDto,
+  })
+  async getRecentActivity(
+    @Query('limit') limit?: string,
+    @Query('type') type?: 'all' | 'users' | 'posts',
+  ): Promise<BaseResponseDto> {
+    const activities = await this.adminService.getRecentActivity(
+      limit ? parseInt(limit) : 20,
+      type || 'all',
+    );
+    return createSuccessResponse('Recent activity retrieved successfully', {
+      activities,
+    });
   }
 
   /**
@@ -156,7 +202,21 @@ export class AdminController {
   async updateAdmin(
     @Param('uuid') uuid: string,
     @Body() updateDto: UpdateAdminDto,
+    @Req() req: any,
   ): Promise<BaseResponseDto> {
+    // Check if requesting admin is super_admin
+    const requestingAdmin = await this.adminService.findByUuid(req.user.sub);
+    if (requestingAdmin.role !== 'super_admin') {
+      throw new ForbiddenException(
+        'You do not have permission to update admins',
+      );
+    }
+
+    // Prevent super admin from updating their own role
+    if (uuid === req.user.sub && updateDto.role) {
+      throw new ForbiddenException('You cannot change your own role');
+    }
+
     const admin = await this.adminService.updateAdmin(uuid, updateDto);
     const { password, ...adminData } = admin.toObject();
     return createSuccessResponse('Admin updated successfully', {
@@ -207,7 +267,23 @@ export class AdminController {
     status: 404,
     description: 'Admin not found',
   })
-  async deleteAdmin(@Param('uuid') uuid: string): Promise<BaseResponseDto> {
+  async deleteAdmin(
+    @Param('uuid') uuid: string,
+    @Req() req: any,
+  ): Promise<BaseResponseDto> {
+    // Check if requesting admin is super_admin
+    const requestingAdmin = await this.adminService.findByUuid(req.user.sub);
+    if (requestingAdmin.role !== 'super_admin') {
+      throw new ForbiddenException(
+        'You do not have permission to delete admins',
+      );
+    }
+
+    // Prevent super admin from deleting themselves
+    if (uuid === req.user.sub) {
+      throw new ForbiddenException('You cannot delete your own account');
+    }
+
     await this.adminService.deleteAdmin(uuid);
     return createSuccessResponse('Admin deleted successfully', null);
   }

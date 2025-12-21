@@ -21,6 +21,7 @@ export class AdminJwtStrategy extends PassportStrategy(Strategy, 'admin-jwt') {
     }
 
     const admin = await this.adminService.findByUuid(payload.sub);
+
     if (!admin) {
       throw new UnauthorizedException('Admin not found');
     }
@@ -30,6 +31,12 @@ export class AdminJwtStrategy extends PassportStrategy(Strategy, 'admin-jwt') {
       throw new UnauthorizedException('Admin account is inactive');
     }
 
-    return admin;
+    // Return payload with admin info for easy access in controllers
+    return {
+      sub: admin.uuid,
+      email: admin.email,
+      role: admin.role,
+      type: 'admin',
+    };
   }
 }

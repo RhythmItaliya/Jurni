@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional } from 'class-validator';
 
-export class UpdateUserDto {
+export class AdminUpdateUserDto {
   @ApiProperty({
     description: 'User suspended status',
     example: true,

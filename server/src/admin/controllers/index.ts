@@ -5,3 +5,5 @@
 
 export { AdminAuthController, AdminController } from './admin.controller';
 export { AdminUsersController } from './admin-users.controller';
+export { AdminCommentsController } from './admin-comments.controller';
+export { AdminReportsController } from './admin-reports.controller';

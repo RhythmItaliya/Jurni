@@ -10,6 +10,8 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Admin, AdminDocument } from '@/admin/models';
+import { User, UserDocument } from '@/users/models';
+import { Post, PostDocument } from '@/posts/models/post.model';
 import {
   AdminRegisterDto,
   UpdateAdminDto,
@@ -20,6 +22,8 @@ import {
 export class AdminService {
   constructor(
     @InjectModel(Admin.name) private adminModel: Model<AdminDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Post.name) private postModel: Model<PostDocument>,
   ) {}
 
   /**
@@ -131,9 +135,11 @@ export class AdminService {
       admin.email = updateDto.email.toLowerCase();
     }
 
-    if (updateDto.role !== undefined) admin.role = updateDto.role;
-    if (updateDto.permissions !== undefined)
-      admin.permissions = updateDto.permissions;
+    if (updateDto.role !== undefined) {
+      admin.role = updateDto.role;
+      // Update permissions based on role
+      admin.permissions = this.getDefaultPermissions(updateDto.role);
+    }
 
     return admin.save();
   }
@@ -264,5 +270,79 @@ export class AdminService {
     };
 
     return permissions[role] || permissions.moderator;
+  }
+
+  /**
+   * Get recent activity (users and posts created)
+   * @param limit - Number of items to return
+   * @param activityType - Type of activity (all, users, posts)
+   * @returns Array of recent activities
+   */
+  async getRecentActivity(
+    limit: number = 20,
+    activityType: 'all' | 'users' | 'posts' = 'all',
+  ) {
+    const activities: any[] = [];
+
+    // Get recent users
+    if (activityType === 'all' || activityType === 'users') {
+      const recentUsers = await this.userModel
+        .find()
+        .select('username email avatarImage createdAt')
+        .sort({ createdAt: -1 })
+        .limit(activityType === 'users' ? limit : Math.ceil(limit / 2))
+        .lean();
+
+      const userActivities = recentUsers.map((user) => ({
+        type: 'user',
+        action: 'created_account',
+        user: {
+          username: user.username,
+          email: user.email,
+          avatarImage: user.avatarImage,
+        },
+        timestamp: user.createdAt,
+      }));
+
+      activities.push(...userActivities);
+    }
+
+    // Get recent posts
+    if (activityType === 'all' || activityType === 'posts') {
+      const recentPosts = await this.postModel
+        .find()
+        .populate('userId', 'username email avatarImage')
+        .select('title userId createdAt')
+        .sort({ createdAt: -1 })
+        .limit(activityType === 'posts' ? limit : Math.ceil(limit / 2))
+        .lean();
+
+      const postActivities = recentPosts.map((post) => ({
+        type: 'post',
+        action: 'created_post',
+        user: post.userId
+          ? {
+              username: (post.userId as any).username,
+              email: (post.userId as any).email,
+              avatarImage: (post.userId as any).avatarImage,
+            }
+          : null,
+        post: {
+          _id: post._id,
+          title: post.title,
+        },
+        timestamp: post.createdAt,
+      }));
+
+      activities.push(...postActivities);
+    }
+
+    // Sort all activities by timestamp and limit
+    return activities
+      .sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      )
+      .slice(0, limit);
   }
 }

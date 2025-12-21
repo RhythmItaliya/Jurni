@@ -10,4 +10,4 @@ export {
   ChangeAdminPasswordDto,
 } from './admin.dto';
 
-export { UpdateUserDto } from './admin-users.dto';
+export { AdminUpdateUserDto } from './admin-users.dto';

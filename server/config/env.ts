@@ -38,4 +38,9 @@ export const ENV_VARS = {
   R2_BUCKET_NAME: process.env.R2_BUCKET_NAME!,
   R2_ENDPOINT: process.env.R2_ENDPOINT!,
   R2_PUBLIC_URL: process.env.R2_PUBLIC_URL!,
+
+  // Super Admin Credentials
+  SUPER_ADMIN_USERNAME: process.env.SUPER_ADMIN_USERNAME!,
+  SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL!,
+  SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD!,
 };

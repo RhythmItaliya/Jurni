@@ -18,7 +18,7 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { AdminUsersService } from '@/admin/services/admin-users.service';
-import { UpdateUserDto } from '@/admin/dto';
+import { AdminUpdateUserDto } from '@/admin/dto';
 import { BaseResponseDto, createSuccessResponse } from '@/lib/response.dto';
 import { AdminJwtAuthGuard } from '@/admin/guards';
 
@@ -128,7 +128,7 @@ export class AdminUsersController {
   })
   async updateUser(
     @Param('uuid') uuid: string,
-    @Body() updateDto: UpdateUserDto,
+    @Body() updateDto: AdminUpdateUserDto,
   ): Promise<BaseResponseDto> {
     try {
       if (!uuid || uuid.trim().length === 0) {
