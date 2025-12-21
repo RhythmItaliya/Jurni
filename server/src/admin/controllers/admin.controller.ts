@@ -157,6 +157,28 @@ export class AdminController {
   }
 
   /**
+   * Get dashboard statistics
+   * Endpoint: GET /admin/dashboard
+   * @returns Dashboard stats including total users, posts, comments, and reports
+   */
+  @Get('dashboard')
+  @ApiOperation({ summary: 'Get dashboard statistics' })
+  @ApiResponse({
+    status: 200,
+    description: 'Dashboard statistics retrieved successfully',
+    type: BaseResponseDto,
+  })
+  async getDashboardStats(): Promise<BaseResponseDto> {
+    const stats = await this.adminService.getDashboardStats();
+    return createSuccessResponse(
+      'Dashboard statistics retrieved successfully',
+      {
+        stats,
+      },
+    );
+  }
+
+  /**
    * Get admin by UUID
    * Endpoint: GET /admin/:uuid
    * @param uuid - Admin UUID

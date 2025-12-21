@@ -10,8 +10,10 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Admin, AdminDocument } from '@/admin/models';
-import { User, UserDocument } from '@/users/models';
+import { User, UserDocument } from '@/users';
 import { Post, PostDocument } from '@/posts/models/post.model';
+import { Comment, CommentDocument } from '@/comments/models/comment.model';
+import { Report, ReportDocument } from '@/reports/models/report.model';
 import {
   AdminRegisterDto,
   UpdateAdminDto,
@@ -24,6 +26,8 @@ export class AdminService {
     @InjectModel(Admin.name) private adminModel: Model<AdminDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(Report.name) private reportModel: Model<ReportDocument>,
   ) {}
 
   /**
@@ -344,5 +348,31 @@ export class AdminService {
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       )
       .slice(0, limit);
+  }
+
+  /**
+   * Get dashboard statistics
+   * @returns Dashboard stats including total users, posts, comments, and reports
+   */
+  async getDashboardStats(): Promise<{
+    totalUsers: number;
+    totalPosts: number;
+    totalComments: number;
+    totalReports: number;
+  }> {
+    const [totalUsers, totalPosts, totalComments, totalReports] =
+      await Promise.all([
+        this.userModel.countDocuments().exec(),
+        this.postModel.countDocuments().exec(),
+        this.commentModel.countDocuments().exec(),
+        this.reportModel.countDocuments().exec(),
+      ]);
+
+    return {
+      totalUsers,
+      totalPosts,
+      totalComments,
+      totalReports,
+    };
   }
 }
