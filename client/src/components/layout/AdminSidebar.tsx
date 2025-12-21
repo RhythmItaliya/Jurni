@@ -16,7 +16,6 @@ import {
   Image,
   Flag,
   Shield,
-  Settings,
   Moon,
   Sun,
   LogOut,
@@ -118,15 +117,6 @@ export default function AdminSidebar() {
             {!isCollapsed && <span className="nav-text">Admins</span>}
           </Link>
         )}
-        <Link
-          href="/admin/settings"
-          className={`nav-item ${isActive('/admin/settings') ? 'nav-item-active' : ''}`}
-        >
-          <span className="nav-icon">
-            <Settings size={20} />
-          </span>
-          {!isCollapsed && <span className="nav-text">Settings</span>}
-        </Link>
       </div>
 
       <div className="sidebar-footer">

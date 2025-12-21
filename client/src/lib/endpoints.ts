@@ -96,7 +96,7 @@ export const ENDPOINTS = {
       CHANGE_PASSWORD: (uuid: string) => `/admin/${uuid}/password`,
     },
     REPORTS: {
-      GET_ALL: '/admin/reports',
+      GET_ALL: '/admin/reports/list',
       GET_BY_UUID: (uuid: string) => `/admin/reports/${uuid}`,
       UPDATE_STATUS: (uuid: string) => `/admin/reports/${uuid}/status`,
       DELETE: (uuid: string) => `/admin/reports/${uuid}`,

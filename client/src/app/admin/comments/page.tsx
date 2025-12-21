@@ -172,16 +172,20 @@ export default function AdminComments() {
       >
         <div className="modal-content">
           <p>Are you sure you want to delete this comment?</p>
-          <p className="modal-warning">This action cannot be undone.</p>
           <div className="modal-actions">
-            <Button
-              variant="danger"
+            <button
+              className="admin-btn admin-btn-danger"
               onClick={handleConfirmDelete}
-              className="admin-btn-danger"
               disabled={deleteCommentMutation.isPending}
             >
-              {deleteCommentMutation.isPending ? <Spinner size="sm" /> : 'Delete'}
-            </Button>
+              {deleteCommentMutation.isPending ? (
+                <>
+                  <Spinner size="sm" />
+                </>
+              ) : (
+                'Delete'
+              )}
+            </button>
           </div>
         </div>
       </Modal>

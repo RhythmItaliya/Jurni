@@ -16,7 +16,7 @@ export interface Report {
   };
   reason: string;
   description?: string;
-  status: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
+  status: 'pending' | 'resolved' | 'dismissed';
   reviewedBy?: {
     _id: string;
     username: string;
@@ -92,7 +92,7 @@ export const useAdminGetAllReports = (
           },
         }
       );
-      return data;
+      return data.data;
     },
   });
 };
@@ -106,7 +106,7 @@ export const useAdminGetReportsStats = () => {
           Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
         },
       });
-      return data;
+      return data.data;
     },
   });
 };
@@ -123,7 +123,7 @@ export const useAdminGetReportById = (uuid: string) => {
           },
         }
       );
-      return data;
+      return data.data;
     },
     enabled: !!uuid,
   });
@@ -139,7 +139,7 @@ export const useAdminUpdateReportStatus = () => {
       status,
     }: {
       uuid: string;
-      status: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
+      status: 'pending' | 'resolved' | 'dismissed';
     }) => {
       const { data } = await axiosInstance.patch(
         ENDPOINTS.ADMIN.REPORTS.UPDATE_STATUS(uuid),
