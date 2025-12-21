@@ -83,7 +83,7 @@ export const useAdminGetCommentsStats = () => {
 
 export const useAdminDeleteComment = () => {
   const queryClient = useQueryClient();
-  const { showToast } = useReduxToast();
+  const { showSuccess, showError } = useReduxToast();
 
   return useMutation<any, Error, string>({
     mutationFn: async (commentId: string) => {
@@ -99,10 +99,10 @@ export const useAdminDeleteComment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-comments'] });
       queryClient.invalidateQueries({ queryKey: ['admin-comments-stats'] });
-      showToast('Comment deleted successfully', 'success');
+      showSuccess('Success', 'Comment deleted successfully');
     },
     onError: (error: Error) => {
-      showToast(error.message || 'Failed to delete comment', 'error');
+      showError('Error', error.message || 'Failed to delete comment');
     },
   });
 };

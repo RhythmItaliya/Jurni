@@ -245,7 +245,7 @@ export default function CommentsPanel({
             type="submit"
             disabled={isLoading || !commentText.trim()}
           >
-            {createCommentMutation.isPending ? 'Posting...' : 'Post'}
+            {createCommentMutation.isPending ? <Spinner size="sm" /> : 'Post'}
           </Button>
         </form>
       </div>

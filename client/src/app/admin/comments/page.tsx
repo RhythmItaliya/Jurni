@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Modal, Spinner } from '@/components/ui';
+import { Button, Modal, Spinner } from '@/components/ui';
 import {
   useAdminGetAllComments,
   useAdminDeleteComment,
@@ -67,7 +67,7 @@ export default function AdminComments() {
             <thead>
               <tr>
                 <th>Commenter</th>
-                <th>Post Owner</th>
+                <th>Post</th>
                 <th>Comment</th>
                 <th>Date</th>
                 <th>Actions</th>
@@ -174,20 +174,14 @@ export default function AdminComments() {
           <p>Are you sure you want to delete this comment?</p>
           <p className="modal-warning">This action cannot be undone.</p>
           <div className="modal-actions">
-            <button
-              onClick={() => setCommentToDelete(null)}
-              className="admin-btn-secondary"
-              disabled={deleteCommentMutation.isPending}
-            >
-              Cancel
-            </button>
-            <button
+            <Button
+              variant="danger"
               onClick={handleConfirmDelete}
               className="admin-btn-danger"
               disabled={deleteCommentMutation.isPending}
             >
-              {deleteCommentMutation.isPending ? 'Deleting...' : 'Delete'}
-            </button>
+              {deleteCommentMutation.isPending ? <Spinner size="sm" /> : 'Delete'}
+            </Button>
           </div>
         </div>
       </Modal>

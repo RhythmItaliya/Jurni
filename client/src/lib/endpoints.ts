@@ -84,7 +84,7 @@ export const ENDPOINTS = {
       STATS: '/admin/posts/stats',
     },
     COMMENTS: {
-      GET_ALL: '/admin/comments',
+      GET_ALL: '/admin/comments/list',
       DELETE: (id: string) => `/admin/comments/${id}`,
       STATS: '/admin/comments/stats',
     },
