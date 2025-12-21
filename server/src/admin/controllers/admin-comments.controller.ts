@@ -18,23 +18,6 @@ import { BaseResponseDto, createSuccessResponse } from '@/lib/response.dto';
 export class AdminCommentsController {
   constructor(private adminCommentsService: AdminCommentsService) {}
 
-  @Get()
-  async getAllComments(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ): Promise<BaseResponseDto> {
-    try {
-      const result = await this.adminCommentsService.getAllComments({
-        page: page ? parseInt(page) : 1,
-        limit: limit ? parseInt(limit) : 12,
-      });
-
-      return createSuccessResponse('Comments fetched successfully', result);
-    } catch (error) {
-      throw error;
-    }
-  }
-
   @Get('stats')
   async getStats(): Promise<BaseResponseDto> {
     try {
@@ -45,6 +28,19 @@ export class AdminCommentsController {
     } catch (error) {
       throw error;
     }
+  }
+
+  @Get('list')
+  async getAllComments(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<BaseResponseDto> {
+    const result = await this.adminCommentsService.getAllComments({
+      page: page ? parseInt(page) : 1,
+      limit: limit ? parseInt(limit) : 12,
+    });
+
+    return createSuccessResponse('Comments fetched successfully', result);
   }
 
   @Delete(':id')

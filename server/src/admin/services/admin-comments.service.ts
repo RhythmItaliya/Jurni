@@ -18,7 +18,14 @@ export class AdminCommentsService {
     const comments = await this.commentModel
       .find()
       .populate('userId', 'username email fullName avatarImage')
-      .populate('postId', 'title description')
+      .populate({
+        path: 'postId',
+        select: 'title userId',
+        populate: {
+          path: 'userId',
+          select: 'username avatarImage',
+        },
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
