@@ -4,8 +4,17 @@ import { User } from 'lucide-react';
 import UserListItem from '@/components/ui/UserListItem';
 import UserListSkeleton from '@/components/ui/UserListSkeleton';
 
+interface User {
+  uuid?: string;
+  username: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  avatarImage?: string | null;
+  isFollowing?: boolean;
+}
+
 interface UserListPanelProps {
-  users?: any[];
+  users?: User[];
   isLoading: boolean;
   emptyMessage: string;
 }
@@ -30,7 +39,7 @@ export default function UserListPanel({
 
   return (
     <div className="user-list">
-      {users.map((user: any, index: number) => (
+      {users.map((user: User, index: number) => (
         <UserListItem key={user.uuid || index} user={user} index={index} />
       ))}
     </div>

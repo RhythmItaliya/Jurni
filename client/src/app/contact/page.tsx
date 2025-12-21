@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React from 'react';
 
 export default function ContactPage() {
   return <div className="contact-page"></div>;

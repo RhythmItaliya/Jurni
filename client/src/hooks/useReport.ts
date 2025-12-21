@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import axiosInstance from '@/lib/axios';
 import { useReduxToast } from './useReduxToast';
 import { ENDPOINTS } from '@/lib/endpoints';

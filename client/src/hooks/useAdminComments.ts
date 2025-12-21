@@ -85,7 +85,7 @@ export const useAdminDeleteComment = () => {
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useReduxToast();
 
-  return useMutation<any, Error, string>({
+  return useMutation<Record<string, unknown>, Error, string>({
     mutationFn: async (commentId: string) => {
       const response = await axiosInstance.delete(
         ENDPOINTS.ADMIN.COMMENTS.DELETE(commentId)

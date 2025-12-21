@@ -268,7 +268,6 @@ const LoadingSkeleton = () => {
 export default function ProfileTabContent({
   posts,
   isLoading = false,
-  type,
 }: ProfileTabContentProps) {
   if (isLoading) {
     return <LoadingSkeleton />;

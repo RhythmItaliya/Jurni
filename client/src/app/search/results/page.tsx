@@ -3,10 +3,11 @@
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSearchUsers, useSearchPosts, useSearchHashtags } from '@/hooks';
 import '@/styles/components/search.scss';
+import { Spinner } from '@/components/ui';
 
 /**
  * Search Results Details Page
@@ -102,15 +103,14 @@ export default function SearchResultsPage() {
         {/* Content */}
         {isLoading ? (
           <div className="results-detail-loading">
-            <Loader2 className="spinner" size={40} />
-            <p>Loading results...</p>
+            <Spinner size="md" />
           </div>
         ) : data && data.length > 0 ? (
           <div className="results-detail-list">
             {Array.isArray(data) &&
-              data.map((item: any) => (
+              data.map((item: Record<string, unknown>) => (
                 <motion.div
-                  key={type === 'hashtag' ? item : item._id}
+                  key={type === 'hashtag' ? String(item) : String(item._id)}
                   className={`results-detail-item ${type}`}
                   onClick={() => handleResultClick(item)}
                   whileHover={{ backgroundColor: 'var(--bg-secondary)' }}
@@ -118,35 +118,39 @@ export default function SearchResultsPage() {
                 >
                   {type === 'username' && (
                     <div className="detail-item-content">
-                      <h3>@{item.username}</h3>
-                      {item.firstName && (
+                      <h3>@{String(item.username)}</h3>
+                      {item.firstName ? (
                         <p className="detail-item-subtitle">
-                          {item.firstName} {item.lastName || ''}
+                          {String(item.firstName)}{' '}
+                          {item.lastName ? String(item.lastName) : ''}
                         </p>
-                      )}
-                      {item.email && (
-                        <p className="detail-item-meta">{item.email}</p>
-                      )}
+                      ) : null}
+                      {item.email ? (
+                        <p className="detail-item-meta">{String(item.email)}</p>
+                      ) : null}
                     </div>
                   )}
                   {type === 'post' && (
                     <div className="detail-item-content">
-                      <h3>{item.title}</h3>
-                      {item.description && (
+                      <h3>{String(item.title)}</h3>
+                      {item.description ? (
                         <p className="detail-item-subtitle">
-                          {item.description}
+                          {String(item.description)}
                         </p>
-                      )}
-                      {item.authorId && (
+                      ) : null}
+                      {item.authorId ? (
                         <p className="detail-item-meta">
-                          by @{item.authorId.username}
+                          by @
+                          {String(
+                            (item.authorId as Record<string, unknown>).username
+                          )}
                         </p>
-                      )}
+                      ) : null}
                     </div>
                   )}
                   {type === 'hashtag' && (
                     <div className="detail-item-content">
-                      <h3>#{item}</h3>
+                      <h3>#{String(item)}</h3>
                     </div>
                   )}
                 </motion.div>

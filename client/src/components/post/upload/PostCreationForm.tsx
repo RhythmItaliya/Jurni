@@ -35,7 +35,6 @@ interface PostCreationFormProps {
 const PostCreationForm: React.FC<PostCreationFormProps> = ({
   onSubmit: _onSubmit,
   loading: _loading,
-  error: _error,
   initialData,
   isEdit = false,
 }) => {

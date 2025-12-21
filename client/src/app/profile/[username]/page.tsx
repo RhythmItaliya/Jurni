@@ -2,7 +2,6 @@
 
 import { useParams } from 'next/navigation';
 import React, { useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { useGetPublicProfile } from '@/hooks/useProfile';
 import { ProfileNotFound } from '@/components/profile/ProfileNotFound';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -18,7 +17,6 @@ import { Spinner } from '@/components/ui';
 export default function ProfilePage() {
   const params = useParams();
   const username = params.username as string;
-  const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState('posts');
 
   const { data: profile, isLoading, error } = useGetPublicProfile(username);
@@ -34,8 +32,6 @@ export default function ProfilePage() {
   if (error || !profile) {
     return <ProfileNotFound username={username} />;
   }
-
-  const isOwnProfile = session?.user?.uuid === profile.uuid;
 
   return (
     <div className="profile-page">

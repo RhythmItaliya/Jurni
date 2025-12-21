@@ -143,7 +143,7 @@ export function useUpdateProfile() {
       }>(ENDPOINTS.PROFILES.UPDATE, data);
       return response.data.data;
     },
-    onSuccess: data => {
+    onSuccess: () => {
       // Invalidate all profile queries to refetch updated data
       queryClient.invalidateQueries({ queryKey: profileKeys.all });
       showSuccess(
@@ -232,7 +232,7 @@ export function useUpdateProfileWithFiles() {
       });
       return response.data.data;
     },
-    onSuccess: data => {
+    onSuccess: () => {
       // Invalidate all profile queries
       queryClient.invalidateQueries({ queryKey: profileKeys.all });
       showSuccess(

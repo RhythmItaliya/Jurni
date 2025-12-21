@@ -13,9 +13,7 @@ import { useGetTrendingPosts } from '@/hooks/useTrending';
 import { PostData } from '@/types/post';
 import { ShareModal } from '@/components/ui';
 
-interface Post extends PostData {}
-
-const PostGridItem = ({ post, index }: { post: Post; index: number }) => {
+const PostGridItem = ({ post, index }: { post: PostData; index: number }) => {
   const router = useRouter();
   const [isHovered, setIsHovered] = React.useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = React.useState(0);

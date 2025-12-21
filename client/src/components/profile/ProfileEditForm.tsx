@@ -54,7 +54,6 @@ export default function ProfileEditForm({
     isPrivate: false,
   });
 
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isSendingOTP, setIsSendingOTP] = useState(false);
 
   const [coverPreview, setCoverPreview] = useState<string>(
@@ -76,9 +75,6 @@ export default function ProfileEditForm({
         location: profileData.location ?? undefined,
         isPrivate: profileData.isPrivate,
       });
-
-      // Set email verification status
-      setIsEmailVerified(!!profileData.otpVerifiedAt);
 
       // Set cover image preview
       if (profileData.coverImage?.publicUrl) {
@@ -141,7 +137,6 @@ export default function ProfileEditForm({
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       alert('OTP sent to your email!');
-      setIsEmailVerified(true);
     } catch (error) {
       console.error('Error sending OTP:', error);
       alert('Failed to send OTP. Please try again.');

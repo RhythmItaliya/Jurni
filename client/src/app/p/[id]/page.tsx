@@ -9,6 +9,7 @@ import { useGetPostById, useDeletePost } from '@/hooks/usePosts';
 import { PostNotFound, PostMessage } from '@/components/post/PostNotFound';
 import SkeletonPost from '@/components/ui/post/SkeletonPost';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
 import { Edit, Trash2 } from 'lucide-react';
 import CommentsPanel from '@/components/layout/CommentsPanel';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -29,6 +30,7 @@ export default function PostDetailPage() {
   const [openCommentsPostId, setOpenCommentsPostId] = React.useState<
     string | null
   >(null);
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
   const { data: post, isLoading, error } = useGetPostById(id);
   const deletePost = useDeletePost();
@@ -41,10 +43,19 @@ export default function PostDetailPage() {
   };
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
-      deletePost.mutate(id);
-    }
+    setShowDeleteModal(true);
   };
+
+  const handleConfirmDelete = () => {
+    deletePost.mutate(id);
+    setShowDeleteModal(false);
+  };
+
+  React.useEffect(() => {
+    if (deletePost.isSuccess) {
+      router.push('/profile');
+    }
+  }, [deletePost.isSuccess, router]);
 
   if (status === 'loading' || isLoading) {
     if (status === 'unauthenticated') {
@@ -166,6 +177,34 @@ export default function PostDetailPage() {
           )}
         </AnimatePresence>
       </div>
+
+      <Modal
+        isOpen={showDeleteModal}
+        title="Delete Post"
+        onClose={() => setShowDeleteModal(false)}
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleConfirmDelete}
+              disabled={deletePost.isPending}
+            >
+              {deletePost.isPending ? 'Deleting...' : 'Delete'}
+            </Button>
+          </>
+        }
+      >
+        <p>
+          Are you sure you want to delete this post? This action cannot be
+          undone.
+        </p>
+      </Modal>
     </div>
   );
 }

@@ -38,7 +38,7 @@ export function useFollowUser(onSuccess?: () => void) {
       const response = await api.post(ENDPOINTS.FOLLOWS.FOLLOW(userId));
       return response.data;
     },
-    onSuccess: (data, userId) => {
+    onSuccess: () => {
       // Invalidate follow-related queries
       queryClient.invalidateQueries({ queryKey: followKeys.all });
       // Invalidate profile queries to update follower/following counts
@@ -79,7 +79,7 @@ export function useUnfollowUser(onSuccess?: () => void) {
       const response = await api.delete(ENDPOINTS.FOLLOWS.UNFOLLOW(userId));
       return response.data;
     },
-    onSuccess: (data, userId) => {
+    onSuccess: () => {
       // Invalidate follow-related queries
       queryClient.invalidateQueries({ queryKey: followKeys.all });
       // Invalidate profile queries to update follower/following counts

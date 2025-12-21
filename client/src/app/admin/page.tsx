@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAdminGetRecentActivity, type ActivityItem } from '@/hooks';
+import { useAdminGetRecentActivity } from '@/hooks';
 import { useGetDashboardStats } from '@/hooks/useAdmin';
 import {
   Users,

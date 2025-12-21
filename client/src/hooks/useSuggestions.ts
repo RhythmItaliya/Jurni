@@ -25,7 +25,7 @@ export interface SuggestedUser {
     url?: string;
   };
   bio: string;
-  location?: any;
+  location?: Record<string, unknown>;
   followersCount: number;
   followingCount: number;
   isFollower: boolean; // If they follow the current user

@@ -159,9 +159,9 @@ export default function ReportsManagement() {
                   </td>
                   <td>
                     <div className="user-cell">
-                      {report.reporterId?.avatar ? (
+                      {report.reporterId?.avatarImage ? (
                         <img
-                          src={report.reporterId.avatar}
+                          src={report.reporterId.avatarImage.publicUrl}
                           alt={report.reporterId.username}
                           className="user-avatar"
                         />
@@ -184,9 +184,9 @@ export default function ReportsManagement() {
                   <td>
                     {report.reportType === 'user' && report.reportedUser && (
                       <div className="user-cell">
-                        {report.reportedUser.avatar ? (
+                        {report.reportedUser.avatarImage ? (
                           <img
-                            src={report.reportedUser.avatar}
+                            src={report.reportedUser.avatarImage.publicUrl}
                             alt={report.reportedUser.username}
                             className="user-avatar"
                           />
@@ -305,9 +305,9 @@ export default function ReportsManagement() {
             <div className="form-group">
               <label>Reported By</label>
               <div className="user-cell">
-                {selectedReport.reporterId?.avatar ? (
+                {selectedReport.reporterId?.avatarImage ? (
                   <img
-                    src={selectedReport.reporterId.avatar}
+                    src={selectedReport.reporterId.avatarImage.publicUrl}
                     alt={selectedReport.reporterId.username}
                     className="user-avatar"
                   />
@@ -333,9 +333,9 @@ export default function ReportsManagement() {
                 <div className="form-group">
                   <label>Reported User</label>
                   <div className="user-cell">
-                    {selectedReport.reportedUser.avatar ? (
+                    {selectedReport.reportedUser.avatarImage ? (
                       <img
-                        src={selectedReport.reportedUser.avatar}
+                        src={selectedReport.reportedUser.avatarImage.publicUrl}
                         alt={selectedReport.reportedUser.username}
                         className="user-avatar"
                       />

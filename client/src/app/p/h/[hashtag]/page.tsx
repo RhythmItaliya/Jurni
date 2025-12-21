@@ -2,8 +2,6 @@
 
 import { useParams } from 'next/navigation';
 import React from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { PostCard } from '@/components/ui';
 import { useGetPostsByHashtag } from '@/hooks/usePosts';
 import { PostData } from '@/types/post';
@@ -20,11 +18,9 @@ import { useReduxToast } from '@/hooks/useReduxToast';
  */
 export default function HashPostsPage() {
   const params = useParams();
-  const router = useRouter();
   const rawHashtag = params.hashtag as string;
   // Decode URL-encoded hashtag (e.g., 'lord_buddha' instead of 'lord%20buddha')
   const hashtag = rawHashtag ? decodeURIComponent(rawHashtag) : '';
-  const { data: session, status } = useSession();
 
   const [openCommentsPostId, setOpenCommentsPostId] = React.useState<
     string | null

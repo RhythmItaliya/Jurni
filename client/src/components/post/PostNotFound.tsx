@@ -25,7 +25,6 @@ export const PostMessage: React.FC<PostMessageProps> = ({
   description,
   buttonText,
   buttonHref,
-  postId,
 }) => {
   const defaultIcon = (
     <svg
@@ -70,9 +69,8 @@ export const PostMessage: React.FC<PostMessageProps> = ({
 
 /**
  * PostNotFound component - displays a styled error page when a post is not found
- * @param {string} postId - The post ID that was not found
  */
-export const PostNotFound: React.FC<{ postId: string }> = ({ postId }) => {
+export const PostNotFound: React.FC<{ postId?: string }> = () => {
   return (
     <PostMessage
       title="Post Not Found"

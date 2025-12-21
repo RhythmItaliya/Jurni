@@ -5,7 +5,6 @@ import { Button, Modal, Spinner } from '@/components/ui';
 import {
   useAdminGetAllUsers,
   useAdminUpdateUser,
-  useAdminDeleteUser,
   type AdminUser,
 } from '@/hooks/useAdminUsers';
 
@@ -16,7 +15,7 @@ import {
 export default function AdminUsers() {
   const { data: users = [], isLoading, error } = useAdminGetAllUsers();
   const updateUserMutation = useAdminUpdateUser();
-  const deleteUserMutation = useAdminDeleteUser();
+  // const deleteUserMutation = useAdminDeleteUser();
 
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);

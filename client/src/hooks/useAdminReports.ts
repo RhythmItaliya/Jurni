@@ -12,7 +12,15 @@ export interface Report {
     _id: string;
     username: string;
     email: string;
-    avatar?: string;
+    avatarImage?: {
+      key: string;
+      url: string;
+      publicUrl: string;
+      bucket: string;
+      size: number;
+      contentType: string;
+      mediaId: string;
+    };
   };
   reason: string;
   description?: string;
@@ -30,7 +38,15 @@ export interface Report {
     uuid: string;
     username: string;
     email: string;
-    avatar?: string;
+    avatarImage?: {
+      key: string;
+      url: string;
+      publicUrl: string;
+      bucket: string;
+      size: number;
+      contentType: string;
+      mediaId: string;
+    };
     isActive: boolean;
     isSuspended: boolean;
   };
@@ -42,7 +58,15 @@ export interface Report {
     userId: {
       _id: string;
       username: string;
-      avatar?: string;
+      avatarImage?: {
+        key: string;
+        url: string;
+        publicUrl: string;
+        bucket: string;
+        size: number;
+        contentType: string;
+        mediaId: string;
+      };
     };
   };
 }
@@ -157,10 +181,13 @@ export const useAdminUpdateReportStatus = () => {
       queryClient.invalidateQueries({ queryKey: ['admin-reports-stats'] });
       showSuccess('Success', 'Report status updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
+      const err = error as unknown as {
+        response?: { data?: { message?: string } };
+      };
       showError(
         'Error',
-        error.response?.data?.message || 'Failed to update report status'
+        err?.response?.data?.message || 'Failed to update report status'
       );
     },
   });
@@ -187,10 +214,13 @@ export const useAdminDeleteReport = () => {
       queryClient.invalidateQueries({ queryKey: ['admin-reports-stats'] });
       showSuccess('Success', 'Report deleted successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
+      const err = error as unknown as {
+        response?: { data?: { message?: string } };
+      };
       showError(
         'Error',
-        error.response?.data?.message || 'Failed to delete report'
+        err?.response?.data?.message || 'Failed to delete report'
       );
     },
   });

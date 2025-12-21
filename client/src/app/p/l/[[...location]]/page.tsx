@@ -2,8 +2,6 @@
 
 import { useParams } from 'next/navigation';
 import React from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { PostCard } from '@/components/ui';
 import { useGetPostsByLocation } from '@/hooks/usePosts';
 import { PostData } from '@/types/post';
@@ -20,10 +18,8 @@ import { useReduxToast } from '@/hooks/useReduxToast';
  */
 export default function LocationPostsPage() {
   const params = useParams();
-  const router = useRouter();
   const encodedLocation = (params.location as string[]).join('/');
   const location = decodeURIComponent(encodedLocation);
-  const { data: session, status } = useSession();
 
   // Try to parse location as JSON to get display_name
   let displayLocation = location;
