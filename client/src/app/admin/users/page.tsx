@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Modal, Spinner } from '@/components/ui';
+import { Button, Modal, Spinner } from '@/components/ui';
 import {
   useAdminGetAllUsers,
   useAdminUpdateUser,
@@ -168,56 +168,24 @@ export default function AdminUsers() {
                     </div>
                   </div>
                   <div className="action-buttons">
-                    <button
-                      className="admin-btn-icon"
-                      title="View"
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => {
                         console.log('View button clicked for user:', user);
                         setSelectedUser(user);
                       }}
                     >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      className="admin-btn-icon"
-                      title="Deactivate"
+                      View
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
                       onClick={() => handleDeleteClick(user)}
                       disabled={updateUserMutation.isPending}
                     >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
+                      Delete
+                    </Button>
                   </div>
                 </div>
                 <div className="post-card-content">
@@ -252,11 +220,11 @@ export default function AdminUsers() {
 
         {filteredUsers && filteredUsers.length > 0 && (
           <div className="admin-pagination">
-            <button className="admin-btn admin-btn-secondary">Previous</button>
+            <Button variant="secondary">Previous</Button>
             <span className="pagination-info">
               Page 1 of {Math.ceil(filteredUsers.length / 9)}
             </span>
-            <button className="admin-btn admin-btn-secondary">Next</button>
+            <Button variant="secondary">Next</Button>
           </div>
         )}
       </div>
@@ -269,19 +237,17 @@ export default function AdminUsers() {
         size="small"
         actions={
           <div className="modal-footer">
-            <button
-              className="admin-btn admin-btn-secondary"
-              onClick={() => setUserToDelete(null)}
-            >
-              Cancel
-            </button>
-            <button
-              className="admin-btn admin-btn-danger"
+            <Button
+              variant="danger"
               onClick={handleConfirmDelete}
               disabled={updateUserMutation.isPending}
             >
-              {updateUserMutation.isPending ? 'Deactivating...' : 'Deactivate'}
-            </button>
+              {updateUserMutation.isPending ? (
+                <Spinner size="sm" />
+              ) : (
+                'Deactivate'
+              )}
+            </Button>
           </div>
         }
       >
@@ -302,33 +268,38 @@ export default function AdminUsers() {
         size="medium"
         actions={
           <div className="modal-footer">
-            <button
-              className="admin-btn admin-btn-secondary"
-              onClick={() => setSelectedUser(null)}
-            >
+            <Button variant="secondary" onClick={() => setSelectedUser(null)}>
               Close
-            </button>
+            </Button>
             {selectedUser && !selectedUser.isSuspended && (
-              <button
-                className="admin-btn admin-btn-warning"
+              <Button
+                variant="warning"
                 onClick={() => {
                   handleSuspendUser(selectedUser);
                 }}
                 disabled={updateUserMutation.isPending}
               >
-                {updateUserMutation.isPending ? 'Processing...' : 'Suspend'}
-              </button>
+                {updateUserMutation.isPending ? (
+                  <Spinner size="sm" />
+                ) : (
+                  'Suspend'
+                )}
+              </Button>
             )}
             {selectedUser && selectedUser.isSuspended && (
-              <button
-                className="admin-btn admin-btn-success"
+              <Button
+                variant="success"
                 onClick={() => {
                   handleSuspendUser(selectedUser);
                 }}
                 disabled={updateUserMutation.isPending}
               >
-                {updateUserMutation.isPending ? 'Processing...' : 'Unsuspend'}
-              </button>
+                {updateUserMutation.isPending ? (
+                  <Spinner size="sm" />
+                ) : (
+                  'Unsuspend'
+                )}
+              </Button>
             )}
           </div>
         }

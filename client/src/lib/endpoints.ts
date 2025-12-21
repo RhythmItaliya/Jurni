@@ -103,6 +103,7 @@ export const ENDPOINTS = {
       STATS: '/admin/reports/stats',
     },
     ACTIVITY: '/admin/activity',
+    DASHBOARD: '/admin/dashboard',
   },
   USERS: {
     GET_ALL: '/users',

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Modal, Spinner } from '@/components/ui';
+import { Modal, Spinner, Button } from '@/components/ui';
 import {
   useAdminGetAllReports,
   useAdminUpdateReportStatus,
@@ -227,76 +227,31 @@ export default function ReportsManagement() {
                   <td>{new Date(report.createdAt).toLocaleDateString()}</td>
                   <td>
                     <div className="action-buttons">
-                      <button
-                        className="admin-btn-icon"
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handleViewDetails(report)}
-                        title="View Details"
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      </button>
+                        View
+                      </Button>
                       {report.status === 'pending' && (
-                        <button
-                          className="admin-btn-icon"
+                        <Button
+                          variant="success"
+                          size="sm"
                           onClick={() =>
                             handleUpdateStatus(report.uuid, 'resolved')
                           }
-                          title="Resolve"
                         >
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        </button>
+                          Resolve
+                        </Button>
                       )}
-                      <button
-                        className="admin-btn-icon"
+                      <Button
+                        variant="danger"
+                        size="sm"
                         onClick={() => handleDeleteClick(report)}
-                        title="Delete"
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
+                        Delete
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -307,25 +262,25 @@ export default function ReportsManagement() {
 
         {reportsData && reportsData.pagination.totalPages > 1 && (
           <div className="admin-pagination">
-            <button
+            <Button
+              variant="secondary"
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="admin-btn-secondary"
             >
               <ChevronLeft size={20} />
               Previous
-            </button>
+            </Button>
             <span className="admin-pagination-info">
               Page {page} of {reportsData.pagination.totalPages}
             </span>
-            <button
+            <Button
+              variant="secondary"
               onClick={() => setPage(p => p + 1)}
               disabled={page >= reportsData.pagination.totalPages}
-              className="admin-btn-secondary"
             >
               Next
               <ChevronRight size={20} />
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -468,8 +423,8 @@ export default function ReportsManagement() {
             <div className="modal-actions">
               {selectedReport.status === 'pending' && (
                 <>
-                  <button
-                    className="admin-btn admin-btn-success"
+                  <Button
+                    variant="success"
                     onClick={() => {
                       if (selectedReport) {
                         handleUpdateStatus(selectedReport.uuid, 'resolved');
@@ -478,9 +433,9 @@ export default function ReportsManagement() {
                     }}
                   >
                     Resolve
-                  </button>
-                  <button
-                    className="admin-btn admin-btn-danger"
+                  </Button>
+                  <Button
+                    variant="danger"
                     onClick={() => {
                       if (selectedReport) {
                         handleUpdateStatus(selectedReport.uuid, 'dismissed');
@@ -489,7 +444,7 @@ export default function ReportsManagement() {
                     }}
                   >
                     Dismiss
-                  </button>
+                  </Button>
                 </>
               )}
             </div>
@@ -510,8 +465,8 @@ export default function ReportsManagement() {
               report? This action cannot be undone.
             </p>
             <div className="modal-actions">
-              <button
-                className="admin-btn admin-btn-danger"
+              <Button
+                variant="danger"
                 onClick={handleConfirmDelete}
                 disabled={deleteReport.isPending}
               >
@@ -522,7 +477,7 @@ export default function ReportsManagement() {
                 ) : (
                   'Delete'
                 )}
-              </button>
+              </Button>
             </div>
           </div>
         )}

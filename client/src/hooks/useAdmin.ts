@@ -11,6 +11,7 @@ export const adminKeys = {
   list: () => [...adminKeys.all, 'list'] as const,
   detail: (uuid: string) => [...adminKeys.all, 'detail', uuid] as const,
   session: () => [...adminKeys.all, 'session'] as const,
+  dashboard: () => [...adminKeys.all, 'dashboard'] as const,
 };
 
 // Types
@@ -49,6 +50,13 @@ export interface UpdateAdminData {
 export interface ChangePasswordData {
   currentPassword: string;
   newPassword: string;
+}
+
+export interface DashboardStats {
+  totalUsers: number;
+  totalPosts: number;
+  totalComments: number;
+  totalReports: number;
 }
 
 /**
@@ -286,6 +294,23 @@ export function useDeleteAdmin() {
       const serverMessage = extractServerMessage(error);
       showError('Delete Failed', serverMessage || 'Failed to delete admin');
     },
+  });
+}
+
+/**
+ * Hook to get dashboard statistics
+ * Fetches total counts for users, posts, comments, and reports
+ *
+ * @returns {UseQueryResult} Query object with dashboard statistics
+ */
+export function useGetDashboardStats(enabled: boolean = true) {
+  return useQuery({
+    queryKey: adminKeys.dashboard(),
+    queryFn: async () => {
+      const response = await api.get(ENDPOINTS.ADMIN.DASHBOARD);
+      return response.data.data.stats;
+    },
+    enabled,
   });
 }
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Modal } from '@/components/ui';
+import { Modal, Spinner, Button } from '@/components/ui';
 import {
   useGetAdmins,
   useAdminRegister,
@@ -11,7 +11,6 @@ import {
   useAdminSession,
   Admin,
 } from '@/hooks/useAdmin';
-import Loading from '@/app/loading';
 
 export default function AdminManagement() {
   const { data: currentAdmin, isLoading: isLoadingSession } = useAdminSession();
@@ -104,8 +103,16 @@ export default function AdminManagement() {
   // Show loading while checking session
   if (isLoadingSession) {
     return (
-      <div className="admin-loading-container">
-        <Loading />
+      <div className="admin-page">
+        <div className="admin-page-header">
+          <h1>Admin Management</h1>
+          <p>Manage administrator accounts and permissions</p>
+        </div>
+        <div className="admin-section">
+          <div className="admin-loading">
+            <Spinner size="xl" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -118,6 +125,11 @@ export default function AdminManagement() {
           <h1>Access Denied</h1>
           <p>Only super administrators can access this page.</p>
         </div>
+        <div className="admin-section">
+          <p className="error-message">
+            You don't have permission to access this page.
+          </p>
+        </div>
       </div>
     );
   }
@@ -129,126 +141,106 @@ export default function AdminManagement() {
           <h1>Admin Management</h1>
           <p>Manage administrator accounts and permissions</p>
         </div>
-        <button
-          className="admin-btn admin-btn-primary"
+        <Button
+          variant="primary"
           onClick={() => setShowCreateModal(true)}
+          icon={
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          }
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Create Admin
-        </button>
+          Add Admin
+        </Button>
       </div>
 
       {isLoading ? (
-        <div className="admin-loading-container">
-          <Loading />
+        <div className="admin-section">
+          <div className="admin-loading">
+            <Spinner size="xl" />
+          </div>
         </div>
       ) : (
-        <div className="admin-table-container">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Created</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {admins?.map((admin: Admin) => (
-                <motion.tr
-                  key={admin.uuid}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <td>
-                    <div className="user-cell">
-                      <div className="user-avatar">
-                        {admin.username[0].toUpperCase()}
+        <div className="admin-section">
+          <div className="admin-table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {admins?.map((admin: Admin) => (
+                  <motion.tr
+                    key={admin.uuid}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <td>
+                      <div className="user-cell">
+                        <div className="user-avatar">
+                          {admin.username[0].toUpperCase()}
+                        </div>
+                        <span className="user-name">{admin.username}</span>
                       </div>
-                      <span className="user-name">{admin.username}</span>
-                    </div>
-                  </td>
-                  <td>{admin.email}</td>
-                  <td>
-                    <span
-                      className={`status-badge status-${admin.role === 'super_admin' ? 'danger' : admin.role === 'admin' ? 'info' : 'success'}`}
-                    >
-                      {admin.role.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td>{new Date(admin.createdAt).toLocaleDateString()}</td>
-                  <td>
-                    <div className="action-buttons">
-                      {(admin.role !== 'super_admin' ||
-                        superAdminCount > 1) && (
-                        <>
-                          <button
-                            className="admin-btn-icon"
-                            onClick={() => handleEdit(admin)}
-                            title="Edit"
-                            disabled={currentAdmin?.uuid === admin.uuid}
-                          >
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
+                    </td>
+                    <td>{admin.email}</td>
+                    <td>
+                      <span
+                        className={`status-badge status-${admin.role === 'super_admin' ? 'danger' : admin.role === 'admin' ? 'info' : 'success'}`}
+                      >
+                        {admin.role.replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td>{new Date(admin.createdAt).toLocaleDateString()}</td>
+                    <td>
+                      <div className="action-buttons">
+                        {(admin.role !== 'super_admin' ||
+                          superAdminCount > 1) && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(admin)}
+                              disabled={currentAdmin?.uuid === admin.uuid}
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                              />
-                            </svg>
-                          </button>
-                          <button
-                            className="admin-btn-icon"
-                            onClick={() =>
-                              handleDelete(admin.uuid, admin.role, admin)
-                            }
-                            title="Delete"
-                            disabled={currentAdmin?.uuid === admin.uuid}
-                          >
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
+                              Edit
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() =>
+                                handleDelete(admin.uuid, admin.role, admin)
+                              }
+                              disabled={currentAdmin?.uuid === admin.uuid}
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+                              Delete
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
@@ -260,19 +252,13 @@ export default function AdminManagement() {
         size="medium"
         actions={
           <div className="modal-footer">
-            <button
-              className="admin-btn admin-btn-secondary"
-              onClick={() => setShowCreateModal(false)}
-            >
-              Cancel
-            </button>
-            <button
-              className="admin-btn admin-btn-primary"
+            <Button
+              variant="primary"
               onClick={handleCreate}
               disabled={registerAdmin.isPending}
             >
               {registerAdmin.isPending ? 'Creating...' : 'Create Admin'}
-            </button>
+            </Button>
           </div>
         }
       >
@@ -281,7 +267,6 @@ export default function AdminManagement() {
             <label>Username</label>
             <input
               type="text"
-              className="admin-input"
               value={formData.username}
               onChange={e =>
                 setFormData({ ...formData, username: e.target.value })
@@ -293,7 +278,6 @@ export default function AdminManagement() {
             <label>Email</label>
             <input
               type="email"
-              className="admin-input"
               value={formData.email}
               onChange={e =>
                 setFormData({ ...formData, email: e.target.value })
@@ -305,7 +289,6 @@ export default function AdminManagement() {
             <label>Password</label>
             <input
               type="password"
-              className="admin-input"
               value={formData.password}
               onChange={e =>
                 setFormData({ ...formData, password: e.target.value })
@@ -316,7 +299,6 @@ export default function AdminManagement() {
           <div className="form-group">
             <label>Role</label>
             <select
-              className="admin-select"
               value={formData.role}
               onChange={e =>
                 setFormData({
@@ -340,19 +322,13 @@ export default function AdminManagement() {
         size="medium"
         actions={
           <div className="modal-footer">
-            <button
-              className="admin-btn admin-btn-secondary"
-              onClick={() => setShowEditModal(false)}
-            >
-              Cancel
-            </button>
-            <button
-              className="admin-btn admin-btn-primary"
+            <Button
+              variant="primary"
               onClick={handleUpdate}
               disabled={updateAdmin.isPending}
             >
               {updateAdmin.isPending ? 'Updating...' : 'Update Admin'}
-            </button>
+            </Button>
           </div>
         }
       >
@@ -384,19 +360,13 @@ export default function AdminManagement() {
         size="small"
         actions={
           <div className="modal-footer">
-            <button
-              className="admin-btn admin-btn-secondary"
-              onClick={() => setShowDeleteModal(false)}
-            >
-              Cancel
-            </button>
-            <button
-              className="admin-btn admin-btn-danger"
+            <Button
+              variant="danger"
               onClick={handleConfirmDelete}
               disabled={deleteAdmin.isPending}
             >
-              {deleteAdmin.isPending ? 'Deleting...' : 'Delete'}
-            </button>
+              {deleteAdmin.isPending ? <Spinner size="sm" /> : 'Delete'}
+            </Button>
           </div>
         }
       >

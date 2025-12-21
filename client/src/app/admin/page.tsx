@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAdminGetRecentActivity, type ActivityItem } from '@/hooks';
+import { useGetDashboardStats } from '@/hooks/useAdmin';
 import {
   Users,
   FileText,
@@ -10,7 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { Spinner } from '@/components/ui';
+import { Button, Spinner } from '@/components/ui';
 
 /**
  * Admin dashboard page component
@@ -23,10 +24,13 @@ export default function AdminDashboard() {
   const [activityPage, setActivityPage] = useState(1);
   const activityLimit = 5;
 
-  const { data: activities = [], isLoading } = useAdminGetRecentActivity({
-    limit: activityLimit * activityPage,
-    type: activityFilter,
-  });
+  const { data: activities = [], isLoading: activitiesLoading } =
+    useAdminGetRecentActivity({
+      limit: activityLimit * activityPage,
+      type: activityFilter,
+    });
+
+  const { data: stats, isLoading: statsLoading } = useGetDashboardStats();
 
   // Get activities for current page
   const startIndex = (activityPage - 1) * activityLimit;
@@ -61,53 +65,72 @@ export default function AdminDashboard() {
         <h1>Dashboard</h1>
         <p>Overview of your platform</p>
       </div>
-
-      <div className="admin-stats-grid">
-        <div className="admin-stat-card">
-          <div className="stat-icon">
-            <Users size={24} />
+      <div className="admin-section">
+        <h2>Platform Statistics</h2>
+        <div className="admin-stats-grid">
+          <div className="admin-stat-card">
+            <div className="stat-icon">
+              <Users size={24} />
+            </div>
+            <div className="stat-info">
+              <h3>Total Users</h3>
+              <p className="stat-value">
+                {statsLoading
+                  ? '...'
+                  : stats?.totalUsers?.toLocaleString() || '0'}
+              </p>
+              <p className="stat-change">Active users on platform</p>
+            </div>
           </div>
-          <div className="stat-info">
-            <h3>Total Users</h3>
-            <p className="stat-value">1,234</p>
-            <p className="stat-change">+12% from last month</p>
+
+          <div className="admin-stat-card">
+            <div className="stat-icon">
+              <FileText size={24} />
+            </div>
+            <div className="stat-info">
+              <h3>Total Posts</h3>
+              <p className="stat-value">
+                {statsLoading
+                  ? '...'
+                  : stats?.totalPosts?.toLocaleString() || '0'}
+              </p>
+              <p className="stat-change">Posts created by users</p>
+            </div>
+          </div>
+
+          <div className="admin-stat-card">
+            <div className="stat-icon">
+              <MessageCircle size={24} />
+            </div>
+            <div className="stat-info">
+              <h3>Total Comments</h3>
+              <p className="stat-value">
+                {statsLoading
+                  ? '...'
+                  : stats?.totalComments?.toLocaleString() || '0'}
+              </p>
+              <p className="stat-change">Comments on posts</p>
+            </div>
+          </div>
+
+          <div className="admin-stat-card">
+            <div className="stat-icon">
+              <AlertTriangle size={24} />
+            </div>
+            <div className="stat-info">
+              <h3>Total Reports</h3>
+              <p className="stat-value">
+                {statsLoading
+                  ? '...'
+                  : stats?.totalReports?.toLocaleString() || '0'}
+              </p>
+              <p className="stat-change stat-change-warning">
+                {stats?.totalReports > 0 ? 'Needs attention' : 'All clear'}
+              </p>
+            </div>
           </div>
         </div>
-
-        <div className="admin-stat-card">
-          <div className="stat-icon">
-            <FileText size={24} />
-          </div>
-          <div className="stat-info">
-            <h3>Total Posts</h3>
-            <p className="stat-value">5,678</p>
-            <p className="stat-change">+8% from last month</p>
-          </div>
-        </div>
-
-        <div className="admin-stat-card">
-          <div className="stat-icon">
-            <MessageCircle size={24} />
-          </div>
-          <div className="stat-info">
-            <h3>Total Comments</h3>
-            <p className="stat-value">12,345</p>
-            <p className="stat-change">+15% from last month</p>
-          </div>
-        </div>
-
-        <div className="admin-stat-card">
-          <div className="stat-icon">
-            <AlertTriangle size={24} />
-          </div>
-          <div className="stat-info">
-            <h3>Reports</h3>
-            <p className="stat-value">23</p>
-            <p className="stat-change stat-change-warning">Needs attention</p>
-          </div>
-        </div>
-      </div>
-
+      </div>{' '}
       <div className="admin-section">
         <div className="section-header-with-filter">
           <h2>Recent Activity</h2>
@@ -125,7 +148,7 @@ export default function AdminDashboard() {
           </select>
         </div>
 
-        {isLoading ? (
+        {activitiesLoading ? (
           <div className="admin-loading">
             <Spinner size="xl" />
           </div>
@@ -185,25 +208,27 @@ export default function AdminDashboard() {
 
             {/* Pagination Controls */}
             <div className="admin-pagination">
-              <button
-                className="admin-btn admin-btn-secondary"
+              <Button
+                variant="secondary"
                 onClick={() => setActivityPage(p => Math.max(1, p - 1))}
                 disabled={activityPage === 1}
+                icon={<ChevronLeft size={16} />}
+                iconPosition="left"
               >
-                <ChevronLeft size={16} />
                 Previous
-              </button>
+              </Button>
 
               <span className="pagination-info">Page {activityPage}</span>
 
-              <button
-                className="admin-btn admin-btn-secondary"
+              <Button
+                variant="secondary"
                 onClick={() => setActivityPage(p => p + 1)}
                 disabled={!hasMore}
+                icon={<ChevronRight size={16} />}
+                iconPosition="right"
               >
                 Next
-                <ChevronRight size={16} />
-              </button>
+              </Button>
             </div>
           </>
         ) : (

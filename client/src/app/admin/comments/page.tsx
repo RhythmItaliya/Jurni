@@ -124,13 +124,13 @@ export default function AdminComments() {
                   <td>{new Date(comment.createdAt).toLocaleDateString()}</td>
                   <td>
                     <div className="action-buttons">
-                      <button
-                        className="admin-btn-icon"
+                      <Button
+                        variant="danger"
+                        size="sm"
                         onClick={() => handleDeleteClick(comment)}
-                        title="Delete"
                       >
-                        <Trash2 size={16} />
-                      </button>
+                        Delete
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -141,25 +141,25 @@ export default function AdminComments() {
 
         {data && data.totalPages > 1 && (
           <div className="admin-pagination">
-            <button
+            <Button
+              variant="secondary"
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="admin-btn-secondary"
             >
               <ChevronLeft size={20} />
               Previous
-            </button>
+            </Button>
             <span className="admin-pagination-info">
               Page {page} of {data.totalPages}
             </span>
-            <button
+            <Button
+              variant="secondary"
               onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
               disabled={page === data.totalPages}
-              className="admin-btn-secondary"
             >
               Next
               <ChevronRight size={20} />
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -173,8 +173,8 @@ export default function AdminComments() {
         <div className="modal-content">
           <p>Are you sure you want to delete this comment?</p>
           <div className="modal-actions">
-            <button
-              className="admin-btn admin-btn-danger"
+            <Button
+              variant="danger"
               onClick={handleConfirmDelete}
               disabled={deleteCommentMutation.isPending}
             >
@@ -185,7 +185,7 @@ export default function AdminComments() {
               ) : (
                 'Delete'
               )}
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
