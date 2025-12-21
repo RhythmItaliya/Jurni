@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Modal } from '@/components/ui';
+import { Modal, Spinner } from '@/components/ui';
 import {
   useAdminGetAllUsers,
   useAdminUpdateUser,
@@ -40,10 +40,20 @@ export default function AdminUsers() {
   });
 
   const handleSuspendUser = (user: AdminUser) => {
-    updateUserMutation.mutate({
-      uuid: user.uuid,
-      data: { isSuspended: !user.isSuspended },
-    });
+    updateUserMutation.mutate(
+      {
+        uuid: user.uuid,
+        data: {
+          isSuspended: !user.isSuspended,
+          isActive: user.isSuspended ? true : false,
+        },
+      },
+      {
+        onSuccess: () => {
+          setSelectedUser(null);
+        },
+      }
+    );
   };
 
   const handleDeleteClick = (user: AdminUser) => {
@@ -74,7 +84,9 @@ export default function AdminUsers() {
           <p>Manage all users on the platform</p>
         </div>
         <div className="admin-section">
-          <p>Loading users...</p>
+          <div className="admin-loading">
+            <Spinner size="xl" />
+          </div>
         </div>
       </div>
     );

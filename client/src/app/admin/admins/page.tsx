@@ -14,11 +14,20 @@ import {
 import Loading from '@/app/loading';
 
 export default function AdminManagement() {
-  const { data: currentAdmin } = useAdminSession();
-  const { data: admins, isLoading } = useGetAdmins();
+  const { data: currentAdmin, isLoading: isLoadingSession } = useAdminSession();
+  const isSuperAdmin = currentAdmin?.role === 'super_admin';
+
+  // Only fetch admins if user is super admin and session is loaded
+  const { data: admins, isLoading } = useGetAdmins(
+    !!currentAdmin && isSuperAdmin
+  );
   const registerAdmin = useAdminRegister();
   const updateAdmin = useUpdateAdmin();
   const deleteAdmin = useDeleteAdmin();
+
+  // Count super admins to determine if actions should be shown
+  const superAdminCount =
+    admins?.filter((admin: Admin) => admin.role === 'super_admin').length || 0;
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -32,8 +41,6 @@ export default function AdminManagement() {
     role: 'admin' as 'super_admin' | 'admin',
   });
 
-  const isSuperAdmin = currentAdmin?.role === 'super_admin';
-
   const handleCreate = () => {
     registerAdmin.mutate(formData, {
       onSuccess: () => {
@@ -45,6 +52,10 @@ export default function AdminManagement() {
 
   const handleEdit = (admin: Admin) => {
     setSelectedAdmin(admin);
+    setFormData({
+      ...formData,
+      role: admin.role as 'super_admin' | 'admin',
+    });
     setShowEditModal(true);
   };
 
@@ -90,6 +101,16 @@ export default function AdminManagement() {
     }
   };
 
+  // Show loading while checking session
+  if (isLoadingSession) {
+    return (
+      <div className="admin-loading-container">
+        <Loading />
+      </div>
+    );
+  }
+
+  // Show access denied for non-super admins
   if (!isSuperAdmin) {
     return (
       <div className="admin-page">
@@ -173,49 +194,54 @@ export default function AdminManagement() {
                   <td>{new Date(admin.createdAt).toLocaleDateString()}</td>
                   <td>
                     <div className="action-buttons">
-                      <button
-                        className="admin-btn-icon"
-                        onClick={() => handleEdit(admin)}
-                        title="Edit"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                          />
-                        </svg>
-                      </button>
-                      {admin.role !== 'super_admin' && (
-                        <button
-                          className="admin-btn-icon"
-                          onClick={() =>
-                            handleDelete(admin.uuid, admin.role, admin)
-                          }
-                          title="Delete"
-                        >
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
+                      {(admin.role !== 'super_admin' ||
+                        superAdminCount > 1) && (
+                        <>
+                          <button
+                            className="admin-btn-icon"
+                            onClick={() => handleEdit(admin)}
+                            title="Edit"
+                            disabled={currentAdmin?.uuid === admin.uuid}
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                              />
+                            </svg>
+                          </button>
+                          <button
+                            className="admin-btn-icon"
+                            onClick={() =>
+                              handleDelete(admin.uuid, admin.role, admin)
+                            }
+                            title="Delete"
+                            disabled={currentAdmin?.uuid === admin.uuid}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                          </button>
+                        </>
                       )}
                     </div>
                   </td>
@@ -335,7 +361,7 @@ export default function AdminManagement() {
             <label>Role</label>
             <select
               className="admin-select"
-              value={formData.role || selectedAdmin?.role}
+              value={formData.role}
               onChange={e =>
                 setFormData({
                   ...formData,

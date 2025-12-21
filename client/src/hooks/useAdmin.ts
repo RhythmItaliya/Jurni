@@ -157,13 +157,14 @@ export function useAdminRegister() {
  *
  * @returns {UseQueryResult} Query object with admins list
  */
-export function useGetAdmins() {
+export function useGetAdmins(enabled: boolean = true) {
   return useQuery({
     queryKey: adminKeys.list(),
     queryFn: async () => {
-      const response = await api.get(ENDPOINTS.ADMIN.USERS.GET_ALL);
-      return response.data.data.admins;
+      const response = await api.get(ENDPOINTS.ADMIN.ADMINS.GET_ALL);
+      return response.data.data.admins || [];
     },
+    enabled,
   });
 }
 
@@ -178,7 +179,7 @@ export function useGetAdmin(uuid: string) {
   return useQuery({
     queryKey: adminKeys.detail(uuid),
     queryFn: async () => {
-      const response = await api.get(ENDPOINTS.ADMIN.USERS.GET_BY_UUID(uuid));
+      const response = await api.get(ENDPOINTS.ADMIN.ADMINS.GET_BY_UUID(uuid));
       return response.data.data.admin;
     },
     enabled: !!uuid,
@@ -204,7 +205,7 @@ export function useUpdateAdmin() {
       data: UpdateAdminData;
     }) => {
       const response = await api.patch(
-        ENDPOINTS.ADMIN.USERS.UPDATE(uuid),
+        ENDPOINTS.ADMIN.ADMINS.UPDATE(uuid),
         data
       );
       return response.data.data;

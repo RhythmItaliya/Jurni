@@ -51,6 +51,28 @@ export {
 } from './useAdminUsers';
 
 /**
+ * Admin Comments Hooks
+ */
+export {
+  useAdminGetAllComments,
+  useAdminGetCommentsStats,
+  useAdminDeleteComment,
+  type AdminComment,
+  type AdminCommentsResponse,
+  type AdminCommentsStats,
+} from './useAdminComments';
+
+/**
+ * Admin Activity Hooks
+ * Export all admin activity hooks for easy import
+ */
+export {
+  useAdminGetRecentActivity,
+  type ActivityItem,
+  type ActivityUser,
+} from './useAdminActivity';
+
+/**
  * Reports Hooks
  * Export all report-related hooks for easy import
  */

@@ -76,14 +76,33 @@ export const ENDPOINTS = {
       UPDATE: (uuid: string) => `/admin/users/${uuid}`,
       DELETE: (uuid: string) => `/admin/users/${uuid}`,
     },
-    ADMINS: {
-      GET_ALL: '/admin/admins/list',
-      GET_BY_UUID: (uuid: string) => `/admin/admins/${uuid}`,
-      UPDATE: (uuid: string) => `/admin/admins/${uuid}`,
-      DELETE: (uuid: string) => `/admin/admins/${uuid}`,
-      CHANGE_PASSWORD: (uuid: string) =>
-        `/admin/admins/${uuid}/change-password`,
+    POSTS: {
+      GET_ALL: '/admin/posts',
+      GET_BY_ID: (id: string) => `/admin/posts/${id}`,
+      UPDATE_STATUS: (id: string) => `/admin/posts/${id}/status`,
+      DELETE: (id: string) => `/admin/posts/${id}`,
+      STATS: '/admin/posts/stats',
     },
+    COMMENTS: {
+      GET_ALL: '/admin/comments',
+      DELETE: (id: string) => `/admin/comments/${id}`,
+      STATS: '/admin/comments/stats',
+    },
+    ADMINS: {
+      GET_ALL: '/admin',
+      GET_BY_UUID: (uuid: string) => `/admin/${uuid}`,
+      UPDATE: (uuid: string) => `/admin/${uuid}`,
+      DELETE: (uuid: string) => `/admin/${uuid}`,
+      CHANGE_PASSWORD: (uuid: string) => `/admin/${uuid}/password`,
+    },
+    REPORTS: {
+      GET_ALL: '/admin/reports',
+      GET_BY_UUID: (uuid: string) => `/admin/reports/${uuid}`,
+      UPDATE_STATUS: (uuid: string) => `/admin/reports/${uuid}/status`,
+      DELETE: (uuid: string) => `/admin/reports/${uuid}`,
+      STATS: '/admin/reports/stats',
+    },
+    ACTIVITY: '/admin/activity',
   },
   USERS: {
     GET_ALL: '/users',

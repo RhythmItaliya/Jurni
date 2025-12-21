@@ -1,10 +1,60 @@
 'use client';
 
+import { useState } from 'react';
+import { useAdminGetRecentActivity, type ActivityItem } from '@/hooks';
+import {
+  Users,
+  FileText,
+  MessageCircle,
+  AlertTriangle,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
+import { Spinner } from '@/components/ui';
+
 /**
  * Admin dashboard page component
  * @returns {JSX.Element} The admin dashboard
  */
 export default function AdminDashboard() {
+  const [activityFilter, setActivityFilter] = useState<
+    'all' | 'users' | 'posts'
+  >('all');
+  const [activityPage, setActivityPage] = useState(1);
+  const activityLimit = 5;
+
+  const { data: activities = [], isLoading } = useAdminGetRecentActivity({
+    limit: activityLimit * activityPage,
+    type: activityFilter,
+  });
+
+  // Get activities for current page
+  const startIndex = (activityPage - 1) * activityLimit;
+  const currentActivities = activities.slice(
+    startIndex,
+    startIndex + activityLimit
+  );
+  const hasMore = activities.length > activityPage * activityLimit;
+
+  const getTimeAgo = (timestamp: string) => {
+    const now = new Date();
+    const past = new Date(timestamp);
+    const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 604800)
+      return `${Math.floor(diffInSeconds / 86400)} days ago`;
+    return past.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
   return (
     <div className="admin-page">
       <div className="admin-page-header">
@@ -15,20 +65,7 @@ export default function AdminDashboard() {
       <div className="admin-stats-grid">
         <div className="admin-stat-card">
           <div className="stat-icon">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-              />
-            </svg>
+            <Users size={24} />
           </div>
           <div className="stat-info">
             <h3>Total Users</h3>
@@ -39,20 +76,7 @@ export default function AdminDashboard() {
 
         <div className="admin-stat-card">
           <div className="stat-icon">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
-              />
-            </svg>
+            <FileText size={24} />
           </div>
           <div className="stat-info">
             <h3>Total Posts</h3>
@@ -63,20 +87,7 @@ export default function AdminDashboard() {
 
         <div className="admin-stat-card">
           <div className="stat-icon">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
+            <MessageCircle size={24} />
           </div>
           <div className="stat-info">
             <h3>Total Comments</h3>
@@ -87,20 +98,7 @@ export default function AdminDashboard() {
 
         <div className="admin-stat-card">
           <div className="stat-icon">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
+            <AlertTriangle size={24} />
           </div>
           <div className="stat-info">
             <h3>Reports</h3>
@@ -111,53 +109,106 @@ export default function AdminDashboard() {
       </div>
 
       <div className="admin-section">
-        <h2>Recent Activity</h2>
-        <div className="admin-table-container">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Action</th>
-                <th>Time</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>john_doe</td>
-                <td>Created a new post</td>
-                <td>2 minutes ago</td>
-                <td>
-                  <span className="status-badge status-success">Active</span>
-                </td>
-              </tr>
-              <tr>
-                <td>jane_smith</td>
-                <td>Commented on a post</td>
-                <td>5 minutes ago</td>
-                <td>
-                  <span className="status-badge status-success">Active</span>
-                </td>
-              </tr>
-              <tr>
-                <td>mike_johnson</td>
-                <td>Uploaded media</td>
-                <td>10 minutes ago</td>
-                <td>
-                  <span className="status-badge status-success">Active</span>
-                </td>
-              </tr>
-              <tr>
-                <td>sarah_williams</td>
-                <td>Reported a post</td>
-                <td>15 minutes ago</td>
-                <td>
-                  <span className="status-badge status-warning">Pending</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="section-header-with-filter">
+          <h2>Recent Activity</h2>
+          <select
+            className="admin-select admin-select-small"
+            value={activityFilter}
+            onChange={e => {
+              setActivityFilter(e.target.value as 'all' | 'users' | 'posts');
+              setActivityPage(1); // Reset to page 1 when filter changes
+            }}
+          >
+            <option value="all">All Activity</option>
+            <option value="users">User Registrations</option>
+            <option value="posts">Post Creations</option>
+          </select>
         </div>
+
+        {isLoading ? (
+          <div className="admin-loading">
+            <Spinner size="xl" />
+          </div>
+        ) : currentActivities.length > 0 ? (
+          <>
+            <div className="admin-grid">
+              {currentActivities.map((activity, index) => (
+                <div
+                  key={`${activity.type}-${activity.timestamp}-${index}`}
+                  className="admin-post-card"
+                >
+                  <div className="post-card-header">
+                    <div className="user-cell">
+                      {activity.user?.avatarImage?.publicUrl ? (
+                        <img
+                          src={activity.user.avatarImage.publicUrl}
+                          alt={activity.user.username}
+                          className="user-avatar-img"
+                        />
+                      ) : (
+                        <div className="user-avatar">
+                          {activity.user?.username?.charAt(0).toUpperCase() ||
+                            'U'}
+                        </div>
+                      )}
+                      <div>
+                        <p className="user-name">
+                          {activity.user?.username || 'Unknown User'}
+                        </p>
+                        <p className="post-time">
+                          {getTimeAgo(activity.timestamp)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="post-card-content">
+                    {activity.action === 'created_account' ? (
+                      <p>Created a new account</p>
+                    ) : (
+                      <p>
+                        Created post: <strong>{activity.post?.title}</strong>
+                      </p>
+                    )}
+                  </div>
+                  <div className="post-card-stats">
+                    <span
+                      className={`status-badge ${activity.action === 'created_account' ? 'status-success' : 'status-info'}`}
+                    >
+                      {activity.action === 'created_account'
+                        ? 'User Registration'
+                        : 'Post Created'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="admin-pagination">
+              <button
+                className="admin-btn admin-btn-secondary"
+                onClick={() => setActivityPage(p => Math.max(1, p - 1))}
+                disabled={activityPage === 1}
+              >
+                <ChevronLeft size={16} />
+                Previous
+              </button>
+
+              <span className="pagination-info">Page {activityPage}</span>
+
+              <button
+                className="admin-btn admin-btn-secondary"
+                onClick={() => setActivityPage(p => p + 1)}
+                disabled={!hasMore}
+              >
+                Next
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </>
+        ) : (
+          <p className="no-activity">No recent activity found.</p>
+        )}
       </div>
     </div>
   );

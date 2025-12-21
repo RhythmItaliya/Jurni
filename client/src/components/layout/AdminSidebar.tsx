@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useAdminLogout } from '@/hooks';
+import { useAdminLogout, useAdminSession } from '@/hooks';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Logo } from '@/components/ui/Logo';
 import {
@@ -27,7 +27,10 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const adminLogout = useAdminLogout();
+  const { data: currentAdmin } = useAdminSession();
   const { theme, toggleTheme } = useTheme();
+
+  const isSuperAdmin = currentAdmin?.role === 'super_admin';
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -73,24 +76,19 @@ export default function AdminSidebar() {
           </span>
           {!isCollapsed && <span className="nav-text">Dashboard</span>}
         </Link>
-        <Link
-          href="/admin/users"
-          className={`nav-item ${isActive('/admin/users') ? 'nav-item-active' : ''}`}
-        >
-          <span className="nav-icon">
-            <Users size={20} />
-          </span>
-          {!isCollapsed && <span className="nav-text">Users</span>}
-        </Link>
-        <Link
-          href="/admin/posts"
-          className={`nav-item ${isActive('/admin/posts') ? 'nav-item-active' : ''}`}
-        >
-          <span className="nav-icon">
-            <FileText size={20} />
-          </span>
-          {!isCollapsed && <span className="nav-text">Posts</span>}
-        </Link>
+        {isSuperAdmin && (
+          <Link
+            href="/admin/users"
+            className={`nav-item ${
+              isActive('/admin/users') ? 'nav-item-active' : ''
+            }`}
+          >
+            <span className="nav-icon">
+              <Users size={20} />
+            </span>
+            {!isCollapsed && <span className="nav-text">Users</span>}
+          </Link>
+        )}
         <Link
           href="/admin/comments"
           className={`nav-item ${isActive('/admin/comments') ? 'nav-item-active' : ''}`}
@@ -101,15 +99,6 @@ export default function AdminSidebar() {
           {!isCollapsed && <span className="nav-text">Comments</span>}
         </Link>
         <Link
-          href="/admin/media"
-          className={`nav-item ${isActive('/admin/media') ? 'nav-item-active' : ''}`}
-        >
-          <span className="nav-icon">
-            <Image size={20} />
-          </span>
-          {!isCollapsed && <span className="nav-text">Media</span>}
-        </Link>
-        <Link
           href="/admin/reports"
           className={`nav-item ${isActive('/admin/reports') ? 'nav-item-active' : ''}`}
         >
@@ -118,15 +107,17 @@ export default function AdminSidebar() {
           </span>
           {!isCollapsed && <span className="nav-text">Reports</span>}
         </Link>
-        <Link
-          href="/admin/admins"
-          className={`nav-item ${isActive('/admin/admins') ? 'nav-item-active' : ''}`}
-        >
-          <span className="nav-icon">
-            <Shield size={20} />
-          </span>
-          {!isCollapsed && <span className="nav-text">Admins</span>}
-        </Link>
+        {isSuperAdmin && (
+          <Link
+            href="/admin/admins"
+            className={`nav-item ${isActive('/admin/admins') ? 'nav-item-active' : ''}`}
+          >
+            <span className="nav-icon">
+              <Shield size={20} />
+            </span>
+            {!isCollapsed && <span className="nav-text">Admins</span>}
+          </Link>
+        )}
         <Link
           href="/admin/settings"
           className={`nav-item ${isActive('/admin/settings') ? 'nav-item-active' : ''}`}
