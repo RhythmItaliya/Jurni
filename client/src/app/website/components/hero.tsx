@@ -2,6 +2,9 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button';
+import { Logo } from '@/components/ui/Logo';
 import {
   heroContentVariants,
   heroItemVariants,
@@ -10,8 +13,34 @@ import {
 import '@/styles/website/hero-section.scss';
 
 export default function Hero() {
+  const router = useRouter();
+
   return (
     <section className="hero-section">
+      <motion.div
+        className="hero-top-bar"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Logo variant="light" size="lg" className="hero-brand-logo" />
+        <div className="hero-auth-buttons">
+          <Button
+            variant="light"
+            size="md"
+            onClick={() => router.push('/auth/login')}
+          >
+            Sign In
+          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            onClick={() => router.push('/auth/register')}
+          >
+            Sign Up
+          </Button>
+        </div>
+      </motion.div>
       <motion.div
         className="hero-background"
         initial="hidden"

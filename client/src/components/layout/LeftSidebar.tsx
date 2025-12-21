@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Logo } from '@/components/ui/Logo';
 import {
   ChevronRight,
   ChevronLeft,
@@ -47,7 +48,7 @@ export default function LeftSidebar({
       layout
     >
       <div className="sidebar-top">
-        {!isCollapsed && <div className="logo">Jurni</div>}
+        {!isCollapsed && <Logo variant="auto" size="sm" />}
         <div className="sidebar-controls">
           <button
             className="sidebar-toggle"

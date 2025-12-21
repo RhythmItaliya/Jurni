@@ -14,6 +14,8 @@ import {
 import { RegisterData } from '@/types/user';
 import { useRegister } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
+import { Logo } from '@/components/ui/Logo';
+import { AuthThemeToggle } from '@/components/ui/AuthThemeToggle';
 
 /**
  * Registration form component that uses search params
@@ -121,13 +123,7 @@ function RegisterForm() {
           <CardBody>
             <div className="auth-container">
               <div className="auth-header">
-                <Link href="/" className="auth-logo-placeholder">
-                  <img
-                    src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
-                    alt="Jurni"
-                    className="auth-logo-image"
-                  />
-                </Link>
+                <Logo variant="auto" size="md" />
                 <h1 className="auth-title">Create Account</h1>
                 <p className="auth-subtitle">
                   Join us and start your journey today
@@ -204,14 +200,18 @@ function RegisterForm() {
                   </Button>
                 </div>
 
-                <Link
-                  href="/auth/login"
-                  variant="forest"
-                  size="sm"
-                  className="auth-link"
-                >
-                  Already have an account? Sign In
-                </Link>
+                <div className="auth-links-container">
+                  <Link
+                    href="/auth/login"
+                    variant="forest"
+                    size="sm"
+                    className="auth-link"
+                  >
+                    Already have an account? Sign In
+                  </Link>
+
+                  <AuthThemeToggle />
+                </div>
               </form>
             </div>
           </CardBody>

@@ -14,6 +14,8 @@ import {
 } from '@/components/ui';
 import { useLogin } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
+import { Logo } from '@/components/ui/Logo';
+import { AuthThemeToggle } from '@/components/ui/AuthThemeToggle';
 
 /**
  * Login form component that uses search params
@@ -91,13 +93,7 @@ function LoginForm() {
           <CardBody>
             <div className="auth-container">
               <div className="auth-header">
-                <Link href="/" className="auth-logo-placeholder">
-                  <img
-                    src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
-                    alt="Jurni"
-                    className="auth-logo-image"
-                  />
-                </Link>
+                <Logo variant="auto" size="md" />
                 <h1 className="auth-title">Welcome Back</h1>
                 <p className="auth-subtitle">
                   Enter your email and password to access your account
@@ -164,6 +160,8 @@ function LoginForm() {
                   >
                     Don&apos;t have an account? Sign Up
                   </Link>
+
+                  <AuthThemeToggle />
                 </div>
               </form>
             </div>

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAdminLogout } from '@/hooks';
 import { useTheme } from '@/contexts/ThemeContext';
+import { Logo } from '@/components/ui/Logo';
 import {
   ChevronRight,
   ChevronLeft,
@@ -46,7 +47,7 @@ export default function AdminSidebar() {
       layout
     >
       <div className="sidebar-top">
-        {!isCollapsed && <div className="logo">Admin</div>}
+        {!isCollapsed && <Logo variant="auto" size="sm" />}
         <div className="sidebar-controls">
           <button
             className="sidebar-toggle"

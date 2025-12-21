@@ -1,4 +1,4 @@
-import { Montserrat, Lora } from 'next/font/google';
+import { Montserrat, Lora, Pacifico } from 'next/font/google';
 
 export const montserrat = Montserrat({
   subsets: ['latin'],
@@ -12,4 +12,11 @@ export const lora = Lora({
   variable: '--font-lora',
   display: 'swap',
   weight: ['400', '500', '600', '700'],
+});
+
+export const pacifico = Pacifico({
+  subsets: ['latin'],
+  variable: '--font-pacifico',
+  display: 'swap',
+  weight: ['400'],
 });

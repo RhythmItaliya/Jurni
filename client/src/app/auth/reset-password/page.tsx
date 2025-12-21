@@ -10,6 +10,8 @@ import {
   Card,
   CardBody,
 } from '@/components/ui';
+import { Logo } from '@/components/ui/Logo';
+import { AuthThemeToggle } from '@/components/ui/AuthThemeToggle';
 import { useResetPassword, useVerifyResetToken } from '@/hooks/useAuth';
 import { validateResetPasswordForm, ResetPasswordData } from './reset-password';
 import { useReduxToast } from '@/hooks/useReduxToast';
@@ -115,13 +117,7 @@ function ResetPasswordForm() {
             <CardBody>
               <div className="auth-container">
                 <div className="auth-header">
-                  <Link href="/" className="auth-logo-placeholder">
-                    <img
-                      src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
-                      alt="Jurni"
-                      className="auth-logo-image"
-                    />
-                  </Link>
+                  <Logo variant="auto" size="md" />
                   <h1 className="auth-title">Password Reset Complete</h1>
                   <p className="auth-subtitle">
                     Your password has been successfully updated
@@ -166,13 +162,7 @@ function ResetPasswordForm() {
             <CardBody>
               <div className="auth-container">
                 <div className="auth-header">
-                  <Link href="/" className="auth-logo-placeholder">
-                    <img
-                      src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
-                      alt="Jurni"
-                      className="auth-logo-image"
-                    />
-                  </Link>
+                  <Logo variant="auto" size="md" />
                   <h1 className="auth-title">Invalid Reset Link</h1>
                   <p className="auth-subtitle">
                     This password reset link is invalid or has expired
@@ -201,6 +191,7 @@ function ResetPasswordForm() {
                   >
                     Back to Sign In
                   </Link>
+                  <AuthThemeToggle />
                 </div>
               </div>
             </CardBody>
@@ -227,13 +218,7 @@ function ResetPasswordForm() {
           <CardBody>
             <div className="auth-container">
               <div className="auth-header">
-                <div className="auth-logo-placeholder">
-                  <img
-                    src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
-                    alt="Jurni"
-                    className="auth-logo-image"
-                  />
-                </div>
+                <Logo variant="auto" size="md" />
                 <h1 className="auth-title">Reset Password</h1>
                 <p className="auth-subtitle">Enter your new password below</p>
               </div>
@@ -288,6 +273,7 @@ function ResetPasswordForm() {
                 >
                   Back to Sign In
                 </Link>
+                <AuthThemeToggle />
               </form>
             </div>
           </CardBody>

@@ -1,0 +1,50 @@
+@use '../variables' as *;
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+
+  .logo-text {
+    font-family: var(--font-pacifico), cursive;
+    letter-spacing: 1px;
+  }
+
+  // Size variants
+  &.logo-sm .logo-text {
+    font-size: 1.5rem;
+  }
+
+  &.logo-md .logo-text {
+    font-size: 2rem;
+  }
+
+  &.logo-lg .logo-text {
+    font-size: 3rem;
+  }
+
+  // Color variants
+  &.logo-light .logo-text {
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  &.logo-dark .logo-text {
+    color: $primary;
+    text-shadow: 0 2px 4px rgba(45, 80, 22, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    &.logo-sm .logo-text {
+      font-size: 1.25rem;
+    }
+
+    &.logo-md .logo-text {
+      font-size: 1.5rem;
+    }
+
+    &.logo-lg .logo-text {
+      font-size: 2rem;
+    }
+  }
+}

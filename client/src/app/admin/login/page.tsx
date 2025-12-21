@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useAdminLogin } from '@/hooks';
-import Link from 'next/link';
+import { Input, Button, Card, CardBody, Link } from '@/components/ui';
+import { Logo } from '@/components/ui/Logo';
+import { AuthThemeToggle } from '@/components/ui/AuthThemeToggle';
 
 export default function AdminLogin() {
   const adminLogin = useAdminLogin();
@@ -30,64 +31,88 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="admin-login-page">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="admin-login-card"
-      >
-        <div className="admin-login-header">
-          <h1>Jurni Admin</h1>
-          <p>Sign in to continue to Admin Panel</p>
-        </div>
+    <div className="auth-layout">
+      <div className="auth-promo">
+        <img
+          src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1766298274/Jurni/Admin_Jurni.png"
+          alt="Admin Login"
+          className="auth-promo-image"
+        />
+      </div>
 
-        <form className="admin-login-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="usernameOrEmail">Email or Username</label>
-            <input
-              id="usernameOrEmail"
-              name="usernameOrEmail"
-              type="text"
-              className="form-input"
-              placeholder="Enter your email or username"
-              value={formData.usernameOrEmail}
-              onChange={handleChange}
-              disabled={adminLogin.isPending}
-              required
-            />
-          </div>
+      <div className="auth-form-section">
+        <Card variant="elevated" className="card-flat auth-card-width">
+          <CardBody>
+            <div className="auth-container">
+              <div className="auth-header">
+                <Logo variant="auto" size="md" />
+                <h1 className="auth-title">Admin Panel</h1>
+                <p className="auth-subtitle">
+                  Sign in to continue to Admin Panel
+                </p>
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              className="form-input"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              disabled={adminLogin.isPending}
-              required
-            />
-          </div>
+              <form className="auth-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="usernameOrEmail">Email or Username</label>
+                  <Input
+                    id="usernameOrEmail"
+                    name="usernameOrEmail"
+                    type="text"
+                    className="form-input"
+                    placeholder="Enter your email or username"
+                    value={formData.usernameOrEmail}
+                    onChange={handleChange}
+                    disabled={adminLogin.isPending}
+                    required
+                  />
+                </div>
 
-          <button
-            type="submit"
-            className="admin-login-button"
-            disabled={adminLogin.isPending}
-          >
-            {adminLogin.isPending ? 'Signing in...' : 'Sign In'}
-          </button>
+                <div className="form-group">
+                  <label htmlFor="password">Password</label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    className="form-input"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    disabled={adminLogin.isPending}
+                    required
+                  />
+                </div>
 
-          <div className="admin-login-footer">
-            <Link href="/" className="back-link">
-              ← Back to Main Site
-            </Link>
-          </div>
-        </form>
-      </motion.div>
+                <div className="form-actions">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    loading={adminLogin.isPending}
+                    loadingText="Signing in..."
+                    className="auth-button"
+                  >
+                    Sign In
+                  </Button>
+                </div>
+
+                <div className="auth-links-container">
+                  <Link
+                    href="/"
+                    variant="forest"
+                    size="sm"
+                    className="auth-link"
+                  >
+                    Back to Main Site
+                  </Link>
+
+                  <AuthThemeToggle />
+                </div>
+              </form>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
     </div>
   );
 }

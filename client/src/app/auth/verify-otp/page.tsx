@@ -11,6 +11,8 @@ import {
   Card,
   CardBody,
 } from '@/components/ui';
+import { Logo } from '@/components/ui/Logo';
+import { AuthThemeToggle } from '@/components/ui/AuthThemeToggle';
 import { useVerifyOTP, useResendOTP } from '@/hooks/useAuth';
 import { useReduxToast } from '@/hooks/useReduxToast';
 
@@ -174,13 +176,7 @@ function VerifyOTPForm() {
           <CardBody>
             <div className="auth-container">
               <div className="auth-header">
-                <Link href="/" className="auth-logo-placeholder">
-                  <img
-                    src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
-                    alt="Jurni"
-                    className="auth-logo-image"
-                  />
-                </Link>
+                <Logo variant="auto" size="md" />
                 <h1 className="auth-title">Verify Your Registration</h1>
                 <p className="auth-subtitle">
                   We sent a 6-character code to{' '}
@@ -252,6 +248,7 @@ function VerifyOTPForm() {
                 >
                   Didn&apos;t receive the code? Resend
                 </Button>
+                <AuthThemeToggle />
 
                 <div className="auth-divider">
                   <span>or</span>

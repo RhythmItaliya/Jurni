@@ -9,6 +9,8 @@ import {
   Card,
   CardBody,
 } from '@/components/ui';
+import { Logo } from '@/components/ui/Logo';
+import { AuthThemeToggle } from '@/components/ui/AuthThemeToggle';
 import { useForgotPassword } from '@/hooks/useAuth';
 import {
   validateForgotPasswordForm,
@@ -79,13 +81,7 @@ function ForgotPasswordForm() {
             <CardBody>
               <div className="auth-container">
                 <div className="auth-header">
-                  <Link href="/" className="auth-logo-placeholder">
-                    <img
-                      src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
-                      alt="Jurni"
-                      className="auth-logo-image"
-                    />
-                  </Link>
+                  <Logo variant="auto" size="md" />
                   <h1 className="auth-title">Check Your Email</h1>
                   <p className="auth-subtitle">
                     We&apos;ve sent a password reset link to {formData.email}
@@ -122,6 +118,7 @@ function ForgotPasswordForm() {
                   >
                     Back to Sign In
                   </Link>
+                  <AuthThemeToggle />
                 </div>
               </div>
             </CardBody>
@@ -148,13 +145,7 @@ function ForgotPasswordForm() {
           <CardBody>
             <div className="auth-container">
               <div className="auth-header">
-                <Link href="/" className="auth-logo-placeholder">
-                  <img
-                    src="https://res.cloudinary.com/ds9ufpxom/image/upload/v1765603404/Jurni_.png"
-                    alt="Jurni"
-                    className="auth-logo-image"
-                  />
-                </Link>
+                <Logo variant="auto" size="md" />
                 <h1 className="auth-title">Forgot Password?</h1>
                 <p className="auth-subtitle">
                   Enter your email address and we&apos;ll send you a link to
@@ -198,6 +189,7 @@ function ForgotPasswordForm() {
                 >
                   Back to Sign In
                 </Link>
+                <AuthThemeToggle />
               </form>
             </div>
           </CardBody>

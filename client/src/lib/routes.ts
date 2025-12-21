@@ -7,8 +7,6 @@
 // Routes that are open to everyone (no authentication required)
 export const PUBLIC_ROUTES = [
   '/',
-  '/about',
-  '/contact',
   '/auth/login',
   '/auth/register',
   '/auth/verify-otp',

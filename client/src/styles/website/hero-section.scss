@@ -13,6 +13,60 @@
   margin: 0;
   padding: 0;
 
+  .hero-top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+
+    .hero-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+
+      .hero-logo-text {
+        font-family: var(--font-signika), sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        letter-spacing: -0.5px;
+      }
+
+      .hero-logo-image {
+        height: 50px;
+        width: auto;
+        object-fit: contain;
+        border-radius: 12px;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      }
+    }
+
+    .hero-auth-buttons {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      padding: 1rem 1.5rem;
+
+      .hero-logo .hero-logo-image {
+        height: 40px;
+      }
+
+      .hero-auth-buttons {
+        gap: 0.5rem;
+      }
+    }
+  }
+
   .hero-background {
     position: fixed;
     top: 0;
