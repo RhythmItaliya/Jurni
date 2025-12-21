@@ -110,18 +110,11 @@ export class AdminReportsService {
   async updateReportStatus(
     uuid: string,
     status: 'pending' | 'reviewed' | 'resolved' | 'dismissed',
-    adminUuid: string,
   ) {
     const report = await this.reportModel.findOne({ uuid }).exec();
 
     if (!report) {
       throw new NotFoundException('Report not found');
-    }
-
-    // Find admin by uuid and get their _id
-    const admin = await this.adminModel.findOne({ uuid: adminUuid }).exec();
-    if (admin) {
-      report.reviewedBy = admin._id;
     }
 
     report.status = status;
