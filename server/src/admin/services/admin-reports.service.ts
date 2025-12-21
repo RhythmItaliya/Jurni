@@ -36,7 +36,7 @@ export class AdminReportsService {
 
     const reports = await this.reportModel
       .find(query)
-      .populate('reporterId', 'username email avatar')
+      .populate('reporterId', 'username email avatarImage')
       .populate('reviewedBy', 'username email')
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -51,13 +51,13 @@ export class AdminReportsService {
         if (report.reportType === 'user') {
           const user = await this.userModel
             .findOne({ uuid: report.reportedId })
-            .select('username email avatar uuid')
+            .select('username email avatarImage uuid')
             .exec();
           reportObj.reportedUser = user;
         } else if (report.reportType === 'post') {
           const post = await this.postModel
             .findOne({ uuid: report.reportedId })
-            .populate('userId', 'username avatar')
+            .populate('userId', 'username avatarImage')
             .exec();
           reportObj.reportedPost = post;
         }
@@ -80,7 +80,7 @@ export class AdminReportsService {
   async getReportById(uuid: string) {
     const report = await this.reportModel
       .findOne({ uuid })
-      .populate('reporterId', 'username email avatar')
+      .populate('reporterId', 'username email avatarImage')
       .populate('reviewedBy', 'username email')
       .exec();
 
@@ -93,7 +93,7 @@ export class AdminReportsService {
     if (report.reportType === 'user') {
       const user = await this.userModel
         .findOne({ uuid: report.reportedId })
-        .select('username email avatar uuid isActive isSuspended')
+        .select('username email avatarImage uuid isActive isSuspended')
         .exec();
       reportObj.reportedUser = user;
     } else if (report.reportType === 'post') {
